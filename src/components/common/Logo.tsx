@@ -18,7 +18,7 @@ export const Logo: React.FC<LogoProps> = ({
       className={`inline-flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue rounded-lg p-1 transition-opacity ${className}`}
       aria-label="LearnBuild Hub Home"
     >
-      {/* Brand Hexagon Emblem Vector */}
+      {/* Official Hexagon Shield Emblem Vector */}
       <div className="relative w-10 h-10 md:w-11 md:h-11 flex-shrink-0 flex items-center justify-center">
         <svg
           viewBox="0 0 100 100"
@@ -42,13 +42,13 @@ export const Logo: React.FC<LogoProps> = ({
             fill="none"
           />
 
-          {/* Open Book */}
+          {/* Open Book (Learn) */}
           <path
             d="M 22 72 Q 36 64 50 72 Q 64 64 78 72 L 78 68 Q 64 60 50 68 Q 36 60 22 68 Z"
             fill="#FFFFFF"
           />
 
-          {/* Code Angle Bracket Symbol </ > */}
+          {/* Code Angle Bracket Symbol </ > (Build) */}
           <text
             x="34"
             y="46"
@@ -60,7 +60,7 @@ export const Logo: React.FC<LogoProps> = ({
             &lt;/&gt;
           </text>
 
-          {/* Growth Arrow */}
+          {/* Upward Growth Arrow */}
           <path
             d="M 38 52 Q 55 42 74 22 L 64 22 M 74 22 L 74 32"
             stroke="#FF6B00"
@@ -74,16 +74,16 @@ export const Logo: React.FC<LogoProps> = ({
 
       {variant !== "icon" && (
         <div className="flex flex-col">
-          <div className="flex items-center text-xl md:text-2xl font-black tracking-tight leading-none">
-            <span className="text-white drop-shadow-sm">Learn</span>
+          <div className="flex items-center text-xl md:text-2xl font-black tracking-tight leading-none text-slate-900">
+            <span>Learn</span>
             <span className="text-brand-orange">Build</span>
-            <span className="text-blue-400 font-bold ml-1">Hub</span>
+            <span className="text-brand-blue font-bold ml-1">Hub</span>
           </div>
 
           {showTagline && (
-            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] md:text-xs font-bold tracking-wider uppercase text-slate-400">
-              <span className="text-blue-400">Learn.</span>
-              <span className="text-brand-orange">Build.</span>
+            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] md:text-xs font-black tracking-widest uppercase">
+              <span className="text-brand-blue">LEARN.</span>
+              <span className="text-brand-orange">BUILD.</span>
             </div>
           )}
         </div>

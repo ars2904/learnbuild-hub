@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Menu, ExternalLink, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/common/Logo";
 import { MobileMenu } from "./MobileMenu";
-import { Button } from "@/components/common/Button";
 import { NAV_LINKS } from "@/lib/constants";
 
 export const Navbar: React.FC = () => {
@@ -30,8 +29,8 @@ export const Navbar: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
           isScrolled
-            ? "bg-[#0A0D14]/95 backdrop-blur-2xl border-b border-white/10 shadow-2xl py-3"
-            : "bg-[#0A0D14]/70 backdrop-blur-md border-b border-white/5 py-4"
+            ? "bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm py-3"
+            : "bg-white/80 backdrop-blur-md border-b border-slate-200/60 py-4"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +39,7 @@ export const Navbar: React.FC = () => {
             <Logo showTagline={true} />
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2 bg-slate-900/90 p-1.5 rounded-2xl border border-white/10 backdrop-blur-xl">
+            <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href;
 
@@ -51,11 +50,11 @@ export const Navbar: React.FC = () => {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 transition-all hover:scale-105"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-brand-blue hover:bg-slate-100 transition-all"
                       title="External Training Platform (Corizo)"
                     >
                       <span>{link.name}</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ExternalLink className="w-3.5 h-3.5 text-brand-blue" />
                     </a>
                   );
                 }
@@ -66,8 +65,8 @@ export const Navbar: React.FC = () => {
                     href={link.href}
                     className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${
                       isActive
-                        ? "text-brand-orange bg-brand-orange/15 font-bold border border-brand-orange/30 shadow-sm"
-                        : "text-slate-300 hover:text-white hover:bg-white/5"
+                        ? "text-brand-blue bg-blue-50 font-bold border-b-2 border-brand-blue"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                     }`}
                   >
                     {link.name}
@@ -76,20 +75,32 @@ export const Navbar: React.FC = () => {
               })}
             </nav>
 
-            {/* Right Action CTA — ONLY SHOW WHEN ON /build PAGE */}
-            <div className="hidden lg:flex items-center space-x-3 min-w-[140px] justify-end">
+            {/* Right Action CTA Button */}
+            <div className="hidden lg:flex items-center space-x-3">
               {isBuildPage ? (
-                <Button href="/contact" size="sm" variant="build" icon={<ArrowRight className="w-4 h-4" />}>
-                  Start a Project
-                </Button>
-              ) : null}
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:shadow-lg transition-all"
+                >
+                  <span>Start a Project</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:shadow-lg transition-all"
+                >
+                  <span>Get Started</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
 
             {/* Mobile Hamburger Button */}
             <div className="flex lg:hidden items-center">
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="p-2.5 rounded-xl bg-slate-900 border border-white/15 text-slate-200 hover:text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                className="p-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-blue"
                 aria-label="Open menu"
               >
                 <Menu className="w-6 h-6" />
@@ -99,7 +110,7 @@ export const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu Drawer Modal */}
       <MobileMenu
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}

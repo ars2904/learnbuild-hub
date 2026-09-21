@@ -10,30 +10,28 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          blue: "#0052CC",
-          "blue-hover": "#0041A3",
-          "blue-glow": "#3B82F6",
-          "blue-dark": "#0A192F",
-          orange: "#FF6B00",
+          blue: "#0052CC", // Deep Electric Blue
+          "blue-hover": "#003D99",
+          "blue-light": "#EFF6FF",
+          orange: "#FF6B00", // Vibrant Cyber Orange
           "orange-hover": "#E05D00",
-          "orange-glow": "#FF8C38",
+          "orange-light": "#FFF7ED",
           gold: "#F59E0B",
-          dark: "#0A0D14", // Deep Midnight
-          surface: "#121620",
-          card: "#161B26",
-          border: "rgba(255, 255, 255, 0.1)",
+          slate: "#0F172A",
+          muted: "#64748B",
+          bg: "#FFFFFF",
+          surface: "#F8FAFC",
+          border: "#E2E8F0",
         },
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        handwriting: ["var(--font-caveat)", "Georgia", "cursive", "serif"],
       },
       boxShadow: {
-        "glow-blue": "0 0 35px -5px rgba(0, 82, 204, 0.35)",
-        "glow-orange": "0 0 35px -5px rgba(255, 107, 0, 0.35)",
-        "card-glass": "0 20px 40px -15px rgba(0, 0, 0, 0.7)",
-      },
-      backgroundImage: {
-        "cyber-grid": "linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)",
+        course: "0 10px 30px -5px rgba(0, 82, 204, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04)",
+        "course-hover": "0 25px 50px -12px rgba(0, 82, 204, 0.22), 0 10px 15px -3px rgba(15, 23, 42, 0.08)",
+        "orange-glow": "0 10px 30px -5px rgba(255, 107, 0, 0.2)",
       },
     },
   },
