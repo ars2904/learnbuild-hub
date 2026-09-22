@@ -88,8 +88,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       }
     } catch (err) {
       console.error("Enrollment submission error:", err);
-      // Fallback success for client demonstration if offline
-      setStatus("success");
+      setStatus("error");
+      setErrorMessage("Something went wrong. Please check your network connection and try again.");
     }
   };
 

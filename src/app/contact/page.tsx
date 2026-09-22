@@ -28,15 +28,35 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage("");
 
-    // Simulate dispatch
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setSubmitted(true);
+      } else {
+        setErrorMessage(data.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      console.error("Contact form submit error:", err);
+      setErrorMessage("Something went wrong. Please try again or email learnbuildh@gmail.com directly.");
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 800);
+    }
   };
 
   const faqItems = [
@@ -158,6 +178,11 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    {errorMessage && (
+                      <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
+                        {errorMessage}
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">
