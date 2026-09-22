@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
           
           {/* Brand & Overview */}
           <div className="md:col-span-6 lg:col-span-5 flex flex-col space-y-5">
-            <Logo showTagline={true} />
+            <Logo showTagline={true} theme="dark" />
             <p className="text-sm text-slate-400 max-w-sm leading-relaxed font-normal">
               Empowering individuals through practical skill acquisition and engineering innovative custom digital technology solutions.
             </p>

@@ -4,14 +4,18 @@ import Link from "next/link";
 interface LogoProps {
   variant?: "horizontal" | "stacked" | "icon";
   showTagline?: boolean;
+  theme?: "light" | "dark";
   className?: string;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   variant = "horizontal",
   showTagline = true,
+  theme = "light",
   className = "",
 }) => {
+  const isDark = theme === "dark";
+
   return (
     <Link
       href="/"
@@ -74,15 +78,17 @@ export const Logo: React.FC<LogoProps> = ({
 
       {variant !== "icon" && (
         <div className="flex flex-col">
-          <div className="flex items-center text-xl md:text-2xl font-black tracking-tight leading-none text-slate-900">
-            <span>Learn</span>
+          <div className="flex items-center text-xl md:text-2xl font-black tracking-tight leading-none">
+            <span className={isDark ? "text-white" : "text-slate-900"}>Learn</span>
             <span className="text-brand-orange">Build</span>
-            <span className="text-brand-blue font-bold ml-1">Hub</span>
+            <span className={isDark ? "text-blue-400 font-bold ml-1" : "text-brand-blue font-bold ml-1"}>
+              Hub
+            </span>
           </div>
 
           {showTagline && (
-            <div className="flex items-center gap-1.5 mt-0.5 text-[10px] md:text-xs font-black tracking-widest uppercase">
-              <span className="text-brand-blue">LEARN.</span>
+            <div className="flex items-center gap-1.5 mt-1 text-[10px] md:text-xs font-black tracking-widest uppercase">
+              <span className={isDark ? "text-blue-400" : "text-brand-blue"}>LEARN.</span>
               <span className="text-brand-orange">BUILD.</span>
             </div>
           )}
