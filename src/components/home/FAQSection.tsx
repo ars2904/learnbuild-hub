@@ -14,31 +14,31 @@ const faqData: FAQItem[] = [
   {
     question: "What is the difference between LEARN and BUILD on LearnBuild Hub?",
     answer:
-      "LEARN connects you to practical skill development training and internship tracks provided by our partner Corizo (redirecting externally to https://corizo.in). BUILD is our internal agency service where we design and develop custom websites, mobile applications, and software solutions for clients.",
+      "LEARN is our internal skill development platform offering hands-on training, industry projects, and career internship tracks. BUILD is our custom software engineering service where we design and develop websites, mobile applications, and enterprise software for clients.",
     category: "GENERAL",
   },
   {
-    question: "Where do the LEARN training programs take place?",
+    question: "How do the LEARN training programs work?",
     answer:
-      "All learning tracks, course materials, and internship enrollment are managed on the Corizo platform (https://corizo.in). Clicking 'Explore Learn Tracks' safely redirects you to Corizo's official portal.",
+      "All learning tracks are hosted internally under /learn. You can explore skill modules, review curriculum details, and submit an enrollment enquiry directly online to get started.",
     category: "LEARN",
   },
   {
     question: "How can I request a custom software or website build?",
     answer:
-      "You can visit our internal /build page or navigate to our Contact page to share your project requirements. Our engineering team will review your proposal and set up a kick-off consultation.",
+      "Visit our /build page or navigate to the Contact section to submit your project requirements. Our engineering team will review your proposal and schedule a discovery consultation.",
     category: "BUILD",
   },
   {
     question: "Do you offer mobile application and AI development?",
     answer:
-      "Yes! Our BUILD agency specializes in Full-Stack Web Applications (React/Next.js), Mobile Applications (iOS/Android), and AI Workflow Automation.",
+      "Yes! Our BUILD services specialize in Full-Stack Web Applications (React/Next.js), Mobile Applications (iOS/Android), and AI & Workflow Automation.",
     category: "BUILD",
   },
   {
     question: "Are the learning tracks suitable for beginners?",
     answer:
-      "Absolutely. The tracks on Corizo are designed to guide learners from fundamental concepts up to building industry-grade portfolio projects with mentor guidance.",
+      "Absolutely. Our curriculum starts from foundational principles and progresses to building production-grade projects under live mentorship.",
     category: "LEARN",
   },
 ];

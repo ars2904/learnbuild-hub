@@ -20,7 +20,7 @@ export const PlatformConcept: React.FC = () => {
                 <BookOpen className="w-7 h-7" />
               </div>
               <span className="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-3.5 py-1.5 rounded-full border border-blue-500/20">
-                Corizo Ecosystem
+                Practical Skill Tracks
               </span>
             </div>
 
@@ -29,7 +29,7 @@ export const PlatformConcept: React.FC = () => {
             </h3>
 
             <p className="text-slate-300 leading-relaxed text-sm sm:text-base font-normal">
-              Develop practical skills through training and internship opportunities offered via our ecosystem partner, Corizo. Build real project experience and expand your capabilities.
+              Develop practical skills through training and internship opportunities offered via internal LearnBuild Hub skill tracks. Build real project experience and expand your capabilities.
             </p>
           </div>
 

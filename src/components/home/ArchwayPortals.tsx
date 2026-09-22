@@ -68,17 +68,16 @@ export const ArchwayPortals: React.FC = () => {
 
               <div className="flex flex-col gap-2">
                 <Button
-                  href="https://corizo.in"
-                  isExternal={true}
+                  href="/learn"
                   variant="learn"
                   size="md"
                   className="w-full shadow-vibe-blue rounded-full py-3"
-                  icon={<ExternalLink className="w-4 h-4" />}
+                  icon={<ArrowRight className="w-4 h-4" />}
                 >
                   Explore Learn
                 </Button>
                 <span className="text-[11px] text-center text-slate-400 font-semibold mt-1">
-                  Redirects to Corizo.in
+                  Internal /learn tracks
                 </span>
               </div>
             </div>

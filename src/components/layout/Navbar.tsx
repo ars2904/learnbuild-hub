@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-brand-blue hover:bg-slate-100 transition-all"
-                      title="External Training Platform (Corizo)"
+                      title="LearnBuild Platform Tracks"
                     >
                       <span>{link.name}</span>
                       <ExternalLink className="w-3.5 h-3.5 text-brand-blue" />

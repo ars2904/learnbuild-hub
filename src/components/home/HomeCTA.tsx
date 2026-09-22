@@ -17,12 +17,11 @@ export const HomeCTA: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
               <Button
-                href="https://corizo.in"
-                isExternal={true}
+                href="/learn"
                 variant="learn"
                 size="lg"
                 className="w-full sm:w-auto shadow-vibe-blue"
-                icon={<ExternalLink className="w-5 h-5" />}
+                icon={<ArrowRight className="w-5 h-5" />}
               >
                 Explore Learn
               </Button>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Code2, Sparkles, Layers } from "lucide-react";
+import { BookOpen, Code2, Sparkles, Cpu, Layers, Terminal, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/common/Button";
 
 export const CoursePlatformHero: React.FC = () => {
@@ -25,32 +25,46 @@ export const CoursePlatformHero: React.FC = () => {
         <circle cx="90%" cy="40%" r="160" strokeWidth="1" />
       </svg>
 
-      {/* Floating 3D/Tech Badges (Next.js, React, Python) */}
-      <motion.div 
+      {/* ================= FLOATING TECH BADGES (LEFT & RIGHT) ================= */}
+      {/* Floating 1: React 18 (Left Top) */}
+      <motion.div
         animate={{ y: [0, -10, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="hidden lg:flex absolute top-20 right-16 z-20 items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-xl text-xs font-black text-slate-800"
+        className="hidden xl:flex absolute top-20 left-12 z-20 items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/95 border border-sky-200 shadow-xl backdrop-blur-md text-xs font-black text-slate-800"
       >
-        <span className="w-3 h-3 rounded-full bg-slate-900 flex items-center justify-center text-[8px] text-white">N</span>
-        <span>Next.js 14</span>
+        <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
+        <span className="text-sky-600 font-extrabold">React 18</span>
+        <span className="text-[10px] text-slate-400 font-semibold">• Frontend</span>
       </motion.div>
 
-      <motion.div 
+      {/* Floating 2: Next.js 14 (Left Bottom) */}
+      <motion.div
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-        className="hidden lg:flex absolute bottom-24 left-16 z-20 items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-xl text-xs font-black text-slate-800"
+        className="hidden xl:flex absolute bottom-28 left-16 z-20 items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl text-xs font-black text-white"
       >
-        <span className="w-3 h-3 rounded-full bg-sky-500 text-white flex items-center justify-center text-[8px] font-bold">R</span>
-        <span>React</span>
+        <span className="w-5 h-5 rounded-lg bg-white text-slate-900 flex items-center justify-center font-mono text-[10px] font-black">N</span>
+        <span>Next.js 14 App Router</span>
       </motion.div>
 
-      <motion.div 
+      {/* Floating 3: Python & AI (Right Top) */}
+      <motion.div
         animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-        className="hidden lg:flex absolute bottom-20 right-24 z-20 items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-slate-200 shadow-xl text-xs font-black text-slate-800"
+        transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+        className="hidden xl:flex absolute top-24 right-12 z-20 items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/95 border border-amber-200 shadow-xl backdrop-blur-md text-xs font-black text-slate-800"
       >
-        <span className="w-3 h-3 rounded-full bg-amber-500 text-white flex items-center justify-center text-[8px] font-bold">P</span>
-        <span>Python</span>
+        <Cpu className="w-4 h-4 text-amber-500" />
+        <span className="text-amber-700 font-extrabold">Python & AI Models</span>
+      </motion.div>
+
+      {/* Floating 4: Cloud & DevOps (Right Bottom) */}
+      <motion.div
+        animate={{ y: [0, 9, 0] }}
+        transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+        className="hidden xl:flex absolute bottom-32 right-16 z-20 items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/95 border border-indigo-200 shadow-xl backdrop-blur-md text-xs font-black text-slate-800"
+      >
+        <Layers className="w-4 h-4 text-indigo-500" />
+        <span className="text-indigo-700 font-extrabold">Cloud & DevOps</span>
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -60,15 +74,15 @@ export const CoursePlatformHero: React.FC = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-xs sm:text-sm font-extrabold text-slate-800 mb-8 shadow-md"
+          className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white border border-slate-200 text-xs sm:text-sm font-extrabold text-slate-800 mb-8 shadow-sm"
         >
-          <Sparkles className="w-4 h-4 text-brand-orange animate-pulse" />
+          <Sparkles className="w-4 h-4 text-brand-orange" />
           <span className="uppercase tracking-wider text-slate-900 font-extrabold">LEARNBUILD HUB PLATFORM</span>
           <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
           <span className="text-brand-orange font-black tracking-widest uppercase">LEARN. BUILD.</span>
         </motion.div>
 
-        {/* Hero Title with Floating Badge & Glowing Orange Terminal Container */}
+        {/* Hero Title */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -76,23 +90,13 @@ export const CoursePlatformHero: React.FC = () => {
           className="relative mb-8"
         >
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 leading-[1.1]">
-            <span className="relative inline-block text-brand-blue">
+            <span className="text-brand-blue">
               Learn Practical Skills.
-              {/* Floating Blue Pill Badge */}
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.5, type: "spring" }}
-                className="hidden sm:inline-flex items-center gap-1.5 absolute -top-4 -right-12 px-3 py-1 rounded-full bg-brand-blue text-white text-xs font-extrabold shadow-lg shadow-blue-500/30"
-              >
-                <BookOpen className="w-3.5 h-3.5" />
-                <span>Course Certified</span>
-              </motion.span>
             </span> 
             <br />
             <span className="inline-flex items-center gap-2 flex-wrap justify-center mt-2">
               <span className="text-brand-blue">Build</span> 
-              {/* Glowing Orange Terminal Container */}
+              {/* Glowing Orange Container */}
               <span className="bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border-2 border-orange-400 text-brand-orange rounded-3xl px-6 py-2 shadow-xl shadow-orange-500/20 inline-flex items-center gap-1 font-black">
                 Real Solutions
                 <span className="w-1 h-8 sm:h-12 bg-brand-orange animate-pulse inline-block rounded-full ml-1" />
@@ -106,7 +110,7 @@ export const CoursePlatformHero: React.FC = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-3xl mx-auto text-base sm:text-xl text-slate-600 leading-relaxed font-normal mb-12"
+          className="max-w-3xl mx-auto text-base sm:text-xl text-slate-600 leading-relaxed font-normal mb-10"
         >
           Access industry-aligned skill training tracks and custom software development under one unified platform.
         </motion.p>
@@ -116,18 +120,17 @@ export const CoursePlatformHero: React.FC = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-5 max-w-lg mx-auto"
+          className="flex flex-col sm:flex-row items-center justify-center gap-5 max-w-lg mx-auto mb-14"
         >
           <Button
-            href="https://corizo.in"
-            isExternal={true}
+            href="/learn"
             variant="learn"
             size="lg"
             className="w-full sm:w-auto shadow-course rounded-full py-4 px-8 hover:scale-105 transition-all duration-300 font-extrabold"
             icon={<BookOpen className="w-5 h-5" />}
             iconPosition="left"
           >
-            Explore Learn Tracks ↗
+            Explore Learn Tracks →
           </Button>
 
           <Button
@@ -140,6 +143,43 @@ export const CoursePlatformHero: React.FC = () => {
           >
             Explore Build Services
           </Button>
+        </motion.div>
+
+        {/* PRO HIGH-FIDELITY CORE TECHNOLOGIES STRIP */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="max-w-4xl mx-auto p-4 sm:p-5 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl text-white"
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Left Title Indicator */}
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-300">
+              <Terminal className="w-4 h-4 text-brand-orange" />
+              <span>CORE TECHNOLOGIES</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+
+            {/* Designed Technology Chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {[
+                { name: "React 18", color: "bg-sky-500/10 text-sky-400 border-sky-500/30" },
+                { name: "Next.js 14", color: "bg-white/10 text-slate-200 border-white/20" },
+                { name: "Python & AI", color: "bg-amber-500/10 text-amber-400 border-amber-500/30" },
+                { name: "TypeScript", color: "bg-blue-500/10 text-blue-400 border-blue-500/30" },
+                { name: "Node.js", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" },
+                { name: "Cloud & DevOps", color: "bg-indigo-500/10 text-indigo-400 border-indigo-500/30" },
+              ].map((tech) => (
+                <motion.span
+                  key={tech.name}
+                  whileHover={{ scale: 1.08, y: -2 }}
+                  className={`px-3.5 py-1.5 rounded-xl border text-xs font-extrabold shadow-sm transition-all cursor-default ${tech.color}`}
+                >
+                  {tech.name}
+                </motion.span>
+              ))}
+            </div>
+          </div>
         </motion.div>
 
       </div>

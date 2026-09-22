@@ -31,8 +31,7 @@ export const BlueprintHero: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-10">
               <Button
-                href="https://corizo.in"
-                isExternal={true}
+                href="/learn"
                 variant="learn"
                 size="lg"
                 className="w-full sm:w-auto rounded-full py-3.5 shadow-md shadow-brand-blue/20"

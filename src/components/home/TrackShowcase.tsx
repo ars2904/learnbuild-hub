@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Star, ArrowRight, ExternalLink } from "lucide-react";
+import { Star, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Track {
@@ -17,7 +17,6 @@ interface Track {
   tags: string[];
   ctaText: string;
   ctaHref: string;
-  isExternal: boolean;
 }
 
 const tracks: Track[] = [
@@ -28,12 +27,11 @@ const tracks: Track[] = [
     typeColor: "bg-blue-100 text-blue-700 border-blue-200",
     title: "Full-Stack Web Development Track",
     description: "Learn modern web engineering from front-end UI design to server APIs.",
-    badge: "8 Weeks • Hands-on",
+    badge: "10 Weeks • Hands-on",
     rating: "4.9 ★",
     tags: ["React", "Next.js", "Node.js"],
     ctaText: "Explore Track",
-    ctaHref: "https://corizo.in",
-    isExternal: true,
+    ctaHref: "/learn/full-stack-web-engineering",
   },
   {
     id: "2",
@@ -47,7 +45,6 @@ const tracks: Track[] = [
     tags: ["Next.js", "TypeScript", "Tailwind"],
     ctaText: "Start Project",
     ctaHref: "/contact",
-    isExternal: false,
   },
   {
     id: "3",
@@ -56,12 +53,11 @@ const tracks: Track[] = [
     typeColor: "bg-blue-100 text-blue-700 border-blue-200",
     title: "AI & Machine Learning Track",
     description: "Gain practical experience building intelligent AI models and data pipelines.",
-    badge: "10 Weeks • Internship",
+    badge: "12 Weeks • Internship",
     rating: "4.9 ★",
     tags: ["Python", "AI LLMs", "Analytics"],
     ctaText: "Explore Track",
-    ctaHref: "https://corizo.in",
-    isExternal: true,
+    ctaHref: "/learn/ai-machine-learning-track",
   },
   {
     id: "4",
@@ -75,13 +71,12 @@ const tracks: Track[] = [
     tags: ["React Native", "iOS", "Android"],
     ctaText: "Start Project",
     ctaHref: "/contact",
-    isExternal: false,
   },
 ];
 
 const filterTabs = [
   { id: "ALL", label: "All Offerings" },
-  { id: "LEARN", label: "Learn Tracks ↗" },
+  { id: "LEARN", label: "Learn Tracks →" },
   { id: "BUILD", label: "Build Services →" },
 ];
 
@@ -185,25 +180,15 @@ export const TrackShowcase: React.FC = () => {
                   <span className="text-[11px] font-semibold text-slate-400">
                     {track.badge}
                   </span>
-                  {track.isExternal ? (
-                    <a
-                      href={track.ctaHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-brand-blue hover:underline group"
-                    >
-                      <span>{track.ctaText}</span>
-                      <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </a>
-                  ) : (
-                    <Link
-                      href={track.ctaHref}
-                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-brand-orange hover:underline group"
-                    >
-                      <span>{track.ctaText}</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  )}
+                  <Link
+                    href={track.ctaHref}
+                    className={`inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider hover:underline group ${
+                      track.category === "LEARN" ? "text-brand-blue" : "text-brand-orange"
+                    }`}
+                  >
+                    <span>{track.ctaText}</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
                 </div>
               </motion.div>
             ))}

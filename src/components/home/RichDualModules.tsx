@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ExternalLink, ArrowRight, GraduationCap, Code2, CheckCircle2, Star } from "lucide-react";
+import { ArrowRight, GraduationCap, Code2, CheckCircle2, Star, Sparkles } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { motion } from "framer-motion";
 import { StudentWorkstationIllustration } from "@/components/common/StudentWorkstationIllustration";
@@ -10,7 +10,7 @@ import { DeveloperWorkstationIllustration } from "@/components/common/DeveloperW
 export const RichDualModules: React.FC = () => {
   return (
     <section className="py-16 md:py-24 relative bg-slate-50/70 border-y border-slate-200/80 overflow-hidden">
-      {/* Soft Ambient Radial Background Glows (NO CAD Lines) */}
+      {/* Soft Ambient Radial Background Glows */}
       <div className="absolute top-0 left-10 w-96 h-96 bg-blue-500/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-10 w-96 h-96 bg-orange-500/10 blur-[130px] rounded-full pointer-events-none" />
 
@@ -58,8 +58,9 @@ export const RichDualModules: React.FC = () => {
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>4.9 Track Rating</span>
                   </span>
-                  <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-slate-100 text-xs font-bold text-slate-600">
-                    External Partner
+                  <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-bold text-blue-800">
+                    <Sparkles className="w-3 h-3 text-brand-blue" />
+                    <span>Skill Pathways</span>
                   </span>
                 </div>
               </div>
@@ -73,7 +74,7 @@ export const RichDualModules: React.FC = () => {
                 Training, internships and opportunities to develop practical skills.
               </p>
 
-              {/* Custom Vector Illustration: Student Learning on Laptop with Stacked Books */}
+              {/* Custom Vector Illustration: Student Learning Workstation */}
               <div className="my-6 p-4 rounded-2xl bg-white/90 border border-blue-100 shadow-sm flex flex-col items-center">
                 <StudentWorkstationIllustration className="w-full max-w-xs h-auto" />
                 <span className="text-[11px] font-bold uppercase tracking-wider text-brand-blue mt-2">
@@ -118,18 +119,18 @@ export const RichDualModules: React.FC = () => {
 
             {/* Action */}
             <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-xs text-slate-500 font-medium">
-                Redirects to <span className="text-brand-blue font-bold">https://corizo.in</span>
+              <div className="text-xs text-slate-600 font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-brand-blue" />
+                <span>5+ Industry Skill Modules Available</span>
               </div>
               <Button
-                href="https://corizo.in"
-                isExternal={true}
+                href="/learn"
                 variant="learn"
                 size="md"
                 className="w-full sm:w-auto shadow-course rounded-full py-3 px-6 group/btn"
-                icon={<ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />}
+                icon={<ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />}
               >
-                Explore Learn Tracks ↗
+                Explore Learn Tracks →
               </Button>
             </div>
           </motion.div>
@@ -157,8 +158,9 @@ export const RichDualModules: React.FC = () => {
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>4.9 Client Rating</span>
                   </span>
-                  <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-slate-100 text-xs font-bold text-slate-600">
-                    Internal Agency
+                  <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-xs font-bold text-orange-800">
+                    <Sparkles className="w-3 h-3 text-brand-orange" />
+                    <span>Digital Solutions</span>
                   </span>
                 </div>
               </div>
@@ -172,7 +174,7 @@ export const RichDualModules: React.FC = () => {
                 Build websites, software and digital solutions tailored to your business needs.
               </p>
 
-              {/* Custom Vector Illustration: Software Engineer in Chair at Desk working on Laptop */}
+              {/* Custom Vector Illustration: Software Engineer Workstation */}
               <div className="my-6 p-4 rounded-2xl bg-white/90 border border-orange-100 shadow-sm flex flex-col items-center">
                 <DeveloperWorkstationIllustration className="w-full max-w-xs h-auto" />
                 <span className="text-[11px] font-bold uppercase tracking-wider text-brand-orange mt-2">
@@ -217,8 +219,9 @@ export const RichDualModules: React.FC = () => {
 
             {/* Action */}
             <div className="pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="text-xs text-slate-500 font-medium">
-                Opens internal <span className="text-brand-orange font-bold">/build</span> page
+              <div className="text-xs text-slate-600 font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-brand-orange" />
+                <span>Custom Web, App & AI Solutions</span>
               </div>
               <Button
                 href="/build"

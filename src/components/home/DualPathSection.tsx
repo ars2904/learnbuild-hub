@@ -48,8 +48,7 @@ export const DualPathSection: React.FC = () => {
 
             <div className="flex items-center justify-between pt-6 border-t border-slate-200/80">
               <Button
-                href="https://corizo.in"
-                isExternal={true}
+                href="/learn"
                 variant="learn"
                 size="md"
                 className="rounded-full py-3 px-6 shadow-md shadow-brand-blue/20"

@@ -25,7 +25,7 @@ export const DualPathCards: React.FC = () => {
                 <GraduationCap className="w-8 h-8" />
               </div>
               <span className="px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-xs font-bold text-blue-400 uppercase tracking-wider">
-                External Platform (Corizo)
+                Skill Tracks Platform
               </span>
             </div>
 
@@ -58,15 +58,14 @@ export const DualPathCards: React.FC = () => {
             {/* Card Action */}
             <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="text-xs text-slate-400">
-                Redirects to <span className="text-blue-400 font-semibold">https://corizo.in</span>
+                Opens internal <span className="text-blue-400 font-semibold">/learn</span> page
               </div>
               <Button
-                href="https://corizo.in"
-                isExternal={true}
+                href="/learn"
                 variant="learn"
                 size="md"
                 className="w-full sm:w-auto"
-                icon={<ExternalLink className="w-4 h-4" />}
+                icon={<ArrowRight className="w-4 h-4" />}
               >
                 Explore Learn →
               </Button>

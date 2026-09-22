@@ -34,8 +34,7 @@ export const Hero: React.FC = () => {
         {/* Action Button Group */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-5 max-w-lg mx-auto mb-16">
           <Button
-            href="https://corizo.in"
-            isExternal={true}
+            href="/learn"
             variant="learn"
             size="lg"
             className="w-full sm:w-auto shadow-glow-blue"
@@ -61,7 +60,7 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
           <div className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-md">
             <Zap className="w-5 h-5 text-blue-400 flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-semibold text-slate-300">External Training Redirect</span>
+            <span className="text-xs sm:text-sm font-semibold text-slate-300">Internal Practical Skill Tracks</span>
           </div>
 
           <div className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-md">

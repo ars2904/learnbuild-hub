@@ -20,8 +20,8 @@ export default function HomePage() {
 
       {/* Course & Tech Platform Assembly */}
       <div
-        className={`transition-all duration-700 ${
-          introFinished ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        className={`transition-opacity duration-500 ${
+          introFinished ? "opacity-100" : "opacity-0"
         }`}
       >
         <CoursePlatformHero />

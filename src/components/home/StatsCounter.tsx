@@ -44,7 +44,7 @@ const statsData: StatItem[] = [
     value: 2,
     suffix: " Solutions",
     label: "Dual Platform",
-    description: "LEARN (Corizo) & BUILD (Agency)",
+    description: "LEARN (Skill Tracks) & BUILD (Custom Software)",
     color: "text-purple-600 bg-purple-50 border-purple-200",
   },
 ];
