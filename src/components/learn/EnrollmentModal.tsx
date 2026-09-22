@@ -237,7 +237,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     <input
                       type="tel"
                       name="phone"
-                      placeholder="+91 98765 43210"
+                      placeholder="e.g. 1234567891"
                       value={formData.phone}
                       onChange={handleChange}
                       required
