@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Globe, LayoutGrid, Cpu, Smartphone, Bot, ArrowRight } from "lucide-react";
+import { Globe, LayoutGrid, Cpu, Smartphone, Bot, TrendingUp, Palette, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const servicesData = [
@@ -30,6 +30,16 @@ export const servicesData = [
     icon: Bot,
     title: "AI & Automation",
     description: "AI integrations and workflow automation to improve efficiency.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Digital Marketing",
+    description: "Data-driven SEO, performance marketing, social growth, and brand strategy.",
+  },
+  {
+    icon: Palette,
+    title: "Graphics Designing",
+    description: "Custom UI/UX designs, brand identity, vector assets, and marketing visuals.",
   },
 ];
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { Button } from "@/components/common/Button";
-import { Globe, LayoutGrid, Cpu, Smartphone, Bot, ArrowRight } from "lucide-react";
+import { Globe, LayoutGrid, Cpu, Smartphone, Bot, TrendingUp, Palette, ArrowRight } from "lucide-react";
 
 export const servicesData = [
   {
@@ -28,6 +28,16 @@ export const servicesData = [
     icon: Bot,
     title: "AI & Automation",
     description: "Smart AI integrations and workflow automation to streamline operations.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Digital Marketing",
+    description: "Data-driven SEO, performance marketing, social growth, and brand strategy.",
+  },
+  {
+    icon: Palette,
+    title: "Graphics Designing",
+    description: "Custom UI/UX designs, brand identity, vector assets, and marketing visuals.",
   },
 ];
 
