@@ -79,33 +79,6 @@ export const Footer: React.FC = () => {
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-slate-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-1 transition-all"
-                >
-                  <ChevronRight className="w-3 h-3 text-slate-600" />
-                  <span>Privacy Policy</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="text-slate-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-1 transition-all"
-                >
-                  <ChevronRight className="w-3 h-3 text-slate-600" />
-                  <span>Terms & Conditions</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cookies"
-                  className="text-slate-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-1 transition-all"
-                >
-                  <ChevronRight className="w-3 h-3 text-slate-600" />
-                  <span>Cookie Policy</span>
-                </Link>
-              </li>
             </ul>
           </div>
 
