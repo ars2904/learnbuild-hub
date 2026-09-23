@@ -78,6 +78,24 @@ export const Footer: React.FC = () => {
                   <span>Privacy Policy</span>
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-slate-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-1 transition-all"
+                >
+                  <ChevronRight className="w-3 h-3 text-slate-600" />
+                  <span>Terms & Conditions</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cookies"
+                  className="text-slate-400 hover:text-white hover:translate-x-1 inline-flex items-center gap-1 transition-all"
+                >
+                  <ChevronRight className="w-3 h-3 text-slate-600" />
+                  <span>Cookie Policy</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -182,6 +200,14 @@ export const Footer: React.FC = () => {
             <span className="hidden sm:inline text-slate-700">•</span>
             <Link href="/privacy" className="text-slate-400 hover:text-white transition-colors underline underline-offset-4 font-medium">
               Privacy Policy
+            </Link>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <Link href="/terms" className="text-slate-400 hover:text-white transition-colors underline underline-offset-4 font-medium">
+              Terms & Conditions
+            </Link>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <Link href="/cookies" className="text-slate-400 hover:text-white transition-colors underline underline-offset-4 font-medium">
+              Cookie Policy
             </Link>
           </div>
 

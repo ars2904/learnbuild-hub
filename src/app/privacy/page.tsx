@@ -4,14 +4,12 @@ import React from "react";
 import Link from "next/link";
 import { 
   ShieldCheck, 
-  Lock, 
-  EyeOff, 
   Mail, 
   Phone, 
-  FileText, 
-  CheckCircle2, 
   ArrowLeft,
-  MessageSquare
+  FileText,
+  Lock,
+  Cookie
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -20,8 +18,7 @@ export default function PrivacyPolicyPage() {
     <div className="flex flex-col min-h-screen bg-white overflow-hidden">
       
       {/* ================= 1. HERO SECTION ================= */}
-      <section className="relative pt-12 pb-20 md:pt-20 md:pb-24 bg-[#090D16] text-white overflow-hidden">
-        {/* Ambient Glows */}
+      <section className="relative pt-12 pb-16 md:pt-20 md:pb-20 bg-[#090D16] text-white overflow-hidden border-b border-slate-800">
         <div className="absolute top-0 right-1/4 w-[500px] h-[350px] bg-blue-600/20 blur-[130px] pointer-events-none" />
         <div className="absolute bottom-0 left-1/3 w-[450px] h-[300px] bg-orange-500/15 blur-[120px] pointer-events-none" />
 
@@ -35,188 +32,262 @@ export default function PrivacyPolicyPage() {
           </Link>
 
           <div className="max-w-3xl">
-            <span className="px-4 py-1.5 rounded-full text-xs font-black tracking-widest text-brand-orange uppercase bg-orange-500/10 border border-orange-500/20 mb-6 inline-flex items-center gap-2 shadow-sm">
+            <span className="px-4 py-1.5 rounded-full text-xs font-black tracking-widest text-brand-orange uppercase bg-orange-500/10 border border-orange-500/20 mb-4 inline-flex items-center gap-2 shadow-sm">
               <ShieldCheck className="w-4 h-4 text-brand-orange" />
-              <span>DATA GOVERNANCE & PRIVACY</span>
+              <span>LEGAL & GOVERNANCE</span>
             </span>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-6 leading-[1.1]">
-              Privacy Policy & <br />
-              <span className="text-brand-blue">Data Protection.</span>
+            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+              Privacy Policy
             </h1>
 
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal mb-8">
-              At LearnBuild Hub, we respect your personal privacy. This document outlines how we collect, handle, and safeguard information submitted across our learning tracks, technology solutions, and internship applications.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal mb-6">
+              LearnBuild Hub (“LearnBuild Hub”, “we”, “us”, or “our”) respects your privacy and is committed to protecting the personal information you provide to us.
             </p>
 
-            <div className="text-xs text-slate-400 font-medium">
-              Last updated: September 23, 2026 • Official Governance Document
+            <div className="text-xs text-slate-400 font-semibold">
+              Last Updated: September 23, 2026
             </div>
+          </div>
+
+          {/* Legal Navigation Tabs */}
+          <div className="flex items-center gap-3 mt-10 border-t border-slate-800/80 pt-6 flex-wrap">
+            <Link
+              href="/privacy"
+              className="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-brand-blue text-white shadow-md flex items-center gap-2"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Privacy Policy</span>
+            </Link>
+
+            <Link
+              href="/terms"
+              className="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all flex items-center gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Terms & Conditions</span>
+            </Link>
+
+            <Link
+              href="/cookies"
+              className="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all flex items-center gap-2"
+            >
+              <Cookie className="w-4 h-4" />
+              <span>Cookie Policy</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ================= 2. TRUST HIGHLIGHT STRIP ================= */}
-      <section className="py-8 bg-slate-900 border-b border-slate-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0">
-                <EyeOff className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black uppercase text-white tracking-wider">Zero Data Selling</h4>
-                <p className="text-[11px] text-slate-400">We never sell data to third parties.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 flex-shrink-0">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black uppercase text-white tracking-wider">Encrypted Forms</h4>
-                <p className="text-[11px] text-slate-400">Direct secure email dispatches.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black uppercase text-white tracking-wider">No Unsolicited Spam</h4>
-                <p className="text-[11px] text-slate-400">Only relevant application replies.</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 flex-shrink-0">
-                <CheckCircle2 className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-xs font-black uppercase text-white tracking-wider">Full User Control</h4>
-                <p className="text-[11px] text-slate-400">Request deletion anytime.</p>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* ================= 3. MAIN PRIVACY POLICY ARTICLES ================= */}
+      {/* ================= 2. POLICY DOCUMENT CONTENT ================= */}
       <section className="py-16 md:py-24 bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="prose prose-slate max-w-none space-y-12">
+          <div className="prose prose-slate max-w-none text-slate-700 font-normal leading-relaxed text-sm sm:text-base space-y-10">
             
-            {/* Article 1 */}
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-sm">
-              <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-brand-blue text-white font-black text-sm flex items-center justify-center">1</span>
+            <p className="text-slate-600 leading-relaxed font-medium">
+              This Privacy Policy explains how LearnBuild Hub collects, uses, stores, protects and handles information when you visit our website, submit an enquiry, contact us, use our services, or interact with our training and technology offerings. By using our website, you acknowledge that you have read and understood this Privacy Policy.
+            </p>
+
+            {/* Section 1 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">1</span>
                 <span>Information We Collect</span>
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal mb-4">
-                We only collect personal information that you voluntarily provide when submitting an inquiry or application on our website:
+              <p className="mb-4">
+                Depending on how you interact with LearnBuild Hub, we may collect the following information:
               </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-700 font-medium">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span><strong>Contact Information:</strong> Full Name, Email Address, Phone / WhatsApp number.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span><strong>Educational & Career Details:</strong> Qualifications, preferred technology track, portfolio/GitHub link (submitted during course enrollment or internship applications).</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span><strong>Client & Enterprise Requirements:</strong> School/Company name, custom software requirements, and demo requests.</span>
-                </li>
+              
+              <h4 className="font-extrabold text-slate-900 text-sm uppercase tracking-wider mb-2">Information You Provide</h4>
+              <p className="mb-3">When you submit a contact or enquiry form, request information, or communicate with us, we may collect:</p>
+              <ul className="list-disc pl-6 space-y-1 mb-6 text-sm">
+                <li>Full Name</li>
+                <li>Email Address</li>
+                <li>Phone Number</li>
+                <li>Company or Organisation Name, if provided</li>
+                <li>Service or training requirements</li>
+                <li>Project requirements</li>
+                <li>Course or training interests</li>
+                <li>Message or enquiry details</li>
+                <li>Any other information you voluntarily provide</li>
               </ul>
+
+              <h4 className="font-extrabold text-slate-900 text-sm uppercase tracking-wider mb-2">Technical Information</h4>
+              <p className="mb-3">When you access our website, certain technical information may be processed automatically for website functionality, security and maintenance, including:</p>
+              <ul className="list-disc pl-6 space-y-1 mb-4 text-sm">
+                <li>IP address</li>
+                <li>Browser type</li>
+                <li>Device information</li>
+                <li>Operating system</li>
+                <li>Pages visited</li>
+                <li>Date and time of access</li>
+                <li>Basic website access and error logs</li>
+              </ul>
+              <p className="text-xs font-bold text-slate-500 bg-white p-3 rounded-xl border border-slate-200 inline-block">
+                Note: We do not currently use Google Analytics, Meta Pixel or similar advertising/tracking platforms on our website.
+              </p>
             </div>
 
-            {/* Article 2 */}
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-sm">
-              <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-brand-blue text-white font-black text-sm flex items-center justify-center">2</span>
+            {/* Section 2 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">2</span>
                 <span>How We Use Your Information</span>
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal mb-4">
-                Your submitted data is used strictly for the operational purpose intended by your form submission:
-              </p>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-700 font-medium">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span>To process course enrollments, verify merit internship eligibility, and send demo credentials.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span>To communicate directly regarding your software project specs via email (<code className="text-brand-blue font-bold">{SITE_CONFIG.email}</code>) or WhatsApp (<code className="text-emerald-600 font-bold">{SITE_CONFIG.phone}</code>).</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <span>To send essential updates regarding your selected training program or build deliverables.</span>
-                </li>
+              <p className="mb-3">We may use the information collected to:</p>
+              <ul className="list-disc pl-6 space-y-1.5 text-sm">
+                <li>Respond to your enquiries and requests</li>
+                <li>Understand your project or business requirements</li>
+                <li>Provide information about our services and training programs</li>
+                <li>Contact you regarding your enquiry</li>
+                <li>Prepare proposals or quotations where applicable</li>
+                <li>Deliver requested services and technical deliverables</li>
+                <li>Improve our website and services</li>
+                <li>Maintain website security and prevent unauthorised activity</li>
+                <li>Maintain necessary business records and comply with legal requirements</li>
               </ul>
             </div>
 
-            {/* Article 3 */}
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-sm">
-              <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-brand-blue text-white font-black text-sm flex items-center justify-center">3</span>
-                <span>Data Protection & Security</span>
+            {/* Section 3 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">3</span>
+                <span>Storage of Personal Information</span>
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal mb-4">
-                We employ strict organizational and technical measures to protect your personal information against unauthorized access, loss, or alteration:
+              <p className="mb-3">
+                Information submitted through our website’s contact or enquiry forms may be stored in our database. This information may be used by authorised LearnBuild Hub personnel for the purpose of responding to enquiries, managing leads, providing services and maintaining business records.
               </p>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal">
-                Form submissions dispatch directly through secure serverless API routes to our verified inbox. We do not store unencrypted credit card or payment financial data on our servers.
+              <p>
+                We take reasonable measures to protect stored information from unauthorised access, misuse, alteration or disclosure.
               </p>
             </div>
 
-            {/* Article 4 */}
-            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80 shadow-sm">
-              <h3 className="text-2xl font-black text-slate-900 mb-4 flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-brand-blue text-white font-black text-sm flex items-center justify-center">4</span>
-                <span>Your Data Rights & Deletion Requests</span>
+            {/* Section 4 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">4</span>
+                <span>Sharing of Information</span>
               </h3>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal mb-4">
-                You retain full ownership of your data. You may request to review, update, or completely delete your submitted contact records from our systems at any time.
+              <p className="font-extrabold text-brand-orange mb-3">
+                LearnBuild Hub does not sell your personal information.
               </p>
-              <p className="text-slate-600 text-sm leading-relaxed font-normal">
-                Simply email your deletion request to <a href={`mailto:${SITE_CONFIG.email}`} className="text-brand-blue font-bold hover:underline">{SITE_CONFIG.email}</a> with the subject line <strong>"Data Deletion Request"</strong>.
+              <p className="mb-3">We may share information where reasonably necessary with:</p>
+              <ul className="list-disc pl-6 space-y-1 text-sm">
+                <li>Authorised members of LearnBuild Hub</li>
+                <li>Hosting or database service providers</li>
+                <li>Technology and infrastructure service providers</li>
+                <li>Communication service providers</li>
+                <li>Professional service providers where required</li>
+                <li>Government authorities or law-enforcement agencies where legally required</li>
+              </ul>
+            </div>
+
+            {/* Section 5 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">5</span>
+                <span>Data Security</span>
+              </h3>
+              <p>
+                We take reasonable technical and organisational measures to protect personal information against unauthorised access, disclosure, loss, misuse, alteration or destruction. However, no internet transmission or electronic storage system can be guaranteed to be completely secure.
               </p>
             </div>
 
-            {/* Article 5 */}
+            {/* Section 6 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">6</span>
+                <span>Data Retention</span>
+              </h3>
+              <p>
+                We retain personal information only for as long as reasonably necessary for the purposes for which it was collected, to maintain legitimate business records, or where retention is required by applicable law. When information is no longer reasonably required, we may delete or securely dispose of it.
+              </p>
+            </div>
+
+            {/* Section 7 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">7</span>
+                <span>Your Privacy Rights</span>
+              </h3>
+              <p className="mb-3">Subject to applicable law, you may have rights relating to your personal information, including requesting:</p>
+              <ul className="list-disc pl-6 space-y-1 text-sm">
+                <li>Access to your personal information</li>
+                <li>Correction of inaccurate information</li>
+                <li>Deletion of personal information where applicable</li>
+                <li>Withdrawal of consent where processing is based on consent</li>
+                <li>Information regarding how your personal information is being processed</li>
+              </ul>
+            </div>
+
+            {/* Section 8 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">8</span>
+                <span>Cookies and Similar Technologies</span>
+              </h3>
+              <p className="mb-3">
+                Our website may use essential cookies or similar technical mechanisms where required for basic website functionality, security, sessions or user preferences.
+              </p>
+              <p>
+                At present, LearnBuild Hub does not use Google Analytics, Meta Pixel or advertising cookies on this website.
+              </p>
+            </div>
+
+            {/* Section 9 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">9</span>
+                <span>Third-Party Websites</span>
+              </h3>
+              <p>
+                Our website may contain links to third-party websites, platforms or services. LearnBuild Hub does not control the privacy practices of those third parties. We recommend reviewing their respective privacy policies before providing personal information.
+              </p>
+            </div>
+
+            {/* Section 10 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">10</span>
+                <span>Children’s Privacy</span>
+              </h3>
+              <p>
+                Our website is not specifically intended for children. We do not knowingly collect personal information from children in circumstances where such collection requires parental or guardian consent under applicable law.
+              </p>
+            </div>
+
+            {/* Section 11 */}
+            <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
+              <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
+                <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">11</span>
+                <span>Changes to This Privacy Policy</span>
+              </h3>
+              <p>
+                We may update this Privacy Policy from time to time to reflect changes in our website, services, technology, business practices or applicable legal requirements. Any updated version will be published on this page with a revised “Last Updated” date.
+              </p>
+            </div>
+
+            {/* Section 12: Contact Us */}
             <div className="p-8 rounded-3xl bg-slate-900 text-white shadow-xl">
               <h3 className="text-2xl font-black text-white mb-4 flex items-center gap-3">
                 <Mail className="w-6 h-6 text-brand-orange" />
-                <span>Contact Our Data Officer</span>
+                <span>12. Contact Us</span>
               </h3>
-              <p className="text-slate-300 text-sm leading-relaxed font-normal mb-6">
-                If you have any questions, concerns, or requests regarding this Privacy Policy or how LearnBuild Hub handles your personal information, reach out directly:
+              <p className="text-slate-300 text-sm mb-6">
+                If you have any questions, concerns or requests relating to this Privacy Policy or your personal information, please contact us:
               </p>
-              
-              <div className="flex flex-wrap items-center gap-4">
-                <a
-                  href={`mailto:${SITE_CONFIG.email}`}
-                  className="px-6 py-3 rounded-full bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>{SITE_CONFIG.email}</span>
-                </a>
 
-                <a
-                  href={SITE_CONFIG.whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>WhatsApp: {SITE_CONFIG.whatsapp}</span>
-                </a>
+              <div className="space-y-3 text-sm font-semibold">
+                <div className="text-brand-orange font-bold text-lg">LearnBuild Hub</div>
+                <div className="flex items-center gap-2 text-slate-200">
+                  <Mail className="w-4 h-4 text-blue-400" />
+                  <span>Email: <a href={`mailto:${SITE_CONFIG.email}`} className="text-blue-400 underline">{SITE_CONFIG.email}</a></span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-200">
+                  <Phone className="w-4 h-4 text-blue-400" />
+                  <span>Phone/WhatsApp: <a href={SITE_CONFIG.whatsappLink} target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline">{SITE_CONFIG.phone}</a></span>
+                </div>
               </div>
             </div>
 
