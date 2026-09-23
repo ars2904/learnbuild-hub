@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Logo } from "@/components/common/Logo";
 import { NAV_LINKS, SITE_CONFIG } from "@/lib/constants";
-import { Mail, Phone, MessageSquare, ArrowUpRight, ShieldCheck, Sparkles, Instagram, ChevronRight } from "lucide-react";
+import { Mail, Phone, MessageSquare, ArrowUpRight, ShieldCheck, Sparkles, Instagram, Youtube, ChevronRight } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
@@ -45,6 +45,16 @@ export const Footer: React.FC = () => {
               >
                 <Instagram className="w-3.5 h-3.5" />
                 <span>Instagram</span>
+              </a>
+
+              <a
+                href={SITE_CONFIG.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center gap-2 hover:bg-rose-500/20 transition-all"
+              >
+                <Youtube className="w-3.5 h-3.5 text-rose-500" />
+                <span>YouTube</span>
               </a>
             </div>
           </div>
