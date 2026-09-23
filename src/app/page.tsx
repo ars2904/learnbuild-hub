@@ -80,6 +80,12 @@ export default function HomePage() {
   const [introFinished, setIntroFinished] = useState(false);
   const [isInternshipModalOpen, setIsInternshipModalOpen] = useState(false);
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("hasSeenIntroSplash") === "true") {
+      setIntroFinished(true);
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen relative bg-white overflow-hidden">
       {/* Intro Animation */}

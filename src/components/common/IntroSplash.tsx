@@ -9,16 +9,29 @@ interface IntroSplashProps {
 }
 
 export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [step, setStep] = useState<"converge" | "logo" | "text" | "exit">("converge");
 
   useEffect(() => {
+    const hasSeen = typeof window !== "undefined" && sessionStorage.getItem("hasSeenIntroSplash") === "true";
+    if (hasSeen) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    setIsVisible(true);
+
     // Timeline sequence
     const t1 = setTimeout(() => setStep("logo"), 600);
     const t2 = setTimeout(() => setStep("text"), 1100);
     const t3 = setTimeout(() => setStep("exit"), 1800);
     const t4 = setTimeout(() => {
       setIsVisible(false);
+      try {
+        sessionStorage.setItem("hasSeenIntroSplash", "true");
+      } catch (e) {
+        // Ignore storage errors in restricted iframe/private mode
+      }
       if (onComplete) onComplete();
     }, 2200);
 
@@ -29,6 +42,14 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
       clearTimeout(t4);
     };
   }, [onComplete]);
+
+  const handleSkip = () => {
+    setIsVisible(false);
+    try {
+      sessionStorage.setItem("hasSeenIntroSplash", "true");
+    } catch (e) {}
+    if (onComplete) onComplete();
+  };
 
   if (!isVisible) return null;
 
@@ -166,10 +187,7 @@ export const IntroSplash: React.FC<IntroSplashProps> = ({ onComplete }) => {
 
             {/* Skip Button (Accessibility & Speed) */}
             <button
-              onClick={() => {
-                setIsVisible(false);
-                if (onComplete) onComplete();
-              }}
+              onClick={handleSkip}
               className="absolute bottom-6 right-6 text-xs text-slate-400 hover:text-white underline underline-offset-4 opacity-70 hover:opacity-100 transition-opacity"
             >
               Skip Intro
