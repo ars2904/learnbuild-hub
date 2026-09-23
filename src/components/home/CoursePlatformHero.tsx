@@ -91,14 +91,14 @@ export const CoursePlatformHero: React.FC = () => {
         >
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight text-slate-900 leading-[1.1]">
             <span className="text-brand-blue">
-              Learn Practical Skills.
+              Learn skills.
             </span> 
             <br />
             <span className="inline-flex items-center gap-2 flex-wrap justify-center mt-2">
               <span className="text-brand-blue">Build</span> 
               {/* Glowing Orange Container */}
               <span className="bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border-2 border-orange-400 text-brand-orange rounded-3xl px-6 py-2 shadow-xl shadow-orange-500/20 inline-flex items-center gap-1 font-black">
-                Real Solutions
+                solutions.
                 <span className="w-1 h-8 sm:h-12 bg-brand-orange animate-pulse inline-block rounded-full ml-1" />
               </span>
             </span>
@@ -112,7 +112,7 @@ export const CoursePlatformHero: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="max-w-3xl mx-auto text-base sm:text-xl text-slate-600 leading-relaxed font-normal mb-10"
         >
-          Access industry-aligned skill training tracks and custom software development under one unified platform.
+          LearnBuild Hub bridges high-impact technology education with end-to-end software product development for modern businesses.
         </motion.p>
 
         {/* Action Button Group */}
@@ -130,7 +130,7 @@ export const CoursePlatformHero: React.FC = () => {
             icon={<BookOpen className="w-5 h-5" />}
             iconPosition="left"
           >
-            Explore Learn Tracks →
+            Explore Learning →
           </Button>
 
           <Button
@@ -141,7 +141,7 @@ export const CoursePlatformHero: React.FC = () => {
             icon={<Code2 className="w-5 h-5" />}
             iconPosition="left"
           >
-            Explore Build Services
+            Explore Our Work
           </Button>
         </motion.div>
 

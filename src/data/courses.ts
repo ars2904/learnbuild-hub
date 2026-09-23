@@ -9,7 +9,7 @@ export interface Course {
   slug: string;
   title: string;
   tagline: string;
-  category: "Web Engineering" | "AI & Data" | "Mobile Dev" | "Cloud & DevOps";
+  category: "Digital Marketing" | "Web Engineering" | "AI & Data" | "Mobile Dev" | "Cloud & DevOps";
   duration: string;
   level: "Beginner to Advanced" | "Intermediate" | "Advanced";
   mode: string;
@@ -26,6 +26,69 @@ export interface Course {
 }
 
 export const sampleCourses: Course[] = [
+  {
+    id: "6",
+    slug: "digital-marketing-growth-track",
+    title: "Digital Marketing & Growth Track",
+    tagline: "Master SEO, Social Media Marketing, PPC Ads, Content Strategy, and Analytics.",
+    category: "Digital Marketing",
+    duration: "6 Weeks • Hands-on Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Practical Campaigns",
+    rating: 4.8,
+    studentsEnrolled: 610,
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Learn to build high-converting marketing funnels, run Google & Meta ads, optimize SEO ranking, and drive organic business growth.",
+    overview:
+      "The Digital Marketing & Growth Track equips you with high-demand marketing skills required by modern businesses and tech startups. Master organic search engine optimization (SEO), performance marketing on Google & Meta, social media branding, content strategy, and conversion rate analytics.",
+    whatYouWillLearn: [
+      "Search Engine Optimization (SEO) & Technical On-Page/Off-Page Strategies",
+      "Google Ads (PPC, Search, Display, Video Campaigns)",
+      "Meta Ads (Facebook & Instagram Ad Strategy, Targeting & Conversion Retargeting)",
+      "Social Media Marketing & Brand Content Strategy",
+      "Email Marketing & Funnel Automation Systems",
+      "Google Analytics 4 (GA4) & Conversion Rate Optimization (CRO)",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "SEO Foundations & Technical Optimization",
+        topics: [
+          "Keyword Research & Intent Mapping",
+          "On-Page SEO, Metadata & Schema Markup",
+          "Technical Audit & Backlink Link Building Strategies",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Performance Marketing: Google & Meta Ads",
+        topics: [
+          "Google Search, Display & YouTube Ad Campaigns",
+          "Meta Ads Manager, Audience Targeting & Retargeting Funnels",
+          "Ad Copywriting, Creative Testing & Budget Scaling",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Brand Strategy, Analytics & Funnel Automation",
+        topics: [
+          "Content Marketing & Social Media Brand Building",
+          "Google Analytics 4 Setup, Tracking & Attribution Models",
+          "Email Marketing Automation & Lead Conversion Funnels",
+        ],
+      },
+    ],
+    eligibility: [
+      "Students, graduates, entrepreneurs, freelancers, and marketing enthusiasts looking for practical growth skills",
+    ],
+    careerOptions: [
+      "Digital Marketing Specialist",
+      "SEO Strategist",
+      "PPC / Performance Marketing Lead",
+      "Growth Marketer",
+    ],
+    prerequisites: "No coding background needed. Open to all backgrounds.",
+  },
   {
     id: "1",
     slug: "full-stack-web-engineering",

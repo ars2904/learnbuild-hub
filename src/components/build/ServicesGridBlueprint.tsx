@@ -84,14 +84,9 @@ export const ServicesGridBlueprint: React.FC = () => {
                   <h3 className="text-xl font-extrabold text-slate-900 mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-6 font-normal">
+                  <p className="text-slate-600 text-sm leading-relaxed font-normal">
                     {service.description}
                   </p>
-                </div>
-                <div className="flex justify-end pt-4 border-t border-slate-100">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
-                    →
-                  </div>
                 </div>
               </motion.div>
             );

@@ -117,7 +117,7 @@ export default function CourseDetailsPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-white">
                   <div className="text-xs font-bold text-blue-300">LearnBuild Hub Admissions</div>
-                  <div className="text-sm font-black">{course.studentsEnrolled}+ Students Enrolled</div>
+                  <div className="text-sm font-black">Industry Aligned Track</div>
                 </div>
               </div>
 
@@ -279,7 +279,7 @@ export default function CourseDetailsPage() {
             <div className="p-6 rounded-3xl bg-slate-900 text-white shadow-xl">
               <h4 className="text-base font-black mb-2">Ready to Start Learning?</h4>
               <p className="text-xs text-slate-300 mb-6 font-normal">
-                Join {course.studentsEnrolled}+ learners and build real industry portfolio projects.
+                Develop practical skills and build real industry portfolio projects.
               </p>
               <button
                 onClick={() => setEnrollModalOpen(true)}
