@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "LearnBuild Hub | Learn. Build.",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1 w-full pt-20">{children}</main>
         <Footer />
+        <ScrollToTop />
       </body>
     </html>
   );
