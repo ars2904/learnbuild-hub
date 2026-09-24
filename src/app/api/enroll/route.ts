@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email, phone, course, qualification, message } = body;
+    const { fullName, email, phone, course, qualification, instructor, message } = body;
 
     // Validate required fields
     if (!fullName || !email || !phone || !course) {
@@ -41,6 +41,10 @@ export async function POST(request: Request) {
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px; font-weight: bold; width: 35%; color: #64748b;">Selected Course:</td>
             <td style="padding: 12px; font-weight: bold; color: #0052CC; font-size: 15px;">${course}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 12px; font-weight: bold; color: #64748b;">Preferred Mentor:</td>
+            <td style="padding: 12px; font-weight: bold; color: #059669;">${instructor || "Any Available Senior Mentor"}</td>
           </tr>
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px; font-weight: bold; color: #64748b;">Full Name:</td>

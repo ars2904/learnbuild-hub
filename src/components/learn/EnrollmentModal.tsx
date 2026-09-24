@@ -2,18 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle2, AlertCircle, Send, GraduationCap, BookOpen, Loader2 } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, Send, GraduationCap, BookOpen, Loader2, UserCheck } from "lucide-react";
+import { getInstructorsForCourse, INSTRUCTORS } from "@/data/instructors";
 
 interface EnrollmentModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedCourseTitle?: string;
+  selectedInstructorName?: string;
 }
 
 export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   isOpen,
   onClose,
   selectedCourseTitle = "Full-Stack Web Engineering Track",
+  selectedInstructorName = "",
 }) => {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,18 +24,23 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
     phone: "",
     course: selectedCourseTitle,
     qualification: "Undergraduate",
+    instructor: selectedInstructorName,
     message: "",
   });
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Keep selected course updated when modal opens with a specific course
+  // Keep selected course and instructor updated when modal opens or props change
   useEffect(() => {
-    if (selectedCourseTitle) {
-      setFormData((prev) => ({ ...prev, course: selectedCourseTitle }));
-    }
-  }, [selectedCourseTitle]);
+    setFormData((prev) => ({
+      ...prev,
+      course: selectedCourseTitle || prev.course,
+      instructor: selectedInstructorName !== undefined && selectedInstructorName !== "" 
+        ? selectedInstructorName 
+        : prev.instructor,
+    }));
+  }, [selectedCourseTitle, selectedInstructorName]);
 
   // Reset form status when modal opens/closes
   useEffect(() => {
@@ -43,6 +51,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
       }, 300);
     }
   }, [isOpen]);
+
+  const availableInstructors = getInstructorsForCourse(formData.course);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -134,7 +144,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               Course Enrollment Enquiry
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 font-normal">
-              Submit your enquiry below to secure your spot in our industry training track.
+              Submit your enquiry below to secure your spot and assign your preferred mentor.
             </p>
           </div>
 
@@ -156,10 +166,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   Thank you! Your enrollment enquiry has been submitted successfully. The LearnBuild Hub team will contact you shortly.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-500 w-full mb-8 text-left space-y-1">
-                  <div><span className="font-bold text-slate-700">Course:</span> {formData.course}</div>
-                  <div><span className="font-bold text-slate-700">Applicant:</span> {formData.fullName} ({formData.email})</div>
-                  <div><span className="font-bold text-slate-700">Destination:</span> Sent to learnbuildh@gmail.com</div>
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 w-full mb-8 text-left space-y-1.5">
+                  <div><span className="font-bold text-slate-900">Course Track:</span> {formData.course}</div>
+                  <div><span className="font-bold text-slate-900">Preferred Mentor:</span> {formData.instructor || "Any Available Senior Mentor"}</div>
+                  <div><span className="font-bold text-slate-900">Applicant:</span> {formData.fullName} ({formData.email})</div>
+                  <div><span className="font-bold text-slate-900">Admissions Desk:</span> learnbuildh@gmail.com</div>
                 </div>
 
                 <button
@@ -181,7 +192,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                 {/* Selected Course Field */}
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
-                    Selected Course Track
+                    Selected Skill Track
                   </label>
                   <div className="relative">
                     <BookOpen className="w-4 h-4 text-brand-blue absolute left-3.5 top-3.5" />
@@ -194,6 +205,40 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                       className="w-full pl-10 pr-4 py-3 rounded-2xl bg-blue-50/60 border border-blue-200 text-slate-900 text-xs font-bold focus:outline-none cursor-default"
                     />
                   </div>
+                </div>
+
+                {/* Preferred Instructor Dropdown */}
+                <div className="group">
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5 transition-colors group-has-[:focus]:text-brand-blue">
+                    Preferred Mentor / Instructor
+                  </label>
+                  <div className="relative">
+                    <UserCheck className="w-4 h-4 text-brand-blue absolute left-3.5 top-3.5 z-10" />
+                    <select
+                      name="instructor"
+                      value={formData.instructor}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20 transition-all duration-200 cursor-pointer"
+                    >
+                      <option value="">Any Available Senior Mentor</option>
+                      {availableInstructors.map((inst) => (
+                        <option key={inst.id} value={inst.name}>
+                          {inst.name} — ({inst.role})
+                        </option>
+                      ))}
+                      {INSTRUCTORS.filter((i) => !availableInstructors.some((a) => a.id === i.id)).map((inst) => (
+                        <option key={inst.id} value={inst.name}>
+                          {inst.name} — ({inst.role})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {formData.instructor && (
+                    <p className="mt-1 text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span>{formData.instructor} will be assigned as your 1-on-1 mentor.</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Full Name & Email Grid */}
@@ -271,7 +316,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   </label>
                   <textarea
                     name="message"
-                    rows={3}
+                    rows={2}
                     placeholder="Any specific questions about curriculum, timing, or career support?"
                     value={formData.message}
                     onChange={handleChange}
