@@ -243,9 +243,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                           <img
                             src={inst.avatar}
                             alt={inst.name}
-                            className="w-12 h-12 rounded-full object-cover bg-purple-100/60 border border-purple-200 flex-shrink-0"
+                            className="w-12 h-12 rounded-full object-cover bg-slate-100 border border-slate-200 flex-shrink-0"
                             onError={(e) => {
-                              e.currentTarget.src = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(inst.name)}`;
+                              e.currentTarget.src = inst.gender === "female"
+                                ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop"
+                                : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop";
                             }}
                           />
                           <div className="min-w-0">

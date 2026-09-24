@@ -325,13 +325,15 @@ export default function CourseDetailsPage() {
                   >
                     <div className="flex flex-col items-center w-full min-w-0">
                       {/* Centered Circular Avatar Container */}
-                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-purple-100/70 p-2 mb-3 sm:mb-4 flex items-center justify-center border border-purple-200 overflow-hidden shadow-xs flex-shrink-0">
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-100 p-1 mb-3 sm:mb-4 flex items-center justify-center border border-slate-200 overflow-hidden shadow-xs flex-shrink-0">
                         <img
                           src={inst.avatar}
                           alt={inst.name}
                           className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
-                            e.currentTarget.src = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(inst.name)}`;
+                            e.currentTarget.src = inst.gender === "female"
+                              ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop"
+                              : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop";
                           }}
                         />
                       </div>

@@ -64,13 +64,15 @@ export const InstructorProfileModal: React.FC<InstructorProfileModalProps> = ({
             
             {/* Centered Avatar Hero */}
             <div className="flex flex-col items-center text-center pt-2">
-              <div className="relative w-32 h-32 rounded-full bg-purple-100/70 p-2 mb-4 flex items-center justify-center border border-purple-200 shadow-sm overflow-hidden">
+              <div className="relative w-32 h-32 rounded-full bg-slate-100 p-1 mb-4 flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden">
                 <img
                   src={instructor.avatar}
                   alt={instructor.name}
                   className="w-full h-full object-cover rounded-full"
                   onError={(e) => {
-                    e.currentTarget.src = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(instructor.name)}`;
+                    e.currentTarget.src = instructor.gender === "female"
+                      ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop"
+                      : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop";
                   }}
                 />
               </div>
