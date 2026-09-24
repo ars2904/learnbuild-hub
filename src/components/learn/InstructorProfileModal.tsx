@@ -69,6 +69,9 @@ export const InstructorProfileModal: React.FC<InstructorProfileModalProps> = ({
                   src={instructor.avatar}
                   alt={instructor.name}
                   className="w-full h-full object-cover rounded-full"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(instructor.name)}`;
+                  }}
                 />
               </div>
 

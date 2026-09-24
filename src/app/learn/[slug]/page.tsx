@@ -330,6 +330,9 @@ export default function CourseDetailsPage() {
                           src={inst.avatar}
                           alt={inst.name}
                           className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(inst.name)}`;
+                          }}
                         />
                       </div>
 
