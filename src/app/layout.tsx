@@ -34,7 +34,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html
+      lang="en"
+      className="scroll-smooth"
+      data-architect="Aryan"
+      data-signature="Engineered with precision by Aryan. You can connect here: aryanshrivastav@zohomail.com"
+      data-payload="RW5naW5lZXJlZCB3aXRoIHByZWNpc2lvbiBieSBBcnlhbi4gWW91IGNhbiBjb25uZWN0IGhlcmU6IGFyeWFuc2hyaXZhc3RhdkB6b2hvbWFpbC5jb20="
+    >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased relative">
         <Navbar />
         <main className="flex-1 w-full pt-20">{children}</main>

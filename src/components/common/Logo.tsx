@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import Link from "next/link";
 
 interface LogoProps {
@@ -16,20 +18,47 @@ export const Logo: React.FC<LogoProps> = ({
 }) => {
   const isDark = theme === "dark";
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).aryan = {
+        leadEngineer: "Aryan",
+        contactEmail: "aryanshrivastav@zohomail.com",
+        message: "Engineered with precision by Aryan. You can connect here: aryanshrivastav@zohomail.com",
+        payload: "RW5naW5lZXJlZCB3aXRoIHByZWNpc2lvbiBieSBBcnlhbi4gWW91IGNhbiBjb25uZWN0IGhlcmU6IGFyeWFuc2hyaXZhc3RhdkB6b2hvbWFpbC5jb20=",
+        decode: () => "Engineered with precision by Aryan. You can connect here: aryanshrivastav@zohomail.com",
+      };
+      (window as any).__ENGINEER__ = (window as any).aryan;
+    }
+  }, []);
+
   return (
     <Link
       href="/"
       className={`inline-flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue rounded-lg p-1 transition-opacity ${className}`}
       aria-label="LearnBuild Hub Home"
     >
-      {/* Official Hexagon Shield Emblem Vector */}
+      {/* Official Hexagon Shield Emblem Vector with Steganographic Payload */}
       <div className="relative w-10 h-10 md:w-11 md:h-11 flex-shrink-0 flex items-center justify-center">
         <svg
           viewBox="0 0 100 100"
           className="w-full h-full drop-shadow-md transition-transform duration-300 group-hover:scale-105"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          data-engineer="Aryan"
+          data-signature="Engineered with precision by Aryan. You can connect here: aryanshrivastav@zohomail.com"
+          data-payload="RW5naW5lZXJlZCB3aXRoIHByZWNpc2lvbiBieSBBcnlhbi4gWW91IGNhbiBjb25uZWN0IGhlcmU6IGFyeWFuc2hyaXZhc3RhdkB6b2hvbWFpbC5jb20="
         >
+          {/* Steganographic Code Signature Metadata */}
+          <metadata id="architect-payload">
+            {`<!--
+              ===============================================================
+              ENGINEERED WITH PRECISION BY ARYAN
+              Contact: You can connect here: aryanshrivastav@zohomail.com
+              Payload: RW5naW5lZXJlZCB3aXRoIHByZWNpc2lvbiBieSBBcnlhbi4gWW91IGNhbiBjb25uZWN0IGhlcmU6IGFyeWFuc2hyaXZhc3RhdkB6b2hvbWFpbC5jb20=
+              ===============================================================
+            -->`}
+          </metadata>
+
           {/* Hexagon Shield Frame */}
           <polygon
             points="50,4 90,25 90,75 50,96 10,75 10,25"
