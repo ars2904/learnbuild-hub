@@ -100,7 +100,7 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 overflow-hidden">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -116,10 +116,10 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="relative w-full max-w-xl rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 my-8"
+          className="relative w-full max-w-xl max-h-[90vh] rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 flex flex-col my-auto"
         >
-          {/* Header Banner */}
-          <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 p-6 sm:p-8 pr-14 sm:pr-16 text-white relative">
+          {/* Fixed Header Banner */}
+          <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 p-5 sm:p-6 pr-14 sm:pr-16 text-white relative flex-shrink-0 border-b border-blue-800/50">
             <button
               onClick={onClose}
               aria-label="Close modal"
@@ -128,12 +128,12 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
               <X className="w-5 h-5" />
             </button>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-blue-200 mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-blue-200 mb-2">
               <MonitorPlay className="w-4 h-4 text-blue-400" />
               <span>LearnBuild Hub Live Demo</span>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white mb-1">
               Apply for Live Demo
             </h3>
             <p className="text-xs sm:text-sm text-blue-200 font-normal">
@@ -141,8 +141,8 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
             </p>
           </div>
 
-          {/* Body */}
-          <div className="p-6 sm:p-8">
+          {/* Scrollable Body */}
+          <div className="p-5 sm:p-8 overflow-y-auto flex-1">
             {status === "success" ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}

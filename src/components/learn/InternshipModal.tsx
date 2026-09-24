@@ -101,7 +101,7 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 overflow-hidden">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -117,10 +117,10 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="relative w-full max-w-xl rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 my-8"
+          className="relative w-full max-w-xl max-h-[90vh] rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 flex flex-col my-auto"
         >
-          {/* Header Banner */}
-          <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 p-6 sm:p-8 pr-14 sm:pr-16 text-white relative">
+          {/* Fixed Header Banner */}
+          <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 p-5 sm:p-6 pr-14 sm:pr-16 text-white relative flex-shrink-0 border-b border-orange-700/50">
             <button
               onClick={onClose}
               aria-label="Close modal"
@@ -129,12 +129,12 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({
               <X className="w-5 h-5" />
             </button>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-white mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold text-white mb-2">
               <Briefcase className="w-4 h-4 text-white" />
               <span>LearnBuild Hub Career Track</span>
             </div>
 
-            <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
+            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white mb-1">
               Apply for Internship
             </h3>
             <p className="text-xs sm:text-sm text-orange-100 font-normal">
@@ -142,8 +142,8 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({
             </p>
           </div>
 
-          {/* Body */}
-          <div className="p-6 sm:p-8">
+          {/* Scrollable Form Body */}
+          <div className="p-5 sm:p-8 overflow-y-auto flex-1">
             {status === "success" ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
