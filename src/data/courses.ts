@@ -430,4 +430,500 @@ export const sampleCourses: Course[] = [
     ],
     prerequisites: "Basic Linux terminal commands and networking concepts.",
   },
+
+  /* ================= 8 ADVANCED TECH & LANGUAGE TRACKS ================= */
+  {
+    id: "7",
+    slug: "php-laravel-mastery",
+    title: "PHP & Laravel Mastery",
+    tagline: "Build robust dynamic web applications with Modern PHP 8+, Object-Oriented Architecture, MySQL, and Laravel framework.",
+    category: "Web Engineering",
+    duration: "8 Weeks • Hands-on Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Project Track",
+    rating: 4.9,
+    studentsEnrolled: 580,
+    image: "https://images.unsplash.com/photo-1599507593499-a3f7d7d97667?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Build robust dynamic web applications with Modern PHP 8+, Object-Oriented Architecture, MySQL, and Laravel framework.",
+    overview:
+      "Master Modern PHP 8+ and Laravel 11 framework from scratch. Learn object-oriented programming, MVC architecture, RESTful API development, Eloquent ORM, authentication, and build real-world production web portals.",
+    whatYouWillLearn: [
+      "Modern PHP 8+ Syntax, OOP Concepts & MVC Architecture",
+      "Laravel Framework Routing, Blade Templates & Middleware",
+      "Eloquent ORM, Database Migrations & Seeders",
+      "RESTful API Development & Middleware Authentication",
+      "E-Commerce Payment Gateway & Admin Dashboard",
+      "Server Deployment & MySQL Performance Tuning",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "Modern PHP 8+ Foundations & Object-Oriented Programming",
+        topics: [
+          "PHP 8 Syntax, Data Types & Functions",
+          "Classes, Objects, Interfaces & Inheritance",
+          "Namespaces, Composer & Autoloading",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Laravel Framework Core & Database Architecture",
+        topics: [
+          "Routing, Blade Engine & Controller Architecture",
+          "Database Schema Migrations & Eloquent ORM",
+          "Form Validation, Session & Authentication Systems",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "REST APIs, E-Commerce & Production Capstone",
+        topics: [
+          "Building RESTful APIs with Laravel Sanctum",
+          "Payment Gateway Integration (Razorpay / Stripe)",
+          "Deploying Laravel Applications on Apache / Nginx VPS",
+        ],
+      },
+    ],
+    eligibility: [
+      "Students and developers wanting to master back-end PHP development and Laravel framework",
+    ],
+    careerOptions: [
+      "Laravel Developer",
+      "PHP Web Backend Developer",
+      "Full-Stack PHP/Laravel Engineer",
+    ],
+    prerequisites: "Basic HTML/CSS and fundamental programming logic.",
+  },
+  {
+    id: "8",
+    slug: "dotnet-csharp-enterprise-engineering",
+    title: ".NET & C# Enterprise Engineering",
+    tagline: "Enterprise software development using C#, .NET 8 Web API, Entity Framework Core, SQL Server, and Microservice Architecture.",
+    category: "Web Engineering",
+    duration: "10 Weeks • Enterprise Track",
+    level: "Intermediate",
+    mode: "Live Mentorship & Industry Projects",
+    rating: 4.9,
+    studentsEnrolled: 490,
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Enterprise software development using C#, .NET 8 Web API, Entity Framework Core, SQL Server, and Microservice Architecture.",
+    overview:
+      "Engineered for backend developers who want to master C# and Microsoft .NET 8. Learn object-oriented design, ASP.NET Core Web APIs, Entity Framework Core ORM, LINQ data queries, SQL Server administration, and enterprise microservices.",
+    whatYouWillLearn: [
+      "C# Language Fundamentals & Object-Oriented Design Patterns",
+      "ASP.NET Core Web API & Dependency Injection Container",
+      "Entity Framework Core, Migrations & LINQ Queries",
+      "SQL Server Schema Modeling & Stored Procedures",
+      "JWT Authentication & Role-Based Access Control (RBAC)",
+      "Production Enterprise Management System Capstone",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "C# 12 Language Core & Object-Oriented Architecture",
+        topics: [
+          "C# Type System, Generics & Delegates",
+          "OOP Principles: Encapsulation, Polymorphism & Abstraction",
+          "Asynchronous Programming with Async / Await",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "ASP.NET Core Web API & Entity Framework Core",
+        topics: [
+          "RESTful Controller Architecture & Middleware Pipeline",
+          "EF Core Code-First Migrations & Repository Pattern",
+          "LINQ Data Queries & SQL Server Integration",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Microservices & Enterprise Deployment",
+        topics: [
+          "JWT Security, CORS & Swagger Documentation",
+          "Microservice Messaging & Docker Containerization",
+          "Deploying .NET Applications to Azure / Windows Server",
+        ],
+      },
+    ],
+    eligibility: [
+      "CS/IT Students, Software Engineers, and Enterprise Developers seeking .NET certification & mastery",
+    ],
+    careerOptions: [
+      ".NET Software Engineer",
+      "C# Backend Developer",
+      "Enterprise Application Architect",
+    ],
+    prerequisites: "Basic familiarity with object-oriented programming concepts.",
+  },
+  {
+    id: "9",
+    slug: "java-spring-boot-fullstack",
+    title: "Java & Spring Boot Full-Stack",
+    tagline: "Master Java programming, Object-Oriented Design, Spring Boot microservices, Hibernate ORM, and RESTful web service architecture.",
+    category: "Web Engineering",
+    duration: "10 Weeks • Hands-on Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Enterprise Track",
+    rating: 4.9,
+    studentsEnrolled: 1120,
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Master Java programming, Object-Oriented Design, Spring Boot microservices, Hibernate ORM, and RESTful web service architecture.",
+    overview:
+      "Java powers enterprise backend systems worldwide. Master Java 17+, Object-Oriented Design, Spring Boot 3, Spring Data JPA, Hibernate ORM, Maven/Gradle build tools, Spring Security, and build enterprise-grade microservice backends.",
+    whatYouWillLearn: [
+      "Java 17+ Modern Syntax & Collections Framework",
+      "Spring Boot Microservices & Spring Security Architecture",
+      "Hibernate ORM, JPA & MySQL/PostgreSQL Integrations",
+      "RESTful API Engineering & Postman API Testing",
+      "Maven Build Automation & JUnit/Mockito Unit Testing",
+      "Enterprise Banking or SaaS API Capstone",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "Java 17 Core & Object-Oriented Programming",
+        topics: [
+          "Java Collections Framework, Lambdas & Streams",
+          "OOP Design Patterns & Exception Handling",
+          "Multithreading & Concurrency Basics",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Spring Boot 3 Architecture & Spring Data JPA",
+        topics: [
+          "Dependency Injection & Spring Beans Management",
+          "REST Controllers & Request Handling",
+          "Spring Data JPA, Repositories & Database Persistence",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Spring Security, Microservices & Capstone",
+        topics: [
+          "JWT Authentication & Authorization Security",
+          "Microservice Communication & API Gateways",
+          "Building & Deploying Banking / Enterprise SaaS Backends",
+        ],
+      },
+    ],
+    eligibility: [
+      "Students pursuing B.Tech / BCA / MCA / B.Sc CS or software developers building enterprise Java careers",
+    ],
+    careerOptions: [
+      "Java Backend Engineer",
+      "Spring Boot Developer",
+      "Full-Stack Java Software Architect",
+    ],
+    prerequisites: "Basic programming logic in any language.",
+  },
+  {
+    id: "10",
+    slug: "python-fullstack-automation",
+    title: "Python Full-Stack & Automation",
+    tagline: "Master Python from foundations to building APIs with Django / FastAPI, web scraping, and database management.",
+    category: "Web Engineering",
+    duration: "8 Weeks • Hands-on Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Practical Projects",
+    rating: 4.9,
+    studentsEnrolled: 1450,
+    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Master Python from foundations to building APIs with Django / FastAPI, web scraping, and database management.",
+    overview:
+      "Python is one of the most versatile languages in technology. In this track, master Python 3.12 syntax, build backend APIs using FastAPI and Django, manipulate relational databases, create automated web scrapers with BeautifulSoup and Selenium, and deploy Python applications.",
+    whatYouWillLearn: [
+      "Python 3.12 Core Syntax, Data Structures & Modules",
+      "Django & FastAPI Backend Web Development",
+      "PostgreSQL Integration & ORM Queries",
+      "Automated Web Scrapers & Data Extraction Tools",
+      "RESTful API Engineering & Async Endpoint Handling",
+      "Automated Web Scrapers & Dynamic Web Portal Capstone",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "Python 3.12 Fundamentals & OOP Architecture",
+        topics: [
+          "Python Syntax, Functions & Data Structures",
+          "Object-Oriented Programming & File Handling",
+          "Virtual Environments & Package Management (pip)",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "FastAPI & Django Backend Web Development",
+        topics: [
+          "Building High-Speed Async APIs with FastAPI",
+          "Django ORM, Admin Panel & Template Engine",
+          "Database Schemas & PostgreSQL Integrations",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Web Scraping, Automation & Cloud Deployment",
+        topics: [
+          "Web Scraping with BeautifulSoup & Playwright",
+          "Automating Business Processes & Scheduled Tasks",
+          "Deploying Python Microservices on AWS / Render",
+        ],
+      },
+    ],
+    eligibility: [
+      "Beginners, CS/IT students, automation enthusiasts, and developers seeking Python mastery",
+    ],
+    careerOptions: [
+      "Python Developer",
+      "Backend Django / FastAPI Developer",
+      "Automation & Web Scraping Engineer",
+    ],
+    prerequisites: "No prior coding experience required; starts from absolute basics.",
+  },
+  {
+    id: "11",
+    slug: "nodejs-react-modern-stack",
+    title: "Node.js & React Modern Stack",
+    tagline: "Build ultra-fast single-page and full-stack applications with React 18, TypeScript, Express, and MongoDB / PostgreSQL.",
+    category: "Web Engineering",
+    duration: "8 Weeks • Hands-on Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Project Track",
+    rating: 4.9,
+    studentsEnrolled: 1320,
+    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Build ultra-fast single-page and full-stack applications with React 18, TypeScript, Express, and MongoDB / PostgreSQL.",
+    overview:
+      "Master the JavaScript / TypeScript ecosystem for full-stack web applications. Learn React 18 frontend architecture, Node.js event loops, Express server APIs, MongoDB / PostgreSQL database management, WebSockets for real-time features, and build modern web applications.",
+    whatYouWillLearn: [
+      "React Components, Hooks & State Management Patterns",
+      "Node.js Runtime & Express Server Development",
+      "REST & GraphQL APIs, JWT Auth & WebSockets",
+      "Database Integration with MongoDB (Mongoose) & PostgreSQL",
+      "TypeScript Static Typing for Full-Stack Applications",
+      "Real-Time SaaS Collaboration Portal Capstone",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "React 18 & Component Architecture",
+        topics: [
+          "JSX, Props, State & Event Handling",
+          "Custom Hooks & Context API State Management",
+          "Integrating Axios & TanStack Query APIs",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Node.js & Express API Engineering",
+        topics: [
+          "Node.js Event Loop & Module Architecture",
+          "Express Router, Controllers & Middleware",
+          "MongoDB & Mongoose Schema Design",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Real-Time Features & Full-Stack Capstone",
+        topics: [
+          "Real-Time WebSockets with Socket.io",
+          "JWT Security & Password Hashing",
+          "Deploying React + Node Full-Stack Apps to Vercel / Render",
+        ],
+      },
+    ],
+    eligibility: [
+      "Students & web developers wanting to build modern full-stack JavaScript / TypeScript applications",
+    ],
+    careerOptions: [
+      "React Developer",
+      "Node.js Backend Engineer",
+      "Full-Stack MERN / PERN Developer",
+    ],
+    prerequisites: "Familiarity with HTML, CSS, and basic JavaScript.",
+  },
+  {
+    id: "12",
+    slug: "wordpress-custom-development",
+    title: "WordPress Custom Development",
+    tagline: "Master custom WordPress theme development, plugin development, WooCommerce customization, and headless CMS integrations.",
+    category: "Web Engineering",
+    duration: "6 Weeks • Practical Projects",
+    level: "Beginner to Advanced",
+    mode: "Live Mentorship & Freelance Track",
+    rating: 4.8,
+    studentsEnrolled: 530,
+    image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Master custom WordPress theme development, plugin development, WooCommerce customization, and headless CMS integrations.",
+    overview:
+      "WordPress powers over 40% of the world's websites. Learn professional custom WordPress engineering beyond simple page builders. Master PHP theme programming, custom plugin creation, Gutenberg block building, WooCommerce e-commerce development, and REST API integrations.",
+    whatYouWillLearn: [
+      "Custom PHP Theme & Child Theme Development",
+      "Custom Plugin Hooks, Actions & Filters",
+      "WooCommerce E-Commerce Store Engineering",
+      "Custom Post Types, Taxonomies & ACF Metadata",
+      "WordPress REST API & Headless CMS Integrations",
+      "Page Speed Optimization & Security Hardening",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "WordPress Architecture & Custom Theme Development",
+        topics: [
+          "WordPress File Hierarchy & Template Tags",
+          "Building Custom Themes from Scratch with PHP & HTML/CSS",
+          "Custom Post Types, Fields (ACF) & Taxonomies",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Custom Plugin Development & Hooks API",
+        topics: [
+          "Plugin File Structure & Lifecycle",
+          "Mastering Action & Filter Hooks",
+          "Creating Custom Shortcodes & Admin Settings Pages",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "WooCommerce & Headless WordPress REST API",
+        topics: [
+          "Customizing WooCommerce Checkout & Product Templates",
+          "WordPress REST API Endpoints",
+          "Performance Optimization, Security & Hosting Deployment",
+        ],
+      },
+    ],
+    eligibility: [
+      "Freelancers, agencies, and web developers wanting to build high-ticket custom WordPress sites",
+    ],
+    careerOptions: [
+      "WordPress Developer",
+      "WooCommerce Specialist",
+      "PHP/CMS Web Engineer",
+    ],
+    prerequisites: "Basic understanding of HTML, CSS, and basic PHP or JS.",
+  },
+  {
+    id: "13",
+    slug: "sql-relational-databases",
+    title: "SQL & Relational Databases",
+    tagline: "Master relational database design, complex SQL queries, index optimization, stored procedures, and PostgreSQL / MySQL administration.",
+    category: "AI & Data",
+    duration: "6 Weeks • Hands-on Labs",
+    level: "Beginner to Advanced",
+    mode: "Live Interactive & Projects",
+    rating: 4.9,
+    studentsEnrolled: 890,
+    image: "https://images.unsplash.com/photo-1544383835-bda2bc66a55d?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Master relational database design, complex SQL queries, index optimization, stored procedures, and PostgreSQL / MySQL administration.",
+    overview:
+      "Databases are the foundational core of every software system. Learn relational schema normalization, write advanced SQL queries, master JOINs, window functions, CTEs, index optimization, stored procedures, and PostgreSQL / MySQL database administration.",
+    whatYouWillLearn: [
+      "Relational Schema Normalization & Entity Relationship Modeling",
+      "Complex SQL Joins, Aggregations, Window Functions & Subqueries",
+      "Indexing, Performance Query Tuning & Execution Plans",
+      "Stored Procedures, Triggers & Database Transactions (ACID)",
+      "PostgreSQL & MySQL Administration & Backup Strategies",
+      "Real-world Database Architecture Capstone",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "Database Modeling & Foundational SQL",
+        topics: [
+          "Relational Database Concepts & ER Diagrams",
+          "DDL & DML SQL Syntax (CREATE, INSERT, UPDATE, DELETE)",
+          "Data Filtering, Sorting & Aggregations (GROUP BY, HAVING)",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Advanced SQL Queries & Window Functions",
+        topics: [
+          "INNER, LEFT, RIGHT & FULL OUTER Joins",
+          "Subqueries, Common Table Expressions (CTEs)",
+          "SQL Window Functions (ROW_NUMBER, RANK, DENSE_RANK)",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Database Performance & Stored Procedures",
+        topics: [
+          "Indexes, B-Trees & Query Optimization",
+          "ACID Transactions & Lock Management",
+          "Stored Procedures, Triggers & Real-world Capstone",
+        ],
+      },
+    ],
+    eligibility: [
+      "Data analysts, software engineers, backend developers, and CS students wanting strong database skills",
+    ],
+    careerOptions: [
+      "Database Administrator (DBA)",
+      "SQL Data Analyst",
+      "Database Engineer",
+    ],
+    prerequisites: "No prior experience required; starts with fundamental concepts.",
+  },
+  {
+    id: "14",
+    slug: "custom-tech-track",
+    title: "Your Choice / Custom Tech Track",
+    tagline: "Design a customized curriculum tailored specifically to your project requirements, tech stack preference, or career goals.",
+    category: "Web Engineering",
+    duration: "Custom Duration • 1-on-1 Mentorship",
+    level: "Beginner to Advanced",
+    mode: "1-on-1 Tailored Mentorship",
+    rating: 5.0,
+    studentsEnrolled: 340,
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop",
+    shortDescription: "Design a customized curriculum tailored specifically to your project requirements, tech stack preference, or career goals.",
+    overview:
+      "Need a specialized tech stack, targeted framework, or customized project guidance? Our Custom Tech Track allows you to co-design your learning path directly with senior engineering mentors based on your exact requirements and goals.",
+    whatYouWillLearn: [
+      "1-on-1 Tech Mentorship & Tailored Curriculum Design",
+      "Flexible Choice of Languages, Tools & Frameworks",
+      "Custom Live Project & Dedicated Code Reviews",
+      "Personalized Career & Portfolio Guidance",
+      "Direct Assistance on Personal or Client Projects",
+    ],
+    curriculum: [
+      {
+        moduleNumber: "Module 01",
+        title: "Requirement Scoping & Customized Roadmap",
+        topics: [
+          "1-on-1 Goal Scoping & Skill Assessment",
+          "Selecting Languages, Frameworks & Tech Stack",
+          "Defining Tailored Project Deliverables",
+        ],
+      },
+      {
+        moduleNumber: "Module 02",
+        title: "Targeted Hands-on Engineering & Mentorship",
+        topics: [
+          "Live Code Reviews & Pair Programming",
+          "Building Custom Features & Architecture",
+          "Best Practices & Security Hardening",
+        ],
+      },
+      {
+        moduleNumber: "Module 03",
+        title: "Project Delivery & Deployment Mentorship",
+        topics: [
+          "Testing, Debugging & Performance Optimization",
+          "Live Production Deployment",
+          "Career & Freelance Strategy Session",
+        ],
+      },
+    ],
+    eligibility: [
+      "Anyone looking for a personalized, 1-on-1 tailored learning track or specialized stack mentorship",
+    ],
+    careerOptions: [
+      "Custom Technology Specialist",
+      "Full-Stack Solution Engineer",
+    ],
+    prerequisites: "Tailored based on your chosen track.",
+  },
 ];

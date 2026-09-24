@@ -272,22 +272,25 @@ export default function LearnCatalogPage() {
             {TECH_TRACKS.map((track) => (
               <div
                 key={track.id}
-                className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:border-brand-blue transition-all duration-300 flex flex-col justify-between"
+                className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:border-brand-blue transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center">
+                    <Link
+                      href={`/learn/${track.slug}`}
+                      className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:scale-105 transition-transform"
+                    >
                       {trackIconMap[track.iconName] || <Code2 className="w-6 h-6 text-brand-blue" />}
-                    </div>
+                    </Link>
                     <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-[10px] font-black uppercase tracking-wider">
                       {track.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-black text-slate-900 mb-2">
-                    {track.title}
+                  <h3 className="text-lg font-black text-slate-900 mb-2 group-hover:text-brand-blue transition-colors">
+                    <Link href={`/learn/${track.slug}`}>{track.title}</Link>
                   </h3>
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal mb-4">
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal mb-4 line-clamp-2">
                     {track.description}
                   </p>
 
@@ -302,9 +305,9 @@ export default function LearnCatalogPage() {
                   </div>
                 </div>
 
-                {/* Footer Badges & Action */}
-                <div className="pt-4 border-t border-slate-100">
-                  <div className="flex items-center justify-between gap-2 mb-4">
+                {/* Footer Badges & Actions */}
+                <div className="pt-4 border-t border-slate-100 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
                     <div className="flex gap-1.5">
                       {track.options.map((opt) => (
                         <span
@@ -322,12 +325,31 @@ export default function LearnCatalogPage() {
                     )}
                   </div>
 
-                  <button
-                    onClick={() => handleOpenEnrollModal(track.title)}
-                    className="w-full py-2.5 rounded-full bg-slate-900 hover:bg-brand-blue text-white font-black text-xs uppercase tracking-wider shadow transition-all"
-                  >
-                    Enroll Track
-                  </button>
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <button
+                      onClick={() => handleOpenDemoModal(track.title)}
+                      className="text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-brand-blue transition-colors"
+                    >
+                      Apply for Demo
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenEnrollModal(track.title)}
+                      className="px-4 py-2 rounded-full bg-brand-blue hover:bg-blue-700 text-white font-black text-[11px] uppercase tracking-wider shadow-sm transition-all hover:scale-105"
+                    >
+                      Enroll Track
+                    </button>
+                  </div>
+
+                  <div className="text-center pt-1 border-t border-slate-100/80">
+                    <Link
+                      href={`/learn/${track.slug}`}
+                      className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-blue hover:underline uppercase tracking-wider"
+                    >
+                      <span>Explore Track Details</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

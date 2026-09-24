@@ -1,5 +1,6 @@
 export interface TechTrack {
   id: string;
+  slug: string;
   title: string;
   badge: string;
   description: string;
@@ -13,6 +14,7 @@ export interface TechTrack {
 export const TECH_TRACKS: TechTrack[] = [
   {
     id: "php",
+    slug: "php-laravel-mastery",
     title: "PHP & Laravel Mastery",
     badge: "Web Core",
     description: "Build robust dynamic web applications with Modern PHP 8+, Object-Oriented Architecture, MySQL, and Laravel framework.",
@@ -29,6 +31,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "dotnet",
+    slug: "dotnet-csharp-enterprise-engineering",
     title: ".NET & C# Enterprise Engineering",
     badge: "Enterprise",
     description: "Enterprise software development using C#, .NET 8 Web API, Entity Framework Core, SQL Server, and Microservice Architecture.",
@@ -45,6 +48,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "java",
+    slug: "java-spring-boot-fullstack",
     title: "Java & Spring Boot Full-Stack",
     badge: "Enterprise Core",
     description: "Master Java programming, Object-Oriented Design, Spring Boot microservices, Hibernate ORM, and RESTful web service architecture.",
@@ -61,6 +65,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "python",
+    slug: "python-fullstack-automation",
     title: "Python Full-Stack & Automation",
     badge: "High Demand",
     description: "Master Python from foundations to building APIs with Django / FastAPI, web scraping, and database management.",
@@ -77,6 +82,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "nodejs-react",
+    slug: "nodejs-react-modern-stack",
     title: "Node.js & React Modern Stack",
     badge: "Most Popular",
     description: "Build ultra-fast single-page and full-stack applications with React 18, TypeScript, Express, and MongoDB / PostgreSQL.",
@@ -93,6 +99,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "wordpress",
+    slug: "wordpress-custom-development",
     title: "WordPress Custom Development",
     badge: "CMS & Freelance",
     description: "Master custom WordPress theme development, plugin development, WooCommerce customization, and headless CMS integrations.",
@@ -109,6 +116,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "sql-databases",
+    slug: "sql-relational-databases",
     title: "SQL & Relational Databases",
     badge: "Data Core",
     description: "Master relational database design, complex SQL queries, index optimization, stored procedures, and PostgreSQL / MySQL administration.",
@@ -125,6 +133,7 @@ export const TECH_TRACKS: TechTrack[] = [
   },
   {
     id: "custom-track",
+    slug: "custom-tech-track",
     title: "Your Choice / Custom Tech Track",
     badge: "Tailored",
     description: "Design a customized curriculum tailored specifically to your project requirements, tech stack preference, or career goals.",
