@@ -53,7 +53,10 @@ export default function LearnCatalogPage() {
   const [internshipModalOpen, setInternshipModalOpen] = useState(false);
   const [selectedInternshipTrack, setSelectedInternshipTrack] = useState<string>("Web Engineering Track");
 
-  const filteredCourses = sampleCourses.filter((course) => {
+  const techTrackSlugs = TECH_TRACKS.map((t) => t.slug);
+  const coreFeaturedCourses = sampleCourses.filter((course) => !techTrackSlugs.includes(course.slug));
+
+  const filteredCourses = coreFeaturedCourses.filter((course) => {
     const matchesCategory =
       selectedCategory === "All" || course.category === selectedCategory;
     const matchesSearch =
