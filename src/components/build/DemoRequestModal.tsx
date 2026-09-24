@@ -192,44 +192,21 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                   </div>
                 )}
 
-                {/* Selected Course Track / Solution */}
-                <div className="group">
-                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5 transition-colors group-has-[:focus]:text-brand-blue">
-                    Target Course Track / Software Solution
+                {/* Selected Course Track / Solution (Read-Only Locked) */}
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5">
+                    Selected Course Track / Software Solution
                   </label>
-                  <select
-                    name="solutionTitle"
-                    value={formData.solutionTitle}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-sm font-bold focus:outline-none focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20 focus:scale-[1.015] focus:shadow-xl focus:shadow-brand-blue/15 transition-all duration-200 cursor-pointer"
-                  >
-                    {/* Pre-fill custom course/solution title if passed */}
-                    {formData.solutionTitle &&
-                      ![
-                        "School Management System",
-                        "Office Management System",
-                        "Gym & Fitness Management",
-                        "Library Management System",
-                        "Healthcare CRM & Clinic Management",
-                        "Digital Marketing & Growth Track",
-                        "Full-Stack Web Engineering Track",
-                        "AI & Machine Learning Engineering Track",
-                        "Mobile App Development Track",
-                        "Cloud & DevOps Engineering Track"
-                      ].includes(formData.solutionTitle) && (
-                        <option value={formData.solutionTitle}>{formData.solutionTitle}</option>
-                      )}
-                    <option value="Digital Marketing & Growth Track">Digital Marketing & Growth Track</option>
-                    <option value="Full-Stack Web Engineering Track">Full-Stack Web Engineering Track</option>
-                    <option value="AI & Machine Learning Engineering Track">AI & Machine Learning Engineering Track</option>
-                    <option value="Mobile App Development Track">Mobile App Development Track</option>
-                    <option value="Cloud & DevOps Engineering Track">Cloud & DevOps Engineering Track</option>
-                    <option value="School Management System">School Management System</option>
-                    <option value="Office Management System">Office Management System</option>
-                    <option value="Gym & Fitness Management">Gym & Fitness Management</option>
-                    <option value="Library Management System">Library Management System</option>
-                    <option value="Healthcare CRM & Clinic Management">Healthcare CRM & Clinic Management</option>
-                  </select>
+                  <div className="relative">
+                    <MonitorPlay className="w-4 h-4 text-brand-blue absolute left-3.5 top-3.5" />
+                    <input
+                      type="text"
+                      name="solutionTitle"
+                      value={formData.solutionTitle}
+                      readOnly
+                      className="w-full pl-10 pr-4 py-3 rounded-2xl bg-blue-50/70 border border-blue-200 text-slate-900 text-xs sm:text-sm font-bold focus:outline-none cursor-default"
+                    />
+                  </div>
                 </div>
 
                 {/* Full Name & Email Grid */}
