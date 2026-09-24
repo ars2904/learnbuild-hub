@@ -16,7 +16,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Saurabh Upadhyay",
     role: ".NET / Cloud & Backend Instructor",
     gender: "male",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SaurabhUpadhyay",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=SaurabhUpadhyay",
     skills: [
       ".NET / .NET Core",
       "C#",
@@ -43,7 +43,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Manisha Singh",
     role: "Digital Marketing & Graphics Design Instructor",
     gender: "female",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ManishaSingh",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=ManishaSingh",
     skills: [
       "Digital Marketing",
       "SEO",
@@ -64,7 +64,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Saurabh Srivastava",
     role: "Software Development & Technology Instructor",
     gender: "male",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SaurabhSrivastava",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=SaurabhSrivastava",
     skills: [
       "HTML & CSS",
       "PHP & CodeIgniter",
@@ -93,7 +93,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Rahul S.",
     role: "Python & Backend Instructor",
     gender: "male",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RahulS",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=RahulS",
     skills: ["Python", "Django", "SQL", "React", "Node.js"],
     bio: "Specializes in Python backend systems, Django REST framework, database query tuning, and modern web application development.",
     coursesTaught: [
@@ -108,7 +108,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Priya K.",
     role: "Python & Data Science Instructor",
     gender: "female",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=PriyaK",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=PriyaK",
     skills: ["Python", "Data Analysis", "Machine Learning", "SQL", "Data Visualization"],
     bio: "Specializes in Python programming, data analysis, and machine learning. Focuses on practical, project-based learning to help students build real-world skills and grow in their careers.",
     coursesTaught: [
@@ -125,7 +125,7 @@ export const INSTRUCTORS: Instructor[] = [
     name: "Amit R.",
     role: "Python & Automation Specialist",
     gender: "male",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AmitR",
+    avatar: "https://api.dicebear.com/7.x/open-peeps/svg?seed=AmitR",
     skills: ["Python", "Scripting", "Automation", "React Native", "Redux"],
     bio: "Specializes in Python web scraping, shell scripting automation, cross-platform app dev, and CI/CD pipeline automation.",
     coursesTaught: [

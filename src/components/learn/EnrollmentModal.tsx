@@ -245,7 +245,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                             alt={inst.name}
                             className="w-12 h-12 rounded-full object-cover bg-purple-100/60 border border-purple-200 flex-shrink-0"
                             onError={(e) => {
-                              e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(inst.name)}`;
+                              e.currentTarget.src = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(inst.name)}`;
                             }}
                           />
                           <div className="min-w-0">

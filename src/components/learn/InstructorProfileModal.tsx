@@ -70,7 +70,7 @@ export const InstructorProfileModal: React.FC<InstructorProfileModalProps> = ({
                   alt={instructor.name}
                   className="w-full h-full object-cover rounded-full"
                   onError={(e) => {
-                    e.currentTarget.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(instructor.name)}`;
+                    e.currentTarget.src = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(instructor.name)}`;
                   }}
                 />
               </div>
