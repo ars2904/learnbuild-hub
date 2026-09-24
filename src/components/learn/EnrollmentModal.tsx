@@ -97,7 +97,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         {/* Backdrop overlay */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -116,10 +116,11 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
           className="relative w-full max-w-xl rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden z-10 my-8"
         >
           {/* Header Banner */}
-          <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 sm:p-8 text-white relative">
+          <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 sm:p-8 pr-14 sm:pr-16 text-white relative">
             <button
               onClick={onClose}
-              className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+              aria-label="Close modal"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 border border-white/20 text-white flex items-center justify-center transition-all shadow-md z-30 active:scale-95 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
