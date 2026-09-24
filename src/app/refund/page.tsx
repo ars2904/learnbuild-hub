@@ -106,72 +106,78 @@ export default function RefundPolicyPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
               {/* Day 1: 100% Full Refund */}
-              <div className="p-6 rounded-3xl bg-emerald-50 border-2 border-emerald-200 shadow-md flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-emerald-600 text-white px-3 py-1 rounded-bl-2xl text-[10px] font-black uppercase tracking-wider">
-                  100% Guaranteed
-                </div>
-
+              <div className="p-6 rounded-3xl bg-emerald-50/80 border-2 border-emerald-200 shadow-md flex flex-col justify-between hover:shadow-xl transition-all">
                 <div>
-                  <span className="w-10 h-10 rounded-2xl bg-emerald-600 text-white font-black text-sm flex items-center justify-center mb-4 shadow">
-                    Day 1
-                  </span>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="px-3.5 py-1 rounded-full bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-sm">
+                      Day 1
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-[10px] font-black uppercase tracking-wider">
+                      100% Guaranteed
+                    </span>
+                  </div>
+
                   <h3 className="text-xl font-black text-slate-900 mb-2">
                     100% Full Refund
                   </h3>
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-4">
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-6">
                     If you attend Day 1 of the course track and decide the program or curriculum isn't the right fit for you, you are entitled to a <strong>100% full refund</strong>.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-emerald-200 flex items-center gap-2 text-xs font-bold text-emerald-800">
+                <div className="pt-4 border-t border-emerald-200/80 flex items-center gap-2 text-xs font-bold text-emerald-800">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                   <span>Zero Questions Asked</span>
                 </div>
               </div>
 
               {/* Day 2 to 7: 30% Refund */}
-              <div className="p-6 rounded-3xl bg-amber-50 border-2 border-amber-200 shadow-md flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-amber-600 text-white px-3 py-1 rounded-bl-2xl text-[10px] font-black uppercase tracking-wider">
-                  Partial Refund
-                </div>
-
+              <div className="p-6 rounded-3xl bg-amber-50/80 border-2 border-amber-200 shadow-md flex flex-col justify-between hover:shadow-xl transition-all">
                 <div>
-                  <span className="w-10 h-10 rounded-2xl bg-amber-600 text-white font-black text-sm flex items-center justify-center mb-4 shadow">
-                    Days 2–7
-                  </span>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="px-3.5 py-1 rounded-full bg-amber-600 text-white font-black text-xs uppercase tracking-wider shadow-sm">
+                      Days 2–7
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-800 text-[10px] font-black uppercase tracking-wider">
+                      Partial Refund
+                    </span>
+                  </div>
+
                   <h3 className="text-xl font-black text-slate-900 mb-2">
                     30% Partial Refund
                   </h3>
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-4">
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-6">
                     If a refund request is submitted between <strong>Day 2 and Day 7</strong> of course commencement, a <strong>30% partial refund</strong> will be issued.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-amber-200 flex items-center gap-2 text-xs font-bold text-amber-800">
+                <div className="pt-4 border-t border-amber-200/80 flex items-center gap-2 text-xs font-bold text-amber-800">
                   <Clock className="w-4 h-4 text-amber-600 flex-shrink-0" />
                   <span>Pro-rated Resource Offset</span>
                 </div>
               </div>
 
               {/* Day 8+: No Refund */}
-              <div className="p-6 rounded-3xl bg-rose-50 border-2 border-rose-200 shadow-md flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-rose-600 text-white px-3 py-1 rounded-bl-2xl text-[10px] font-black uppercase tracking-wider">
-                  No Refund
-                </div>
-
+              <div className="p-6 rounded-3xl bg-rose-50/80 border-2 border-rose-200 shadow-md flex flex-col justify-between hover:shadow-xl transition-all">
                 <div>
-                  <span className="w-10 h-10 rounded-2xl bg-rose-600 text-white font-black text-sm flex items-center justify-center mb-4 shadow">
-                    Day 8+
-                  </span>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="px-3.5 py-1 rounded-full bg-rose-600 text-white font-black text-xs uppercase tracking-wider shadow-sm">
+                      Day 8+
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-rose-100 border border-rose-300 text-rose-800 text-[10px] font-black uppercase tracking-wider">
+                      No Refund
+                    </span>
+                  </div>
+
                   <h3 className="text-xl font-black text-slate-900 mb-2">
                     No Refund (0%)
                   </h3>
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-4">
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed mb-6">
                     From <strong>Day 8 onward</strong>, no refunds will be processed as seat allocations, mentor assignments, and project infrastructure are locked.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-rose-200 flex items-center gap-2 text-xs font-bold text-rose-800">
+                <div className="pt-4 border-t border-rose-200/80 flex items-center gap-2 text-xs font-bold text-rose-800">
                   <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
                   <span>Seat Allocation Locked</span>
                 </div>
