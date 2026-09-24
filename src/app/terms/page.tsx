@@ -9,7 +9,8 @@ import {
   ArrowLeft, 
   Mail, 
   Phone, 
-  CheckCircle2 
+  CheckCircle2,
+  RefreshCw
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 
@@ -74,6 +75,14 @@ export default function TermsAndConditionsPage() {
             >
               <Cookie className="w-4 h-4" />
               <span>Cookie Policy</span>
+            </Link>
+
+            <Link
+              href="/refund"
+              className="px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Refund Policy</span>
             </Link>
           </div>
         </div>
@@ -250,10 +259,18 @@ export default function TermsAndConditionsPage() {
             <div className="p-8 rounded-3xl bg-slate-50 border border-slate-200/80">
               <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-3">
                 <span className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">11</span>
-                <span>Cancellation and Refunds</span>
+                <span>Cancellation and Student Refund Policy</span>
               </h3>
-              <p>
-                Cancellation, refund, rescheduling and replacement terms may vary depending on the specific service or training program. Where applicable, the relevant cancellation/refund terms will be communicated before payment or enrolment. For paid services, the applicable written proposal, invoice, agreement or program-specific refund policy will take precedence over general website information.
+              <p className="mb-3">
+                LearnBuild Hub maintains a transparent, time-tiered refund policy for all training tracks and courses:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 text-sm font-semibold text-slate-800 mb-4">
+                <li><strong className="text-emerald-700">Day 1 (First Day):</strong> 100% Full Refund if a student decides the course track isn't the right fit.</li>
+                <li><strong className="text-amber-700">Days 2 to 7:</strong> 30% Partial Refund for requests submitted within the first week.</li>
+                <li><strong className="text-rose-700">Day 8 Onwards:</strong> No refund (0%) as seat allocations, mentor assignments, and course infrastructure are locked.</li>
+              </ul>
+              <p className="text-xs text-slate-600 font-medium">
+                For complete details on submitting a request, please visit our dedicated <Link href="/refund" className="text-brand-blue font-bold underline">Refund Policy Page</Link>.
               </p>
             </div>
 

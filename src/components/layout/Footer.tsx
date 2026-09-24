@@ -192,6 +192,10 @@ export const Footer: React.FC = () => {
             <Link href="/cookies" className="text-slate-400 hover:text-white transition-colors underline underline-offset-4 font-medium">
               Cookie Policy
             </Link>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <Link href="/refund" className="text-slate-400 hover:text-white transition-colors underline underline-offset-4 font-medium">
+              Refund Policy
+            </Link>
           </div>
 
           <div className="flex items-center space-x-2 text-slate-300">
