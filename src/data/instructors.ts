@@ -3,6 +3,7 @@ export interface Instructor {
   name: string;
   role: string;
   avatar: string;
+  gender: "male" | "female";
   skills: string[];
   bio: string;
   coursesTaught: string[];
@@ -14,7 +15,8 @@ export const INSTRUCTORS: Instructor[] = [
     id: "saurabh-upadhyay",
     name: "Saurabh Upadhyay",
     role: ".NET / Cloud & Backend Instructor",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=SaurabhUpadhyay",
+    gender: "male",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SaurabhUpadhyay&top=shortHair&hairColor=black&clothing=blazerAndShirt&backgroundColor=b6e3f4",
     skills: [
       ".NET / .NET Core",
       "C#",
@@ -23,7 +25,7 @@ export const INSTRUCTORS: Instructor[] = [
       "SQL / MS SQL Server",
       "Backend Development",
       "REST APIs",
-      "GenAI / AI Integration"
+      "GenAI Integration"
     ],
     bio: "Specializes in enterprise .NET Core backend engineering, Microsoft Azure cloud architecture, SQL Server optimization, REST API systems, and Generative AI / LLM integrations.",
     coursesTaught: [
@@ -40,7 +42,8 @@ export const INSTRUCTORS: Instructor[] = [
     id: "manisha-singh",
     name: "Manisha Singh",
     role: "Digital Marketing & Graphics Design Instructor",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Manisha",
+    gender: "female",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ManishaSingh&top=longHair&hairColor=black&clothing=overall&backgroundColor=c0aede",
     skills: [
       "Digital Marketing",
       "SEO",
@@ -60,7 +63,8 @@ export const INSTRUCTORS: Instructor[] = [
     id: "saurabh-srivastava",
     name: "Saurabh Srivastava",
     role: "Software Development & Technology Instructor",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=SaurabhSrivastava",
+    gender: "male",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=SaurabhSrivastava&top=shortHairTheCesar&hairColor=black&clothing=shirtVNeck&backgroundColor=d1d4f9",
     skills: [
       "HTML & CSS",
       "PHP & CodeIgniter",
@@ -87,12 +91,14 @@ export const INSTRUCTORS: Instructor[] = [
   {
     id: "rahul-s",
     name: "Rahul S.",
-    role: "Senior Full-Stack & Web Engineering Mentor",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Rahul",
-    skills: ["React", "Next.js 14", "TypeScript", "Node.js", "PostgreSQL"],
-    bio: "Specializes in modern web engineering, React 18 component architecture, and building production-grade SaaS applications. Over 6+ years of full-stack engineering experience.",
+    role: "Python & Backend Instructor",
+    gender: "male",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=RahulS&top=shortHair&hairColor=black&accessories=eyepatch&backgroundColor=b6e3f4",
+    skills: ["Python", "Django", "SQL", "React", "Node.js"],
+    bio: "Specializes in Python backend systems, Django REST framework, database query tuning, and modern web application development.",
     coursesTaught: [
       "Full-Stack Web Engineering Track",
+      "Python Full-Stack & Automation",
       "Node.js & React Modern Stack",
     ],
     rating: 4.9,
@@ -100,15 +106,33 @@ export const INSTRUCTORS: Instructor[] = [
   {
     id: "priya-k",
     name: "Priya K.",
-    role: "AI & Data Science Engineering Lead",
-    avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Priya",
-    skills: ["Python", "Data Analysis", "Machine Learning", "PyTorch", "SQL"],
-    bio: "Specializes in Python data science, machine learning models, neural networks, and generative AI LLM integrations. Passionate about practical project-based learning.",
+    role: "Python & Data Science Instructor",
+    gender: "female",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=PriyaK&top=longHairStraight&hairColor=black&backgroundColor=c0aede",
+    skills: ["Python", "Data Analysis", "Machine Learning", "SQL", "Data Visualization"],
+    bio: "Specializes in Python programming, data analysis, and machine learning. Focuses on practical, project-based learning to help students build real-world skills and grow in their careers.",
     coursesTaught: [
       "AI & Machine Learning Engineering Track",
       "Data Science & Business Analytics Track",
+      "Python Programming",
+      "Data Analysis with Python",
+      "Machine Learning Basics",
     ],
     rating: 4.9,
+  },
+  {
+    id: "amit-r",
+    name: "Amit R.",
+    role: "Python & Automation Specialist",
+    gender: "male",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=AmitR&top=shortHairShortWaved&hairColor=black&backgroundColor=d1d4f9",
+    skills: ["Python", "Scripting", "Automation", "React Native", "Redux"],
+    bio: "Specializes in Python web scraping, shell scripting automation, cross-platform app dev, and CI/CD pipeline automation.",
+    coursesTaught: [
+      "Mobile Application Engineering Track",
+      "Python Full-Stack & Automation",
+    ],
+    rating: 4.8,
   },
 ];
 
