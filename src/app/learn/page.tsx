@@ -28,6 +28,7 @@ import { sampleCourses } from "@/data/courses";
 import { TECH_TRACKS } from "@/data/techTracks";
 import { EnrollmentModal } from "@/components/learn/EnrollmentModal";
 import { InternshipModal } from "@/components/learn/InternshipModal";
+import { DemoRequestModal } from "@/components/build/DemoRequestModal";
 
 const categories = ["All", "Digital Marketing", "Web Engineering", "AI & Data", "Mobile Dev", "Cloud & DevOps"];
 
@@ -47,6 +48,8 @@ export default function LearnCatalogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
   const [selectedCourseForEnrollment, setSelectedCourseForEnrollment] = useState<string>("");
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [selectedCourseForDemo, setSelectedCourseForDemo] = useState<string>("");
   const [internshipModalOpen, setInternshipModalOpen] = useState(false);
   const [selectedInternshipTrack, setSelectedInternshipTrack] = useState<string>("Web Engineering Track");
 
@@ -63,6 +66,11 @@ export default function LearnCatalogPage() {
   const handleOpenEnrollModal = (courseTitle: string) => {
     setSelectedCourseForEnrollment(courseTitle);
     setEnrollModalOpen(true);
+  };
+
+  const handleOpenDemoModal = (courseTitle: string) => {
+    setSelectedCourseForDemo(courseTitle);
+    setDemoModalOpen(true);
   };
 
   const handleOpenInternshipModal = (trackTitle: string) => {
@@ -225,13 +233,13 @@ export default function LearnCatalogPage() {
 
                   {/* Course Card Action Footer */}
                   <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-3">
-                    <Link
-                      href={`/learn/${course.slug}`}
-                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-brand-blue hover:underline"
+                    <button
+                      onClick={() => handleOpenDemoModal(course.title)}
+                      className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-slate-700 hover:text-brand-blue transition-colors group/btn"
                     >
-                      <span>View Details</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                      <span>Apply for Demo</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
 
                     <button
                       onClick={() => handleOpenEnrollModal(course.title)}
@@ -409,6 +417,13 @@ export default function LearnCatalogPage() {
         isOpen={enrollModalOpen}
         onClose={() => setEnrollModalOpen(false)}
         selectedCourseTitle={selectedCourseForEnrollment}
+      />
+
+      {/* Demo Request Modal */}
+      <DemoRequestModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+        selectedSolutionTitle={selectedCourseForDemo}
       />
 
       {/* Internship Modal */}

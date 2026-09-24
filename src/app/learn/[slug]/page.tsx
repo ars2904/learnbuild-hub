@@ -5,11 +5,12 @@ import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import { 
   Star, Clock, BookOpen, CheckCircle2, ChevronDown, 
-  ArrowLeft, GraduationCap, Briefcase, Award, ShieldCheck, Send 
+  ArrowLeft, GraduationCap, Briefcase, Award, ShieldCheck, Send, MonitorPlay 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sampleCourses } from "@/data/courses";
 import { EnrollmentModal } from "@/components/learn/EnrollmentModal";
+import { DemoRequestModal } from "@/components/build/DemoRequestModal";
 
 export default function CourseDetailsPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function CourseDetailsPage() {
   const course = sampleCourses.find((c) => c.slug === slug);
   const [openModule, setOpenModule] = useState<number | null>(0);
   const [enrollModalOpen, setEnrollModalOpen] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
 
   if (!course) {
     return (
@@ -93,7 +95,7 @@ export default function CourseDetailsPage() {
               </div>
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <button
                 onClick={() => setEnrollModalOpen(true)}
@@ -101,6 +103,14 @@ export default function CourseDetailsPage() {
               >
                 <Send className="w-4 h-4" />
                 <span>Enroll Now in this Track</span>
+              </button>
+
+              <button
+                onClick={() => setDemoModalOpen(true)}
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-black text-sm uppercase tracking-widest shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2 border border-slate-700"
+              >
+                <MonitorPlay className="w-4 h-4 text-blue-400" />
+                <span>Apply for Demo</span>
               </button>
             </div>
           </div>
@@ -275,10 +285,10 @@ export default function CourseDetailsPage() {
               </p>
             </div>
 
-            {/* Sidebar Sticky Enroll Button */}
-            <div className="p-6 rounded-3xl bg-slate-900 text-white shadow-xl">
-              <h4 className="text-base font-black mb-2">Ready to Start Learning?</h4>
-              <p className="text-xs text-slate-300 mb-6 font-normal">
+            {/* Sidebar Sticky Buttons */}
+            <div className="p-6 rounded-3xl bg-slate-900 text-white shadow-xl space-y-3">
+              <h4 className="text-base font-black mb-1">Ready to Start Learning?</h4>
+              <p className="text-xs text-slate-300 mb-4 font-normal">
                 Develop practical skills and build real industry portfolio projects.
               </p>
               <button
@@ -286,6 +296,14 @@ export default function CourseDetailsPage() {
                 className="w-full py-3.5 rounded-full bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/30 transition-all hover:scale-105"
               >
                 Enroll Now
+              </button>
+
+              <button
+                onClick={() => setDemoModalOpen(true)}
+                className="w-full py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-widest transition-all hover:scale-105 flex items-center justify-center gap-2 border border-white/20"
+              >
+                <MonitorPlay className="w-4 h-4 text-blue-300" />
+                <span>Apply for Demo</span>
               </button>
             </div>
 
@@ -300,6 +318,13 @@ export default function CourseDetailsPage() {
         isOpen={enrollModalOpen}
         onClose={() => setEnrollModalOpen(false)}
         selectedCourseTitle={course.title}
+      />
+
+      {/* Demo Request Modal */}
+      <DemoRequestModal
+        isOpen={demoModalOpen}
+        onClose={() => setDemoModalOpen(false)}
+        selectedSolutionTitle={course.title}
       />
     </div>
   );

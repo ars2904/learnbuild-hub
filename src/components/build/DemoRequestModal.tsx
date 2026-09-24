@@ -129,14 +129,14 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-blue-200 mb-3">
               <MonitorPlay className="w-4 h-4 text-blue-400" />
-              <span>Ready-Made Software Solutions</span>
+              <span>LearnBuild Hub Live Demo</span>
             </div>
 
             <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white mb-1">
-              Request Product Demo
+              Apply for Live Demo
             </h3>
             <p className="text-xs sm:text-sm text-blue-200 font-normal">
-              Schedule a personalized walkthrough of our production-ready software solutions.
+              Schedule a personalized live demonstration & walkthrough with our technical team.
             </p>
           </div>
 
@@ -155,12 +155,12 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                   Demo Request Received!
                 </h4>
                 <p className="text-slate-600 text-sm sm:text-base max-w-md leading-relaxed mb-6 font-medium">
-                  Thank you! Your request for <strong className="text-slate-900">{formData.solutionTitle}</strong> has been emailed to our solution team ({SITE_CONFIG.email}).
+                  Thank you! Your demo request for <strong className="text-slate-900">{formData.solutionTitle}</strong> has been emailed to our team ({SITE_CONFIG.email}).
                 </p>
 
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 w-full mb-6 text-left space-y-1.5">
-                  <div><span className="font-bold text-slate-800">Product:</span> {formData.solutionTitle}</div>
-                  <div><span className="font-bold text-slate-800">Client:</span> {formData.name} ({formData.email})</div>
+                  <div><span className="font-bold text-slate-800">Target Track / Solution:</span> {formData.solutionTitle}</div>
+                  <div><span className="font-bold text-slate-800">Applicant:</span> {formData.name} ({formData.email})</div>
                   <div><span className="font-bold text-slate-800">Phone:</span> {formData.phone}</div>
                 </div>
 
@@ -192,10 +192,10 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                   </div>
                 )}
 
-                {/* Selected Product */}
+                {/* Selected Course Track / Solution */}
                 <div className="group">
                   <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1.5 transition-colors group-has-[:focus]:text-brand-blue">
-                    Target Software Solution
+                    Target Course Track / Software Solution
                   </label>
                   <select
                     name="solutionTitle"
@@ -203,6 +203,27 @@ export const DemoRequestModal: React.FC<DemoRequestModalProps> = ({
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-sm font-bold focus:outline-none focus:border-brand-blue focus:bg-white focus:ring-4 focus:ring-brand-blue/20 focus:scale-[1.015] focus:shadow-xl focus:shadow-brand-blue/15 transition-all duration-200 cursor-pointer"
                   >
+                    {/* Pre-fill custom course/solution title if passed */}
+                    {formData.solutionTitle &&
+                      ![
+                        "School Management System",
+                        "Office Management System",
+                        "Gym & Fitness Management",
+                        "Library Management System",
+                        "Healthcare CRM & Clinic Management",
+                        "Digital Marketing & Growth Track",
+                        "Full-Stack Web Engineering Track",
+                        "AI & Machine Learning Engineering Track",
+                        "Mobile App Development Track",
+                        "Cloud & DevOps Engineering Track"
+                      ].includes(formData.solutionTitle) && (
+                        <option value={formData.solutionTitle}>{formData.solutionTitle}</option>
+                      )}
+                    <option value="Digital Marketing & Growth Track">Digital Marketing & Growth Track</option>
+                    <option value="Full-Stack Web Engineering Track">Full-Stack Web Engineering Track</option>
+                    <option value="AI & Machine Learning Engineering Track">AI & Machine Learning Engineering Track</option>
+                    <option value="Mobile App Development Track">Mobile App Development Track</option>
+                    <option value="Cloud & DevOps Engineering Track">Cloud & DevOps Engineering Track</option>
                     <option value="School Management System">School Management System</option>
                     <option value="Office Management System">Office Management System</option>
                     <option value="Gym & Fitness Management">Gym & Fitness Management</option>
