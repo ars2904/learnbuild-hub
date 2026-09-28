@@ -106,11 +106,19 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
         </nav>
 
         {/* Bottom CTA Button (Screen 6 Blueprint) */}
-        <div className="mt-8 pt-6 border-t border-slate-200 space-y-4">
+        <div className="mt-8 pt-6 border-t border-slate-200 space-y-3">
+          <Link
+            href="/dashboard"
+            onClick={onClose}
+            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-slate-900 text-white text-sm font-bold tracking-wider shadow-md"
+          >
+            <span>Student Portal / Dashboard</span>
+          </Link>
+
           <Link
             href="/contact"
             onClick={onClose}
-            className="flex items-center justify-center gap-2 w-full py-4 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-brand-blue/30"
+            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-brand-blue/30"
           >
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4" />

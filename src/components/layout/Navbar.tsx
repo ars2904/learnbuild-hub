@@ -77,6 +77,12 @@ export const Navbar: React.FC = () => {
 
             {/* Right Action CTA Button */}
             <div className="hidden lg:flex items-center space-x-3">
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-brand-blue hover:bg-slate-100 transition-all border border-slate-200"
+              >
+                <span>Student Portal</span>
+              </Link>
               {isBuildPage ? (
                 <Link
                   href="/contact"
