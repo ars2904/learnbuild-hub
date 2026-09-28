@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { INITIAL_CLIENTS, Client } from "@/lib/data/crm";
+import { Client } from "@/lib/data/crm";
+import { memoryClients } from "@/lib/data/leadsStore";
 import { createServerClient } from "@/lib/supabase/server";
-
-let memoryClients: Client[] = [...INITIAL_CLIENTS];
 
 export async function GET() {
   const supabase = createServerClient();
@@ -10,10 +9,13 @@ export async function GET() {
     try {
       const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
-        return NextResponse.json({ success: true, data });
+        // Merge Supabase clients with memory clients (which include newly created leads from demos/contact/enrollments)
+        const dbIds = new Set(data.map((c) => c.id));
+        const extraMemory = memoryClients.filter((m) => !dbIds.has(m.id));
+        return NextResponse.json({ success: true, data: [...extraMemory, ...data] });
       }
     } catch (err) {
-      console.warn("Supabase clients fetch fallback:", err);
+      console.warn("Supabase clients fetch fallback to memory:", err);
     }
   }
 
@@ -88,7 +90,7 @@ export async function PUT(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, data: memoryClients[index] });
+    return NextResponse.json({ success: true, data: index !== -1 ? memoryClients[index] : { id, status } });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }
@@ -100,7 +102,9 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
 
     if (id) {
-      memoryClients = memoryClients.filter((c) => c.id !== id);
+      const idx = memoryClients.findIndex((c) => c.id === id);
+      if (idx !== -1) memoryClients.splice(idx, 1);
+
       const supabase = createServerClient();
       if (supabase) {
         try {
