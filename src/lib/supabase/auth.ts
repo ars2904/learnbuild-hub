@@ -30,6 +30,22 @@ export async function loginWithGoogle() {
   return data;
 }
 
+export async function loginWithMicrosoft() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "azure",
+    options: {
+      redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard`,
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export async function loginUser(email: string, pass: string) {
   const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({

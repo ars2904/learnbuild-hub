@@ -77,12 +77,6 @@ export const Navbar: React.FC = () => {
 
             {/* Right Action CTA Button */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-brand-blue hover:bg-slate-100 transition-all border border-slate-200"
-              >
-                <span>Student Portal</span>
-              </Link>
               {isBuildPage ? (
                 <Link
                   href="/contact"
@@ -93,7 +87,7 @@ export const Navbar: React.FC = () => {
                 </Link>
               ) : (
                 <Link
-                  href="/contact"
+                  href="/login"
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:shadow-lg transition-all"
                 >
                   <span>Get Started</span>
