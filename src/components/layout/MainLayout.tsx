@@ -13,6 +13,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
   const isStandaloneRoute =
     pathname?.startsWith("/admin") ||
     pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/employee") ||
     pathname === "/login" ||
     pathname === "/signup";
 
