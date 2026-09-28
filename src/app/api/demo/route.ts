@@ -4,12 +4,18 @@ import { createServerClient } from "@/lib/supabase/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, email, phone, solutionTitle, companyName, projectRequirements, budgetRange } = body;
+    const fullName = body.fullName || body.name || "";
+    const email = body.email || "";
+    const phone = body.phone || "";
+    const solutionTitle = body.solutionTitle || body.solution || "Live Software Demo";
+    const companyName = body.companyName || body.company || "";
+    const projectRequirements = body.projectRequirements || body.message || "";
+    const budgetRange = body.budgetRange || "";
 
     // Validate required fields
-    if (!fullName || !email || !phone || !solutionTitle) {
+    if (!fullName || !email || !phone) {
       return NextResponse.json(
-        { success: false, message: "Missing required demo request fields." },
+        { success: false, message: "Missing required demo request fields (name, email, phone)." },
         { status: 400 }
       );
     }
