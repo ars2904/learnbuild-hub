@@ -270,7 +270,7 @@ export default function SignupPage() {
             </button>
           </form>
 
-          {/* Role Auto-Detection Hint Footer */}
+          {/* Footer Info */}
           <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
             <p className="text-[11px] text-slate-500 font-medium flex items-center justify-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />

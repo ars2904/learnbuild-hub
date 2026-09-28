@@ -332,11 +332,11 @@ function AuthPortalForm() {
             </button>
           </form>
 
-          {/* Role Auto-Detection Hint Footer */}
+          {/* Public Security Badge */}
           <div className="pt-4 border-t border-slate-800/80 text-center space-y-2">
             <p className="text-[11px] text-slate-500 font-medium flex items-center justify-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Smart Role Detection: Admin accounts automatically route to Admin CMS.</span>
+              <span>Secured by Supabase 256-Bit SSL Encryption</span>
             </p>
           </div>
         </div>
