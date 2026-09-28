@@ -102,9 +102,15 @@ export async function logoutAdmin() {
 }
 
 export async function getUserSession() {
-  const supabase = createClient();
-  const { data } = await supabase.auth.getSession();
-  return data.session;
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.getSession();
+    if (error) return null;
+    return data?.session || null;
+  } catch (err) {
+    console.warn("getUserSession fallback:", err);
+    return null;
+  }
 }
 
 export async function getAdminSession() {
