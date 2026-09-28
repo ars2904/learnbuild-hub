@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { CardVisualBanner } from "@/components/common/CardVisualBanner";
-import { Check, MonitorPlay, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { Check, MonitorPlay, ArrowRight, Zap } from "lucide-react";
 import { READY_MADE_SOLUTIONS, ReadyMadeSolution } from "@/data/solutions";
 import { DemoRequestModal } from "./DemoRequestModal";
 
@@ -16,10 +16,32 @@ export const ReadyMadeSolutions: React.FC<ReadyMadeSolutionsProps> = ({
   limit,
   showHeading = true,
 }) => {
+  const [solutionsList, setSolutionsList] = useState<ReadyMadeSolution[]>(READY_MADE_SOLUTIONS);
   const [selectedSolution, setSelectedSolution] = useState<ReadyMadeSolution | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const displaySolutions = limit ? READY_MADE_SOLUTIONS.slice(0, limit) : READY_MADE_SOLUTIONS;
+  useEffect(() => {
+    fetch("/api/solutions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data && data.data.length > 0) {
+          const mapped: ReadyMadeSolution[] = data.data.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            badge: item.tag || item.badge || "Ready to Deploy",
+            description: item.description,
+            image: item.image || "https://images.unsplash.com/photo-1556742049-0a6796d49cb4?auto=format&fit=crop&w=800&q=80",
+            keyFeatures: item.features || item.keyFeatures || ["Admin Dashboard", "User Roles", "Payment Gateway"],
+            techStack: item.techStack || ["Next.js", "React", "PostgreSQL"],
+            deliveryTime: "1-2 Weeks",
+          }));
+          setSolutionsList(mapped);
+        }
+      })
+      .catch((err) => console.warn("Dynamic solutions fetch error:", err));
+  }, []);
+
+  const displaySolutions = limit ? solutionsList.slice(0, limit) : solutionsList;
 
   const handleOpenDemo = (solution: ReadyMadeSolution) => {
     setSelectedSolution(solution);
@@ -79,7 +101,7 @@ export const ReadyMadeSolutions: React.FC<ReadyMadeSolutionsProps> = ({
 
                 {/* Key Features List */}
                 <div className="space-y-2 mb-6">
-                  {solution.keyFeatures.slice(0, 4).map((feature, idx) => (
+                  {(solution.keyFeatures || []).slice(0, 4).map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700">
                       <div className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <Check className="w-2.5 h-2.5 stroke-[3]" />
@@ -93,7 +115,7 @@ export const ReadyMadeSolutions: React.FC<ReadyMadeSolutionsProps> = ({
               {/* Tech stack & Request Demo CTA */}
               <div className="pt-4 border-t border-slate-100 mt-auto">
                 <div className="flex flex-wrap gap-1.5 mb-5">
-                  {solution.techStack.map((tech) => (
+                  {(solution.techStack || []).map((tech) => (
                     <span
                       key={tech}
                       className="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold"
@@ -105,7 +127,7 @@ export const ReadyMadeSolutions: React.FC<ReadyMadeSolutionsProps> = ({
 
                 <button
                   onClick={() => handleOpenDemo(solution)}
-                  className="w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-brand-blue text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-brand-blue/25 transition-all group/btn"
+                  className="w-full py-3.5 px-5 rounded-2xl bg-slate-900 hover:bg-brand-blue text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-brand-blue/25 transition-all group/btn cursor-pointer"
                 >
                   <MonitorPlay className="w-4 h-4 text-orange-400 group-hover/btn:text-white transition-colors" />
                   <span>Request Live Demo</span>

@@ -52,9 +52,44 @@ export default function LearnCatalogPage() {
   const [selectedCourseForDemo, setSelectedCourseForDemo] = useState<string>("");
   const [internshipModalOpen, setInternshipModalOpen] = useState(false);
   const [selectedInternshipTrack, setSelectedInternshipTrack] = useState<string>("Web Engineering Track");
+  const [dynamicCourses, setDynamicCourses] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch("/api/courses")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data && data.data.length > 0) {
+          const mapped = data.data.map((c: any) => ({
+            id: c.id,
+            slug: c.slug || c.id,
+            title: c.title,
+            category: c.category || "Web Engineering",
+            level: "Intermediate",
+            duration: c.duration || "12 Weeks",
+            rating: c.rating || 4.9,
+            studentsCount: c.studentsCount || 1200,
+            image: c.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+            badge: c.badge || "Popular",
+            shortDescription: c.description,
+            fullDescription: c.description,
+            whatYouWillLearn: c.skills || ["React", "Node.js"],
+            modules: (c.syllabus || []).map((s: string, i: number) => ({
+              id: i + 1,
+              title: s,
+              lessonsCount: 5,
+              duration: "2 Weeks",
+            })),
+            price: c.price || 34999,
+          }));
+          setDynamicCourses(mapped);
+        }
+      })
+      .catch((e) => console.warn("Dynamic courses fetch error:", e));
+  }, []);
 
   const techTrackSlugs = TECH_TRACKS.map((t) => t.slug);
-  const coreFeaturedCourses = sampleCourses.filter((course) => !techTrackSlugs.includes(course.slug));
+  const activeCourseList = dynamicCourses.length > 0 ? dynamicCourses : sampleCourses;
+  const coreFeaturedCourses = activeCourseList.filter((course) => !techTrackSlugs.includes(course.slug));
 
   const filteredCourses = coreFeaturedCourses.filter((course) => {
     const matchesCategory =
@@ -62,7 +97,7 @@ export default function LearnCatalogPage() {
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.whatYouWillLearn.some((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+      course.whatYouWillLearn.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -221,7 +256,7 @@ export default function LearnCatalogPage() {
                           Core Learning Skills:
                         </span>
                         <div className="flex flex-wrap gap-1.5">
-                          {course.whatYouWillLearn.slice(0, 3).map((skill, i) => (
+                          {course.whatYouWillLearn.slice(0, 3).map((skill: string, i: number) => (
                             <span
                               key={i}
                               className="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-100 text-[11px] font-bold text-slate-700 line-clamp-1"

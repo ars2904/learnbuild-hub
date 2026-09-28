@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, GraduationCap, MonitorPlay, Mail, 
   BookOpen, Users, LogOut, ShieldCheck, Menu, X, ArrowLeft,
-  Briefcase, UserCheck, CheckSquare
+  Briefcase, UserCheck, CheckSquare, Globe
 } from "lucide-react";
 import { getAdminSession, logoutAdmin } from "@/lib/supabase/auth";
 
@@ -41,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Website Content (CMS)", href: "/admin/content", icon: Globe },
     { label: "Clients / Leads", href: "/admin/clients", icon: Briefcase },
     { label: "Employees", href: "/admin/employees", icon: UserCheck },
     { label: "Tasks", href: "/admin/tasks", icon: CheckSquare },

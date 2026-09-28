@@ -1,0 +1,276 @@
+export interface CMSCourse {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  duration: string;
+  badge: string;
+  rating: number;
+  studentsCount: number;
+  image: string;
+  instructorName: string;
+  syllabus: string[];
+  skills: string[];
+  featured: boolean;
+}
+
+export interface CMSSolution {
+  id: string;
+  title: string;
+  category: string;
+  tag: string;
+  description: string;
+  image: string;
+  demoUrl: string;
+  priceEstimate: string;
+  features: string[];
+  techStack: string[];
+  featured: boolean;
+}
+
+export interface CMSInstructor {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  avatar: string;
+  expertise: string[];
+  experienceYears: number;
+  rating: number;
+  studentsCount: number;
+}
+
+export interface CMSBlog {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  authorName: string;
+  authorAvatar: string;
+  coverImage: string;
+  readTime: string;
+  publishedAt: string;
+  featured: boolean;
+}
+
+export interface CMSSiteSettings {
+  heroTitle: string;
+  heroSubtitle: string;
+  announcementBanner: string;
+  contactEmail: string;
+  contactPhone: string;
+  whatsappPhone: string;
+  studentsTrainedCount: string;
+  placementRate: string;
+  projectsDeliveredCount: string;
+  satisfactionRate: string;
+}
+
+export const INITIAL_COURSES: CMSCourse[] = [
+  {
+    id: "crs-101",
+    slug: "full-stack-web-engineering",
+    title: "Full-Stack Web Engineering & Cloud Systems",
+    category: "Software Development",
+    description: "Master React, Next.js, Node.js, PostgreSQL, Docker, and AWS microservices with live industry projects.",
+    price: 34999,
+    originalPrice: 49999,
+    duration: "16 Weeks (4 Months)",
+    badge: "Most Popular",
+    rating: 4.9,
+    studentsCount: 1420,
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+    instructorName: "Rohit Verma",
+    syllabus: [
+      "Frontend Mastery: HTML5, CSS3, Tailwind CSS, TypeScript & React 18",
+      "Next.js App Router, SSR, SSG, Server Actions & State Management",
+      "Backend Architecture: Express.js, RESTful APIs, Node.js & Microservices",
+      "Database Systems: PostgreSQL, Prisma ORM, Redis Caching & Supabase",
+      "Cloud Deployment & DevOps: Docker, AWS EC2/S3, CI/CD Pipelines & Security",
+    ],
+    skills: ["React", "Next.js", "Node.js", "PostgreSQL", "Docker", "AWS", "TypeScript"],
+    featured: true,
+  },
+  {
+    id: "crs-102",
+    slug: "ai-machine-learning-engineering",
+    title: "AI & Machine Learning Production Track",
+    category: "Artificial Intelligence",
+    description: "Build custom LLM agents, RAG pipelines, PyTorch models, and deploy AI microservices at scale.",
+    price: 42999,
+    originalPrice: 59999,
+    duration: "20 Weeks (5 Months)",
+    badge: "High Growth",
+    rating: 4.95,
+    studentsCount: 890,
+    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
+    instructorName: "Amit Kumar",
+    syllabus: [
+      "Python Data Science & Mathematical Foundations for Machine Learning",
+      "Deep Learning with PyTorch & Neural Network Architectures",
+      "Natural Language Processing, Transformer Models & Hugging Face",
+      "Building Generative AI Applications with LangChain, LlamaIndex & Vector DBs",
+      "Deploying AI Models as Scalable FastAPI Services on Kubernetes",
+    ],
+    skills: ["Python", "PyTorch", "LangChain", "FastAPI", "VectorDB", "LlamaIndex"],
+    featured: true,
+  },
+  {
+    id: "crs-103",
+    slug: "devops-cloud-architecture",
+    title: "DevOps Engineering & Multi-Cloud Architecture",
+    category: "Cloud & Infrastructure",
+    description: "Automate CI/CD pipelines, Kubernetes cluster orchestration, Terraform IaC, and AWS cloud security.",
+    price: 38999,
+    originalPrice: 54999,
+    duration: "14 Weeks (3.5 Months)",
+    badge: "Trending",
+    rating: 4.88,
+    studentsCount: 650,
+    image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&w=800&q=80",
+    instructorName: "Sneha Sharma",
+    syllabus: [
+      "Linux System Administration & Shell Scripting Automation",
+      "Containerization with Docker & Container Security Best Practices",
+      "Kubernetes Cluster Setup, Ingress Controllers & Helm Charts",
+      "Infrastructure as Code (IaC) using Terraform & Ansible",
+      "Enterprise CI/CD Pipelines with GitHub Actions & ArgoCD",
+    ],
+    skills: ["Docker", "Kubernetes", "AWS", "Terraform", "GitHub Actions", "Linux"],
+    featured: false,
+  },
+];
+
+export const INITIAL_SOLUTIONS: CMSSolution[] = [
+  {
+    id: "sol-101",
+    title: "School & College Management Software Suite",
+    category: "Education Tech",
+    tag: "Ready to Deploy",
+    description: "Complete ERP system featuring attendance tracking, fee collection gateway, student portal, and report card generation.",
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+    demoUrl: "/admin/demos",
+    priceEstimate: "₹1,49,000",
+    features: ["Student & Staff Directory", "Fee Collection & Online Payment Gateway", "Parent WhatsApp Notifications", "Admin Analytics Dashboard"],
+    techStack: ["Next.js", "Node.js", "PostgreSQL", "Tailwind CSS"],
+    featured: true,
+  },
+  {
+    id: "sol-102",
+    title: "Hospital & Multi-Specialty Clinic ERP",
+    category: "Healthcare Software",
+    tag: "Enterprise Grade",
+    description: "Digital OPD booking, doctor schedule management, electronic health records (EHR), and billing invoice system.",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+    demoUrl: "/admin/demos",
+    priceEstimate: "₹1,99,000",
+    features: ["Doctor Appointment Portal", "Digital Prescription Generator", "Pharmacy & Inventory Control", "Lab Test Report Generation"],
+    techStack: ["React", "Express.js", "MongoDB", "Tailwind CSS"],
+    featured: true,
+  },
+  {
+    id: "sol-103",
+    title: "Multi-Vendor E-Commerce & Marketplace Suite",
+    category: "Retail & E-Commerce",
+    tag: "High Revenue",
+    description: "Fully-featured online shopping portal with vendor dashboard, cart checkout, order tracking, and Razorpay/Stripe integration.",
+    image: "https://images.unsplash.com/photo-1556742049-0a6796d49cb4?auto=format&fit=crop&w=800&q=80",
+    demoUrl: "/admin/demos",
+    priceEstimate: "₹1,79,000",
+    features: ["Seller Vendor Panel", "Razorpay / Stripe Payment Processing", "Real-Time Order Tracking", "Inventory Alert System"],
+    techStack: ["Next.js", "Supabase", "Stripe API", "Tailwind CSS"],
+    featured: true,
+  },
+];
+
+export const INITIAL_INSTRUCTORS: CMSInstructor[] = [
+  {
+    id: "inst-101",
+    name: "Sneha Sharma",
+    role: "Lead Software Architect & Tech Educator",
+    bio: "Ex-SDE at Tier-1 Tech, 8+ years experience building scalable microservices and mentoring over 2,000 engineers.",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+    expertise: ["Full-Stack Engineering", "React", "Next.js", "System Design"],
+    experienceYears: 8,
+    rating: 4.9,
+    studentsCount: 2100,
+  },
+  {
+    id: "inst-102",
+    name: "Rohit Verma",
+    role: "Senior AI Engineer & Cloud Architect",
+    bio: "AI Researcher and Full-Stack Consultant specializing in Large Language Models, PyTorch, and cloud infrastructure.",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    expertise: ["AI / ML", "PyTorch", "LangChain", "Python", "Kubernetes"],
+    experienceYears: 7,
+    rating: 4.95,
+    studentsCount: 1850,
+  },
+  {
+    id: "inst-103",
+    name: "Amit Kumar",
+    role: "DevOps Specialist & Cloud Infrastructure Lead",
+    bio: "Cloud Systems Consultant with expertise in AWS, Terraform, Docker, and automated CI/CD deployment pipelines.",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    expertise: ["DevOps", "AWS", "Docker", "Kubernetes", "Linux"],
+    experienceYears: 9,
+    rating: 4.88,
+    studentsCount: 1400,
+  },
+];
+
+export const INITIAL_BLOGS: CMSBlog[] = [
+  {
+    id: "blog-101",
+    slug: "building-scalable-nextjs-14-applications",
+    title: "How to Build High-Performance Next.js 14 Apps in 2026",
+    excerpt: "Discover the best practices for Server Components, App Router optimization, and Supabase integration.",
+    content: `Next.js 14 has redefined full-stack web development. In this guide, we dive deep into performance techniques, caching strategies, and seamless database integration using Supabase and Tailwind CSS.`,
+    category: "Engineering",
+    authorName: "Sneha Sharma",
+    authorAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
+    coverImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+    readTime: "5 min read",
+    publishedAt: "2026-09-20T10:00:00Z",
+    featured: true,
+  },
+  {
+    id: "blog-102",
+    slug: "ai-agents-llm-rag-architecture",
+    title: "Architecting Production-Grade AI Agents with RAG",
+    excerpt: "Learn how to combine vector databases, LangChain, and PyTorch models for enterprise intelligent search.",
+    content: `Retrieval-Augmented Generation (RAG) is transforming enterprise search. Here is how you can implement vector indexing and LLM prompt chaining to build zero-hallucination AI agents.`,
+    category: "Artificial Intelligence",
+    authorName: "Rohit Verma",
+    authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+    coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
+    readTime: "7 min read",
+    publishedAt: "2026-09-24T14:30:00Z",
+    featured: true,
+  },
+];
+
+export const INITIAL_SITE_SETTINGS: CMSSiteSettings = {
+  heroTitle: "Build Real Software Products & Master In-Demand Engineering Tracks",
+  heroSubtitle: "LearnBuild Hub empowers students, developers, and businesses with live mentorship, ready-to-deploy software solutions, and industry-aligned full-stack engineering programs.",
+  announcementBanner: "🎉 Admissions Open for Fall 2026 Engineering & AI Internship Cohorts! Apply Today.",
+  contactEmail: "learnbuildh@gmail.com",
+  contactPhone: "+91 81495 65351",
+  whatsappPhone: "+91 81495 65351",
+  studentsTrainedCount: "5,000+",
+  placementRate: "98%",
+  projectsDeliveredCount: "120+",
+  satisfactionRate: "4.9/5",
+};
+
+// Global Memory Stores
+export let memoryCourses: CMSCourse[] = [...INITIAL_COURSES];
+export let memorySolutions: CMSSolution[] = [...INITIAL_SOLUTIONS];
+export let memoryInstructors: CMSInstructor[] = [...INITIAL_INSTRUCTORS];
+export let memoryBlogs: CMSBlog[] = [...INITIAL_BLOGS];
+export let memorySiteSettings: CMSSiteSettings = { ...INITIAL_SITE_SETTINGS };
