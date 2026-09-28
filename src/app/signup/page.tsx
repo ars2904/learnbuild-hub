@@ -69,7 +69,11 @@ function SignupForm() {
       await loginWithGoogle();
     } catch (err: any) {
       console.error("Google Auth error:", err);
-      setErrorMsg(err.message || "Failed to sign up with Google.");
+      if (err.message?.includes("not enabled") || err.message?.includes("validation_failed") || err.message?.includes("Unsupported provider")) {
+        setErrorMsg("Google Sign-In provider is not enabled in your Supabase dashboard yet. Please use Email & Password to create an account.");
+      } else {
+        setErrorMsg(err.message || "Failed to sign up with Google.");
+      }
       setGoogleLoading(false);
     }
   };
@@ -81,7 +85,11 @@ function SignupForm() {
       await loginWithMicrosoft();
     } catch (err: any) {
       console.error("Microsoft Auth error:", err);
-      setErrorMsg(err.message || "Failed to sign up with Microsoft.");
+      if (err.message?.includes("not enabled") || err.message?.includes("validation_failed") || err.message?.includes("Unsupported provider")) {
+        setErrorMsg("Microsoft Sign-In provider is not enabled in your Supabase dashboard yet. Please use Email & Password to create an account.");
+      } else {
+        setErrorMsg(err.message || "Failed to sign up with Microsoft.");
+      }
       setMsLoading(false);
     }
   };
