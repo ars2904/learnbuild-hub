@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, GraduationCap, MonitorPlay, Mail, 
-  BookOpen, Users, LogOut, ShieldCheck, Menu, X, ArrowLeft
+  BookOpen, Users, LogOut, ShieldCheck, Menu, X, ArrowLeft,
+  Briefcase, UserCheck, CheckSquare
 } from "lucide-react";
 import { getAdminSession, logoutAdmin } from "@/lib/supabase/auth";
 
@@ -40,6 +41,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: "Overview", href: "/admin", icon: LayoutDashboard },
+    { label: "Clients CRM", href: "/admin/clients", icon: Briefcase },
+    { label: "Employee Credentials", href: "/admin/employees", icon: UserCheck },
+    { label: "Tasks & Deadlines", href: "/admin/tasks", icon: CheckSquare },
     { label: "Enrollment Leads", href: "/admin/enrollments", icon: GraduationCap },
     { label: "Demo Requests", href: "/admin/demos", icon: MonitorPlay },
     { label: "Contact Inbox", href: "/admin/messages", icon: Mail },
