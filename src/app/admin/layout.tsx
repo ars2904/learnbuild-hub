@@ -40,15 +40,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   const navItems = [
-    { label: "Overview", href: "/admin", icon: LayoutDashboard },
-    { label: "Clients CRM", href: "/admin/clients", icon: Briefcase },
-    { label: "Employee Credentials", href: "/admin/employees", icon: UserCheck },
-    { label: "Tasks & Deadlines", href: "/admin/tasks", icon: CheckSquare },
-    { label: "Enrollment Leads", href: "/admin/enrollments", icon: GraduationCap },
+    { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { label: "Clients / Leads", href: "/admin/clients", icon: Briefcase },
+    { label: "Employees", href: "/admin/employees", icon: UserCheck },
+    { label: "Tasks", href: "/admin/tasks", icon: CheckSquare },
+    { label: "Courses", href: "/admin/courses", icon: BookOpen },
+    { label: "Enquiries", href: "/admin/messages", icon: Mail },
     { label: "Demo Requests", href: "/admin/demos", icon: MonitorPlay },
-    { label: "Contact Inbox", href: "/admin/messages", icon: Mail },
-    { label: "Course Manager CMS", href: "/admin/courses", icon: BookOpen },
-    { label: "Instructor Manager CMS", href: "/admin/instructors", icon: Users },
+    { label: "Enrollments", href: "/admin/enrollments", icon: GraduationCap },
   ];
 
   return (
