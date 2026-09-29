@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         // Redirect to login if unauthenticated
         router.push("/admin/login");
       } else {
-        setUserEmail(session.user?.email || localStorage.getItem("lb_admin_email") || "saurabh.srivastav2023@gmail.com");
+        setUserEmail(session.user?.email || localStorage.getItem("lb_admin_email") || "learnbuildh@gmail.com");
       }
     });
   }, [pathname, router]);
