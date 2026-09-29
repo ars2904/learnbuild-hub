@@ -98,10 +98,34 @@ const categories = ["All", "Technology", "Programming", "Projects", "Career", "A
 export default function BlogsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [blogList, setBlogList] = useState<any[]>(ALL_BLOGS);
 
-  const featuredArticle = ALL_BLOGS.find((b) => b.featured) || ALL_BLOGS[0];
+  React.useEffect(() => {
+    fetch("/api/blogs")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data && data.data.length > 0) {
+          const mapped = data.data.map((b: any) => ({
+            id: b.id,
+            title: b.title,
+            excerpt: b.excerpt || b.content?.slice(0, 150) || "",
+            category: b.category || "Technology",
+            author: b.authorName || b.author || "LearnBuild Team",
+            date: b.publishedAt ? new Date(b.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Sep 2026",
+            readTime: b.readTime || "5 min read",
+            image: b.coverImage || b.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+            externalUrl: b.externalUrl || null,
+            featured: b.featured || false,
+          }));
+          setBlogList(mapped);
+        }
+      })
+      .catch((e) => console.warn("Failed fetching dynamic blogs:", e));
+  }, []);
 
-  const filteredBlogs = ALL_BLOGS.filter((blog) => {
+  const featuredArticle = blogList.find((b) => b.featured) || blogList[0];
+
+  const filteredBlogs = blogList.filter((blog) => {
     const matchesCategory =
       selectedCategory === "All" || blog.category === selectedCategory;
     const matchesSearch =
