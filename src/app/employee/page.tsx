@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { CRMTask, Employee } from "@/lib/data/crm";
 import { StudentProfile } from "@/lib/data/studentStore";
+import { getUserSession } from "@/lib/supabase/auth";
 
 function formatEmailToName(email: string): string {
   if (!email || !email.includes("@")) return "Expert Mentor";
@@ -113,9 +114,11 @@ export default function ExpertDashboardPage() {
   };
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem("lb_employee_email") || "expert@learnbuildhub.com";
-    setExpertEmail(storedEmail);
-    fetchExpertScopedData(storedEmail);
+    getUserSession().then((session) => {
+      const email = session?.user?.email || localStorage.getItem("lb_employee_email") || "expert@learnbuildhub.com";
+      setExpertEmail(email);
+      fetchExpertScopedData(email);
+    });
   }, []);
 
   const handleUpdateTaskStatus = async (task: CRMTask, newStatus: CRMTask["status"]) => {

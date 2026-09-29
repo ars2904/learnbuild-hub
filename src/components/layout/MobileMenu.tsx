@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { X, ExternalLink, ArrowRight, Home, BookOpen, Code, Info, FileText, Mail } from "lucide-react";
 import { Logo } from "@/components/common/Logo";
+import { getUserSession, isAdminEmail } from "@/lib/supabase/auth";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -27,6 +28,28 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   navLinks,
 }) => {
   const pathname = usePathname();
+  const [ctaHref, setCtaHref] = useState("/login");
+  const [ctaText, setCtaText] = useState("Get Started");
+
+  useEffect(() => {
+    getUserSession().then((session) => {
+      if (session?.user) {
+        if (isAdminEmail(session.user.email)) {
+          setCtaHref("/admin");
+          setCtaText("Admin Portal");
+        } else if (session.user.user_metadata?.role === "employee") {
+          setCtaHref("/employee");
+          setCtaText("Expert Portal");
+        } else {
+          setCtaHref("/dashboard");
+          setCtaText("My Dashboard");
+        }
+      } else {
+        setCtaHref("/login");
+        setCtaText("Get Started");
+      }
+    });
+  }, [pathname, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -108,11 +131,11 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
         {/* Bottom CTA Button */}
         <div className="mt-8 pt-6 border-t border-slate-200 space-y-3">
           <Link
-            href="/login"
+            href={ctaHref}
             onClick={onClose}
             className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-brand-blue/30"
           >
-            <span>Get Started</span>
+            <span>{ctaText}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
 

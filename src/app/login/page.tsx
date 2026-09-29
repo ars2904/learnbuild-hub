@@ -29,6 +29,8 @@ function LoginForm() {
       if (session?.user) {
         if (isAdminEmail(session.user.email)) {
           router.push("/admin");
+        } else if (session.user.user_metadata?.role === "employee" || session.user.user_metadata?.role === "expert") {
+          router.push("/employee");
         } else {
           router.push("/dashboard");
         }
@@ -43,12 +45,16 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      localStorage.setItem("lb_student_email", email.trim().toLowerCase());
       const result = await loginUser(email, password);
       if (result.isAdmin) {
         setSuccessMsg("Admin identity verified. Redirecting to Admin Portal...");
         setTimeout(() => router.push("/admin"), 800);
+      } else if (result.user?.user_metadata?.role === "employee" || result.user?.user_metadata?.role === "expert") {
+        localStorage.setItem("lb_employee_email", email.trim().toLowerCase());
+        setSuccessMsg("Expert account verified. Redirecting to Expert Workbench...");
+        setTimeout(() => router.push("/employee"), 800);
       } else {
+        localStorage.setItem("lb_student_email", email.trim().toLowerCase());
         setSuccessMsg("Welcome back! Redirecting to Student Dashboard...");
         setTimeout(() => router.push("/dashboard"), 800);
       }

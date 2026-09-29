@@ -7,10 +7,13 @@ import { Menu, ExternalLink, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/common/Logo";
 import { MobileMenu } from "./MobileMenu";
 import { NAV_LINKS } from "@/lib/constants";
+import { getUserSession, isAdminEmail } from "@/lib/supabase/auth";
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [ctaHref, setCtaHref] = useState("/login");
+  const [ctaText, setCtaText] = useState("Get Started");
   const pathname = usePathname();
 
   useEffect(() => {
@@ -21,6 +24,26 @@ export const Navbar: React.FC = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    getUserSession().then((session) => {
+      if (session?.user) {
+        if (isAdminEmail(session.user.email)) {
+          setCtaHref("/admin");
+          setCtaText("Admin Portal");
+        } else if (session.user.user_metadata?.role === "employee") {
+          setCtaHref("/employee");
+          setCtaText("Expert Portal");
+        } else {
+          setCtaHref("/dashboard");
+          setCtaText("My Dashboard");
+        }
+      } else {
+        setCtaHref("/login");
+        setCtaText("Get Started");
+      }
+    });
+  }, [pathname]);
 
   const isBuildPage = pathname === "/build";
 
@@ -87,10 +110,10 @@ export const Navbar: React.FC = () => {
                 </Link>
               ) : (
                 <Link
-                  href="/login"
+                  href={ctaHref}
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:shadow-lg transition-all"
                 >
-                  <span>Get Started</span>
+                  <span>{ctaText}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
