@@ -17,8 +17,16 @@ export async function GET(req: Request) {
         query = query.eq("assigned_employee_id", employeeId);
       }
       const { data, error } = await query;
-      if (!error && data && data.length > 0) {
-        return NextResponse.json({ success: true, data });
+      if (!error && data) {
+        const dbIds = new Set(data.map((t: any) => t.id));
+        const extraMemory = memoryTasks.filter((m) => !dbIds.has(m.id));
+        let combined = [...extraMemory, ...data];
+        if (employeeId) {
+          combined = combined.filter((t) => t.assignedEmployeeId === employeeId || (t as any).assigned_employee_id === employeeId);
+        } else if (employeeEmail) {
+          combined = combined.filter((t) => t.assignedEmployeeEmail?.toLowerCase() === employeeEmail.toLowerCase());
+        }
+        return NextResponse.json({ success: true, data: combined });
       }
     } catch (err) {
       console.warn("Supabase tasks fetch fallback:", err);

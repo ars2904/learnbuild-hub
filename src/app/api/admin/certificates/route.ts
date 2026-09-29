@@ -17,8 +17,13 @@ export async function GET(request: Request) {
         if (studentId) query = query.eq("student_id", studentId);
         if (email) query = query.eq("student_email", email);
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
-          return NextResponse.json({ success: true, data });
+        if (!error && data) {
+          const dbIds = new Set(data.map((c: any) => c.id));
+          const extraMemory = memoryCertificates.filter((m) => !dbIds.has(m.id));
+          let combined = [...extraMemory, ...data];
+          if (studentId) combined = combined.filter((c) => c.studentId === studentId || (c as any).student_id === studentId);
+          if (email) combined = combined.filter((c) => c.studentEmail.toLowerCase() === email.toLowerCase());
+          return NextResponse.json({ success: true, data: combined });
         }
       } catch (e) {
         console.warn("Supabase fetch certificates error fallback:", e);

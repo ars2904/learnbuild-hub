@@ -18,7 +18,12 @@ export async function GET(request: Request) {
         if (email) query = query.eq("email", email);
         const { data, error } = await query;
         if (!error && data) {
-          return NextResponse.json({ success: true, data });
+          const dbIds = new Set(data.map((s: any) => s.id));
+          const extraMemory = memoryStudents.filter((m) => !dbIds.has(m.id));
+          let combined = [...extraMemory, ...data];
+          if (expertId) combined = combined.filter((s) => s.expertId === expertId || (s as any).expert_id === expertId);
+          if (email) combined = combined.filter((s) => s.email.toLowerCase() === email.toLowerCase());
+          return NextResponse.json({ success: true, data: combined });
         }
       } catch (e) {
         console.warn("Supabase fetch students fallback:", e);

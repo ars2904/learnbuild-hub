@@ -10,7 +10,9 @@ export async function GET() {
     try {
       const { data, error } = await supabase.from("employees").select("*").order("created_at", { ascending: false });
       if (!error && data) {
-        return NextResponse.json({ success: true, data });
+        const dbIds = new Set(data.map((e: any) => e.id));
+        const extraMemory = memoryEmployees.filter((m) => !dbIds.has(m.id));
+        return NextResponse.json({ success: true, data: [...extraMemory, ...data] });
       }
     } catch (err) {
       console.warn("Supabase employees fetch fallback:", err);
