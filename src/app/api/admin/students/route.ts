@@ -67,6 +67,7 @@ export async function POST(request: Request) {
       bio: "Learning software engineering with live mentorship.",
       profileLocked: false,
       hasInternship: false,
+      progress: 65,
       createdAt: new Date().toISOString(),
     };
 
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
           bio: newStudent.bio,
           profile_locked: newStudent.profileLocked,
           has_internship: newStudent.hasInternship,
+          progress: newStudent.progress,
         }]);
       } catch (e) {
         console.warn("Supabase insert student fallback:", e);
@@ -110,38 +112,55 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { id, isStudentEdit, ...updates } = body;
 
-    if (!id) {
-      return NextResponse.json({ success: false, message: "Student ID required." }, { status: 400 });
+    if (!id && !updates.email) {
+      return NextResponse.json({ success: false, message: "Student ID or Email required." }, { status: 400 });
     }
 
-    const idx = memoryStudents.findIndex((s) => s.id === id || s.email === updates.email);
-    if (idx === -1) {
-      return NextResponse.json({ success: false, message: "Student record not found." }, { status: 404 });
-    }
+    const idx = memoryStudents.findIndex((s) => (id && s.id === id) || (updates.email && s.email.toLowerCase() === updates.email.toLowerCase()));
+    let existingStudent = idx !== -1 ? memoryStudents[idx] : null;
 
-    const student = memoryStudents[idx];
-
-    // Check if student profile is already locked
-    if (isStudentEdit && student.profileLocked) {
+    if (isStudentEdit && existingStudent?.profileLocked) {
       return NextResponse.json({ 
         success: false, 
         message: "🔒 Profile is locked. Only Admin can update student profile details." 
       }, { status: 403 });
     }
 
-    const updatedObj: StudentProfile = {
-      ...student,
+    const updatedObj: StudentProfile = existingStudent ? {
+      ...existingStudent,
       ...updates,
-      profileLocked: isStudentEdit ? true : (updates.profileLocked ?? student.profileLocked),
+      profileLocked: isStudentEdit ? true : (updates.profileLocked ?? existingStudent.profileLocked),
+    } : {
+      id: id || `std-${Date.now()}`,
+      name: updates.name || "Student User",
+      email: updates.email || "student@learnbuildhub.com",
+      phone: updates.phone || "",
+      courseTitle: updates.courseTitle || "Full-Stack Web Engineering Track",
+      courseSlug: updates.courseSlug || "full-stack-web-engineering",
+      expertId: updates.expertId || "emp-101",
+      expertName: updates.expertName || "Sneha Sharma",
+      status: updates.status || "active",
+      qualification: updates.qualification || "Undergraduate",
+      bio: updates.bio || "Student software engineer.",
+      profileLocked: isStudentEdit ? true : false,
+      hasInternship: updates.hasInternship || false,
+      progress: updates.progress ?? 65,
+      createdAt: new Date().toISOString(),
     };
 
-    memoryStudents[idx] = updatedObj;
+    if (idx !== -1) {
+      memoryStudents[idx] = updatedObj;
+    } else {
+      memoryStudents.unshift(updatedObj);
+    }
 
     const supabase = createServerClient();
     if (supabase) {
       try {
-        await supabase.from("students").update({
+        await supabase.from("students").upsert([{
+          id: updatedObj.id,
           name: updatedObj.name,
+          email: updatedObj.email,
           phone: updatedObj.phone,
           bio: updatedObj.bio,
           qualification: updatedObj.qualification,
@@ -152,7 +171,8 @@ export async function PUT(request: Request) {
           expert_id: updatedObj.expertId,
           expert_name: updatedObj.expertName,
           course_title: updatedObj.courseTitle,
-        }).eq("id", id);
+          progress: updatedObj.progress,
+        }]);
       } catch (e) {
         console.warn("Supabase update student error:", e);
       }

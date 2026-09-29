@@ -71,26 +71,69 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { id, status, notes, assignedEmployeeId, assignedEmployeeName } = body;
+    const { id, status, notes, assignedEmployeeId, assignedEmployeeName, name, email, phone, company, contractValue, serviceInterested } = body;
+
+    if (!id) {
+      return NextResponse.json({ success: false, message: "Client ID required." }, { status: 400 });
+    }
 
     const index = memoryClients.findIndex((c) => c.id === id);
+    let updatedClient: Client;
+
     if (index !== -1) {
-      if (status) memoryClients[index].status = status;
-      if (notes) memoryClients[index].notes = notes;
-      if (assignedEmployeeId) memoryClients[index].assignedEmployeeId = assignedEmployeeId;
-      if (assignedEmployeeName) memoryClients[index].assignedEmployeeName = assignedEmployeeName;
+      updatedClient = {
+        ...memoryClients[index],
+        name: name || memoryClients[index].name,
+        company: company || memoryClients[index].company,
+        email: email || memoryClients[index].email,
+        phone: phone || memoryClients[index].phone,
+        status: status || memoryClients[index].status,
+        notes: notes || memoryClients[index].notes,
+        serviceInterested: serviceInterested || memoryClients[index].serviceInterested,
+        contractValue: contractValue !== undefined ? Number(contractValue) : memoryClients[index].contractValue,
+        assignedEmployeeId: assignedEmployeeId || memoryClients[index].assignedEmployeeId,
+        assignedEmployeeName: assignedEmployeeName || memoryClients[index].assignedEmployeeName,
+      };
+      memoryClients[index] = updatedClient;
+    } else {
+      updatedClient = {
+        id,
+        name: name || "Client Lead",
+        company: company || "Organization",
+        email: email || "",
+        phone: phone || "",
+        status: status || "active",
+        serviceInterested: serviceInterested || "Enterprise Service",
+        contractValue: Number(contractValue) || 50000,
+        assignedEmployeeId: assignedEmployeeId || "",
+        assignedEmployeeName: assignedEmployeeName || "Sneha Sharma",
+        notes: notes || "",
+        createdAt: new Date().toISOString(),
+      };
+      memoryClients.unshift(updatedClient);
     }
 
     const supabase = createServerClient();
     if (supabase) {
       try {
-        await supabase.from("clients").update({ status, notes, assigned_employee_name: assignedEmployeeName }).eq("id", id);
+        const updatePayload: Record<string, any> = {};
+        if (status) updatePayload.status = status;
+        if (notes) updatePayload.notes = notes;
+        if (assignedEmployeeName) updatePayload.assigned_employee_name = assignedEmployeeName;
+        if (name) updatePayload.name = name;
+        if (company) updatePayload.company = company;
+        if (email) updatePayload.email = email;
+        if (phone) updatePayload.phone = phone;
+        if (contractValue !== undefined) updatePayload.contract_value = Number(contractValue);
+        if (serviceInterested) updatePayload.service_interested = serviceInterested;
+
+        await supabase.from("clients").update(updatePayload).eq("id", id);
       } catch (e) {
         console.warn("Supabase client update error:", e);
       }
     }
 
-    return NextResponse.json({ success: true, data: index !== -1 ? memoryClients[index] : { id, status } });
+    return NextResponse.json({ success: true, data: updatedClient });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }

@@ -155,6 +155,66 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, name, designation, department, phone, status, role } = body;
+
+    if (!id) {
+      return NextResponse.json({ success: false, message: "Employee ID required." }, { status: 400 });
+    }
+
+    const idx = memoryEmployees.findIndex((e) => e.id === id || e.email?.toLowerCase() === body.email?.toLowerCase());
+    let updatedObj: Employee;
+
+    if (idx !== -1) {
+      updatedObj = {
+        ...memoryEmployees[idx],
+        name: name || memoryEmployees[idx].name,
+        designation: designation || memoryEmployees[idx].designation,
+        department: department || memoryEmployees[idx].department,
+        phone: phone || memoryEmployees[idx].phone,
+        status: status || memoryEmployees[idx].status,
+        role: role || memoryEmployees[idx].role,
+      };
+      memoryEmployees[idx] = updatedObj;
+    } else {
+      updatedObj = {
+        id,
+        name: name || "Expert Member",
+        email: body.email || "expert@learnbuildhub.com",
+        designation: designation || "Senior Expert Mentor",
+        department: department || "Engineering",
+        phone: phone || "+91 98765 00000",
+        role: role || "Employee",
+        status: status || "Active",
+        createdAt: new Date().toISOString(),
+      };
+      memoryEmployees.unshift(updatedObj);
+    }
+
+    const supabase = createServerClient();
+    if (supabase) {
+      try {
+        await supabase.from("employees").update({
+          name: updatedObj.name,
+          designation: updatedObj.designation,
+          department: updatedObj.department,
+          phone: updatedObj.phone,
+          status: updatedObj.status,
+          role: updatedObj.role,
+        }).eq("id", id);
+      } catch (e) {
+        console.warn("Supabase update employee error:", e);
+      }
+    }
+
+    return NextResponse.json({ success: true, data: updatedObj, message: "Employee profile updated successfully." });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 400 });
+  }
+}
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

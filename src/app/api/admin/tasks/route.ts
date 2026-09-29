@@ -24,7 +24,7 @@ export async function GET(req: Request) {
         if (employeeId) {
           combined = combined.filter((t) => t.assignedEmployeeId === employeeId || (t as any).assigned_employee_id === employeeId);
         } else if (employeeEmail) {
-          combined = combined.filter((t) => t.assignedEmployeeEmail?.toLowerCase() === employeeEmail.toLowerCase());
+          combined = combined.filter((t) => t.assignedEmployeeEmail?.toLowerCase() === employeeEmail.toLowerCase() || (t as any).assigned_employee_email?.toLowerCase() === employeeEmail.toLowerCase());
         }
         return NextResponse.json({ success: true, data: combined });
       }
@@ -73,6 +73,7 @@ export async function POST(req: Request) {
           client_name: newTask.clientName,
           assigned_employee_id: newTask.assignedEmployeeId,
           assigned_employee_name: newTask.assignedEmployeeName,
+          assigned_employee_email: newTask.assignedEmployeeEmail,
           deadline: newTask.deadline,
           priority: newTask.priority,
           status: newTask.status,
@@ -93,24 +94,53 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const { id, status, priority, deadline, description } = body;
 
+    if (!id) {
+      return NextResponse.json({ success: false, message: "Task ID is required." }, { status: 400 });
+    }
+
     const index = memoryTasks.findIndex((t) => t.id === id);
+    let updatedTask: CRMTask;
+
     if (index !== -1) {
       if (status) memoryTasks[index].status = status;
       if (priority) memoryTasks[index].priority = priority;
       if (deadline) memoryTasks[index].deadline = deadline;
       if (description) memoryTasks[index].description = description;
+      updatedTask = memoryTasks[index];
+    } else {
+      updatedTask = {
+        id,
+        title: body.title || "Assigned Deliverable",
+        description: description || "",
+        clientId: "",
+        clientName: "General Project",
+        assignedEmployeeId: body.assignedEmployeeId || "",
+        assignedEmployeeName: body.assignedEmployeeName || "Mentor Expert",
+        assignedEmployeeEmail: body.assignedEmployeeEmail || "",
+        deadline: deadline || "2026-10-15",
+        priority: priority || "High",
+        status: status || "Pending",
+        createdAt: new Date().toISOString(),
+      };
+      memoryTasks.unshift(updatedTask);
     }
 
     const supabase = createServerClient();
     if (supabase) {
       try {
-        await supabase.from("tasks").update({ status, priority, deadline, description }).eq("id", id);
+        const updatePayload: Record<string, any> = {};
+        if (status) updatePayload.status = status;
+        if (priority) updatePayload.priority = priority;
+        if (deadline) updatePayload.deadline = deadline;
+        if (description) updatePayload.description = description;
+
+        await supabase.from("tasks").update(updatePayload).eq("id", id);
       } catch (e) {
         console.warn("Supabase task update error:", e);
       }
     }
 
-    return NextResponse.json({ success: true, data: memoryTasks[index] });
+    return NextResponse.json({ success: true, data: updatedTask });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 400 });
   }
