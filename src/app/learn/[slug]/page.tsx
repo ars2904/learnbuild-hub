@@ -21,7 +21,43 @@ export default function CourseDetailsPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
-  const course = sampleCourses.find((c) => c.slug === slug);
+  const [course, setCourse] = useState<any>(() => sampleCourses.find((c) => c.slug === slug) || null);
+  const [loadingCourse, setLoadingCourse] = useState(!course);
+
+  React.useEffect(() => {
+    fetch("/api/admin/courses")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.data) {
+          const match = data.data.find((c: any) => c.slug === slug || c.id === slug);
+          if (match) {
+            setCourse({
+              id: match.id,
+              slug: match.slug,
+              title: match.title,
+              tagline: match.tagline || match.short_description || "",
+              category: match.category || "Web Engineering",
+              duration: match.duration || "8 Weeks",
+              level: match.level || "Beginner to Advanced",
+              mode: match.mode || "Live Mentorship Track",
+              rating: match.rating || 4.9,
+              studentsEnrolled: match.studentsEnrolled || match.students_enrolled || 120,
+              image: match.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+              shortDescription: match.tagline || match.short_description || "",
+              overview: match.overview || "",
+              whatYouWillLearn: match.whatYouWillLearn || match.what_you_will_learn || [],
+              curriculum: match.curriculum || [],
+              eligibility: match.eligibility || [],
+              careerOptions: match.careerOptions || match.career_options || [],
+              prerequisites: match.prerequisites || "",
+            });
+          }
+        }
+      })
+      .catch((e) => console.warn("Failed fetching dynamic course detail:", e))
+      .finally(() => setLoadingCourse(false));
+  }, [slug]);
+
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [openModule, setOpenModule] = useState<number | null>(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -30,6 +66,15 @@ export default function CourseDetailsPage() {
   const [demoModalOpen, setDemoModalOpen] = useState(false);
   const [selectedInstructorForEnroll, setSelectedInstructorForEnroll] = useState<string>("");
   const [profileModalInstructor, setProfileModalInstructor] = useState<Instructor | null>(null);
+
+  if (loadingCourse) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-white">
+        <GraduationCap className="w-12 h-12 text-brand-blue animate-pulse mb-3" />
+        <p className="text-sm font-bold text-slate-600">Loading course track...</p>
+      </div>
+    );
+  }
 
   if (!course) {
     return (
@@ -237,7 +282,7 @@ export default function CourseDetailsPage() {
               </h2>
 
               <div className="space-y-3 sm:space-y-4">
-                {course.curriculum.map((mod, idx) => {
+                {course.curriculum.map((mod: any, idx: number) => {
                   const isOpen = openModule === idx;
                   return (
                     <div
@@ -270,7 +315,7 @@ export default function CourseDetailsPage() {
                             className="overflow-hidden border-t border-slate-100"
                           >
                             <div className="p-4 sm:p-5 bg-slate-50/60 space-y-2.5">
-                              {mod.topics.map((topic, i) => (
+                              {mod.topics.map((topic: string, i: number) => (
                                 <div key={i} className="flex items-start gap-2 text-xs sm:text-sm text-slate-700 font-medium">
                                   <span className="w-1.5 h-1.5 rounded-full bg-brand-blue mt-1.5 flex-shrink-0" />
                                   <span className="break-words leading-relaxed">{topic}</span>
@@ -292,7 +337,7 @@ export default function CourseDetailsPage() {
                 What You'll Learn
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {course.whatYouWillLearn.map((item, idx) => (
+                {course.whatYouWillLearn.map((item: string, idx: number) => (
                   <div key={idx} className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-brand-blue text-white flex items-center justify-center flex-shrink-0 mt-0.5">
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -318,7 +363,7 @@ export default function CourseDetailsPage() {
 
               {/* Centered Cards Grid Matching Mockup */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                {instructors.map((inst) => (
+                {instructors.map((inst: any) => (
                   <div
                     key={inst.id}
                     className="p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col items-center text-center justify-between group"
@@ -344,7 +389,7 @@ export default function CourseDetailsPage() {
 
                       {/* Skill Pills */}
                       <div className="flex flex-wrap items-center justify-center gap-1.5 mb-5">
-                        {inst.skills.slice(0, 3).map((sk, idx) => (
+                        {inst.skills.slice(0, 3).map((sk: string, idx: number) => (
                           <span
                             key={idx}
                             className="px-2.5 py-1 rounded-full bg-blue-50 text-brand-blue text-[10px] sm:text-[11px] font-bold border border-blue-100"
@@ -376,7 +421,7 @@ export default function CourseDetailsPage() {
               </h2>
 
               <div className="space-y-3">
-                {sampleFaqs.map((faq, idx) => {
+                {sampleFaqs.map((faq: any, idx: number) => {
                   const isOpen = openFaq === idx;
                   return (
                     <div
@@ -413,7 +458,7 @@ export default function CourseDetailsPage() {
                 <span>Eligibility</span>
               </h3>
               <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
-                {course.eligibility.map((item, idx) => (
+                {course.eligibility.map((item: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2">
                     <span className="text-brand-blue font-bold">•</span>
                     <span className="break-words">{item}</span>
@@ -429,7 +474,7 @@ export default function CourseDetailsPage() {
                 <span>Career Opportunities</span>
               </h3>
               <div className="flex flex-wrap gap-2">
-                {course.careerOptions.map((career, idx) => (
+                {course.careerOptions.map((career: string, idx: number) => (
                   <span key={idx} className="px-3 py-1.5 rounded-xl bg-orange-50 border border-orange-200 text-xs font-bold text-orange-800">
                     {career}
                   </span>

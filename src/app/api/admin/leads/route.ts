@@ -16,7 +16,6 @@ export async function GET(request: Request) {
         try {
           const { data, error } = await supabase.from("demo_requests").select("*").order("created_at", { ascending: false });
           if (!error && data && data.length > 0) {
-            // Combine Supabase data with local memory items that might not be in DB
             const existingIds = new Set(data.map((d) => d.id));
             const extraMemory = memoryDemos.filter((m) => !existingIds.has(m.id));
             return NextResponse.json({ success: true, data: [...extraMemory, ...data] });
@@ -115,5 +114,43 @@ export async function PUT(request: Request) {
   } catch (err) {
     console.error("PUT Admin leads route error:", err);
     return NextResponse.json({ success: false, message: "Server error updating lead status." }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const type = searchParams.get("type");
+
+    if (!id || !type) {
+      return NextResponse.json({ success: false, message: "ID and type are required." }, { status: 400 });
+    }
+
+    if (type === "demos") {
+      const idx = memoryDemos.findIndex((d) => d.id === id);
+      if (idx !== -1) memoryDemos.splice(idx, 1);
+    } else if (type === "messages") {
+      const idx = memoryMessages.findIndex((m) => m.id === id);
+      if (idx !== -1) memoryMessages.splice(idx, 1);
+    } else if (type === "enrollments") {
+      const idx = memoryEnrollments.findIndex((e) => e.id === id);
+      if (idx !== -1) memoryEnrollments.splice(idx, 1);
+    }
+
+    const supabase = createServerClient();
+    if (supabase) {
+      try {
+        const tableName = type === "demos" ? "demo_requests" : type === "messages" ? "contact_submissions" : "enrollments";
+        await supabase.from(tableName).delete().eq("id", id);
+      } catch (e) {
+        console.warn("Supabase delete lead error:", e);
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    console.error("DELETE Admin leads route error:", err);
+    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
 }
