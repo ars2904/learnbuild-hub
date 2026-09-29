@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Users, UserPlus, Mail, MessageSquare, 
-  Trash2, X, Loader2, Copy, CheckCircle2, Phone, Briefcase, Send, Eye, EyeOff
+  Trash2, X, Loader2, Copy, CheckCircle2, Phone, Briefcase, Send, Eye, EyeOff, Sparkles, ShieldCheck
 } from "lucide-react";
 import { Employee } from "@/lib/data/crm";
 
@@ -47,7 +47,7 @@ export default function AdminEmployeesPage() {
         setEmployees(json.data);
       }
     } catch (err) {
-      console.error("Error fetching employees:", err);
+      console.error("Error fetching expert network:", err);
     }
     setLoading(false);
   };
@@ -81,6 +81,11 @@ export default function AdminEmployeesPage() {
           triggerWhatsAppMessage(creds);
         }
 
+        // Auto trigger email if selected
+        if (formData.sendEmail && creds.email) {
+          triggerEmailDispatch(creds);
+        }
+
         setFormData({
           name: "",
           email: "",
@@ -94,12 +99,12 @@ export default function AdminEmployeesPage() {
         fetchEmployees();
       }
     } catch (err) {
-      console.error("Error creating employee:", err);
+      console.error("Error creating expert account:", err);
     }
   };
 
   const handleDeleteEmployee = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this employee account?")) return;
+    if (!confirm("Are you sure you want to remove this expert account?")) return;
     try {
       const res = await fetch(`/api/admin/employees?id=${id}`, { method: "DELETE" });
       const json = await res.json();
@@ -107,7 +112,7 @@ export default function AdminEmployeesPage() {
         fetchEmployees();
       }
     } catch (err) {
-      console.error("Error deleting employee:", err);
+      console.error("Error deleting expert:", err);
     }
   };
 
@@ -116,14 +121,14 @@ export default function AdminEmployeesPage() {
     const cleanPhone = creds.phone.replace(/[^0-9]/g, "");
     const message = `Hello ${creds.name} 👋,
 
-Welcome to the LearnBuild Hub Team! Your official employee workspace account is ready.
+Welcome to LearnBuild Hub Expert Network! Your official expert workspace account is ready.
 
-📌 *Role:* ${creds.designation}
+📌 *Role / Title:* ${creds.designation}
 ✉️ *Login Email:* ${creds.email}
 🔑 *Password:* ${creds.pass}
-🌐 *Employee Portal:* ${window.location.origin}/employee/login
+🌐 *Expert Portal:* ${window.location.origin}/employee/login
 
-Please login to view your assigned client tasks and project timelines.`;
+Please login to view your assigned client build projects and manage course reviews.`;
 
     const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
@@ -148,7 +153,7 @@ Please login to view your assigned client tasks and project timelines.`;
       if (json.success) {
         setEmailSentStatus(`Credentials successfully emailed to ${creds.email}!`);
       } else {
-        setEmailSentStatus(`Email dispatch failed: ${json.message}`);
+        setEmailSentStatus(`Email dispatch note: ${json.message}`);
       }
     } catch (err) {
       setEmailSentStatus("Failed to send email. Check network connectivity.");
@@ -160,7 +165,7 @@ Please login to view your assigned client tasks and project timelines.`;
   // Clipboard Copy Helper
   const handleCopyCredentials = () => {
     if (!createdCredentials) return;
-    const text = `LearnBuild Hub Official Employee Workspace Credentials\n\nName: ${createdCredentials.name}\nDesignation: ${createdCredentials.designation}\nLogin Email: ${createdCredentials.email}\nPassword: ${createdCredentials.pass}\nLogin URL: ${window.location.origin}/employee/login`;
+    const text = `LearnBuild Hub Official Expert Workspace Credentials\n\nName: ${createdCredentials.name}\nDesignation: ${createdCredentials.designation}\nLogin Email: ${createdCredentials.email}\nPassword: ${createdCredentials.pass}\nLogin URL: ${window.location.origin}/employee/login`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
@@ -173,13 +178,13 @@ Please login to view your assigned client tasks and project timelines.`;
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-blue-200 mb-2">
             <Users className="w-3.5 h-3.5 text-blue-300" />
-            <span>Employee & Credentials Management</span>
+            <span>Experts & Mentors Network</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Employee Directory & Automated Access
+            Experts & Instructors Directory
           </h1>
           <p className="text-xs sm:text-sm text-blue-200 mt-1">
-            Create employee accounts with designations and automatically dispatch login credentials via Email or WhatsApp.
+            Manage domain experts, software mentors, and technical specialists. Dispatch login credentials via Email & WhatsApp.
           </p>
         </div>
 
@@ -188,7 +193,7 @@ Please login to view your assigned client tasks and project timelines.`;
           className="px-6 py-3.5 rounded-full bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-blue/30 transition-all flex items-center gap-2 flex-shrink-0 cursor-pointer"
         >
           <UserPlus className="w-4 h-4" />
-          <span>Add Employee</span>
+          <span>Add Expert Member</span>
         </button>
       </div>
 
@@ -211,7 +216,7 @@ Please login to view your assigned client tasks and project timelines.`;
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <span className="text-slate-500 font-bold block">Employee Name:</span>
+                <span className="text-slate-500 font-bold block">Expert Name:</span>
                 <span className="text-slate-900 font-bold text-sm">{createdCredentials.name}</span>
               </div>
               <div>
@@ -276,17 +281,17 @@ Please login to view your assigned client tasks and project timelines.`;
         </div>
       )}
 
-      {/* Employee Directory Grid */}
+      {/* Experts Network Directory Grid */}
       {loading ? (
         <div className="py-16 text-center text-slate-500">
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-brand-blue" />
-          <p className="text-xs font-medium">Loading employee directory...</p>
+          <p className="text-xs font-medium">Loading expert directory...</p>
         </div>
       ) : employees.length === 0 ? (
         <div className="p-12 rounded-3xl bg-white border-2 border-slate-200/80 text-center text-slate-500">
           <Users className="w-10 h-10 mx-auto mb-2 text-slate-400" />
-          <p className="text-sm font-bold text-slate-900 mb-1">No Employees Found</p>
-          <p className="text-xs">Click "Add Employee" above to generate employee credentials.</p>
+          <p className="text-sm font-bold text-slate-900 mb-1">No Expert Accounts Found</p>
+          <p className="text-xs">Click "Add Expert Member" above to create credentials.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -317,12 +322,12 @@ Please login to view your assigned client tasks and project timelines.`;
                   </div>
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-3.5 h-3.5 text-slate-400" />
-                    <span className="font-semibold">Dept: {emp.department}</span>
+                    <span className="font-semibold">Domain: {emp.department}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Action Toolbar on Employee Card */}
+              {/* Action Toolbar on Expert Card */}
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-1.5">
                   <button
@@ -358,7 +363,7 @@ Please login to view your assigned client tasks and project timelines.`;
                 <button
                   onClick={() => handleDeleteEmployee(emp.id)}
                   className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-colors"
-                  title="Remove Employee"
+                  title="Remove Expert Member"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -368,13 +373,13 @@ Please login to view your assigned client tasks and project timelines.`;
         </div>
       )}
 
-      {/* Add Employee Modal */}
+      {/* Add Expert Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl space-y-5 my-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div>
-                <h3 className="text-xl font-black text-slate-900">Add Employee Account</h3>
+                <h3 className="text-xl font-black text-slate-900">Add Expert Account</h3>
                 <p className="text-xs text-slate-500 font-medium">Generate credentials & choose dispatch options.</p>
               </div>
               <button
@@ -391,7 +396,7 @@ Please login to view your assigned client tasks and project timelines.`;
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Aman Sharma"
+                  placeholder="e.g. Dr. Sneha Sharma"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
@@ -399,11 +404,11 @@ Please login to view your assigned client tasks and project timelines.`;
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Designation / Title *</label>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Designation / Role Title *</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Senior Software Engineer"
+                  placeholder="e.g. Lead AI Architect & Instructor"
                   value={formData.designation}
                   onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
@@ -412,13 +417,13 @@ Please login to view your assigned client tasks and project timelines.`;
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Department</label>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Domain</label>
                   <select
                     value={formData.department}
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
                   >
-                    <option value="Software Development">Software Development</option>
+                    <option value="Software Development">Software Engineering</option>
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
                     <option value="Digital Marketing & Growth">Digital Marketing & Growth</option>
                     <option value="Client Success">Client Success</option>
@@ -442,7 +447,7 @@ Please login to view your assigned client tasks and project timelines.`;
                 <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Email Address</label>
                 <input
                   type="email"
-                  placeholder="employee@learnbuildhub.com"
+                  placeholder="expert@learnbuildhub.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
@@ -462,7 +467,7 @@ Please login to view your assigned client tasks and project timelines.`;
                     onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
                     className="w-4 h-4 rounded accent-brand-blue"
                   />
-                  <span>Send credentials to Employee Email automatically</span>
+                  <span>Send credentials to Expert Email automatically</span>
                 </label>
 
                 <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 font-bold">

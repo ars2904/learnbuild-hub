@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { label: "Website Content (CMS)", href: "/admin/content", icon: Globe },
     { label: "Clients / Leads", href: "/admin/clients", icon: Briefcase },
-    { label: "Employees", href: "/admin/employees", icon: UserCheck },
+    { label: "Experts & Team", href: "/admin/employees", icon: UserCheck },
     { label: "Tasks & Assignments", href: "/admin/tasks", icon: CheckSquare },
     { label: "Courses Directory", href: "/admin/courses", icon: BookOpen },
     { label: "Contact Inquiries", href: "/admin/messages", icon: Mail },
