@@ -43,6 +43,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      localStorage.setItem("lb_student_email", email.trim().toLowerCase());
       const result = await loginUser(email, password);
       if (result.isAdmin) {
         setSuccessMsg("Admin identity verified. Redirecting to Admin Portal...");

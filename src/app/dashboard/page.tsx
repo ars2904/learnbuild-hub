@@ -9,33 +9,31 @@ import {
 import { getUserSession } from "@/lib/supabase/auth";
 import { StudentProfile, IssuedCertificate } from "@/lib/data/studentStore";
 
+function formatEmailToName(email: string): string {
+  if (!email || !email.includes("@")) return "Student User";
+  const username = email.split("@")[0];
+  return username.replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function StudentDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"tracks" | "mentor" | "certificates" | "profile" | "internship">("tracks");
   
   const [student, setStudent] = useState<StudentProfile>({
-    id: "std-101",
-    name: "Priya Sharma",
-    email: "priya.sharma@gmail.com",
-    phone: "+91 98333 44556",
+    id: "std-user",
+    name: "Student User",
+    email: "student@learnbuildhub.com",
+    phone: "",
     courseTitle: "Full-Stack Web Engineering Track",
     courseSlug: "full-stack-web-engineering",
     expertId: "emp-101",
-    expertName: "Sneha Sharma",
+    expertName: "Senior Lead Mentor",
     status: "active",
-    qualification: "B.Tech Computer Science",
-    bio: "Passionate full-stack developer focusing on Next.js 14, React, and Supabase cloud backends.",
-    githubUrl: "https://github.com/priyasharma",
-    linkedinUrl: "https://linkedin.com/in/priyasharma",
+    qualification: "Undergraduate",
+    bio: "Learning software engineering with live mentorship.",
     profileLocked: false,
-    hasInternship: true,
-    internshipDetails: {
-      role: "Full-Stack Web Intern",
-      company: "LearnBuild Hub Labs",
-      status: "reviewing",
-      appliedDate: "2026-09-20",
-    },
-    createdAt: "2026-09-15T10:00:00Z",
+    hasInternship: false,
+    createdAt: new Date().toISOString(),
   });
 
   const [certificates, setCertificates] = useState<IssuedCertificate[]>([]);
@@ -52,7 +50,7 @@ export default function StudentDashboardPage() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
 
-  const fetchStudentData = async (email: string) => {
+  const fetchStudentData = async (email: string, userMetaName?: string) => {
     setLoading(true);
     try {
       const [resStd, resCert] = await Promise.all([
@@ -76,6 +74,33 @@ export default function StudentDashboardPage() {
           githubUrl: found.githubUrl || "",
           linkedinUrl: found.linkedinUrl || "",
         });
+      } else {
+        const dynamicName = userMetaName || formatEmailToName(email);
+        const dynamicStudent: StudentProfile = {
+          id: `std-${Date.now()}`,
+          name: dynamicName,
+          email: email,
+          phone: "+91 98765 00000",
+          courseTitle: "Full-Stack Web Engineering Track",
+          courseSlug: "full-stack-web-engineering",
+          expertId: "emp-101",
+          expertName: "Senior Lead Mentor",
+          status: "active",
+          qualification: "Undergraduate",
+          bio: "Student software engineer pursuing full-stack engineering & cloud track.",
+          profileLocked: false,
+          hasInternship: false,
+          createdAt: new Date().toISOString(),
+        };
+        setStudent(dynamicStudent);
+        setProfileForm({
+          name: dynamicName,
+          phone: dynamicStudent.phone,
+          qualification: dynamicStudent.qualification,
+          bio: dynamicStudent.bio,
+          githubUrl: "",
+          linkedinUrl: "",
+        });
       }
 
       if (jsonCert.success && jsonCert.data) {
@@ -90,8 +115,9 @@ export default function StudentDashboardPage() {
 
   useEffect(() => {
     getUserSession().then((session) => {
-      const email = session?.user?.email || "priya.sharma@gmail.com";
-      fetchStudentData(email);
+      const email = session?.user?.email || localStorage.getItem("lb_student_email") || "student@learnbuildhub.com";
+      const userMetaName = session?.user?.user_metadata?.full_name;
+      fetchStudentData(email, userMetaName);
     });
   }, []);
 

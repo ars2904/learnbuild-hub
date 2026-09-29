@@ -11,12 +11,18 @@ import {
 import { CRMTask, Employee } from "@/lib/data/crm";
 import { StudentProfile } from "@/lib/data/studentStore";
 
+function formatEmailToName(email: string): string {
+  if (!email || !email.includes("@")) return "Expert Mentor";
+  const username = email.split("@")[0];
+  return username.replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function ExpertDashboardPage() {
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"tasks" | "students" | "enquiries" | "calendar" | "profile">("tasks");
   const [loading, setLoading] = useState(true);
-  const [expertEmail, setExpertEmail] = useState("sneha@learnbuildhub.com");
+  const [expertEmail, setExpertEmail] = useState("expert@learnbuildhub.com");
   const [expertInfo, setExpertInfo] = useState<Employee | null>(null);
 
   // Scoped Data States
@@ -52,18 +58,32 @@ export default function ExpertDashboardPage() {
       ]);
 
       let expertObj: Employee | null = null;
-      if (jsonEmp.success && jsonEmp.data) {
-        expertObj = jsonEmp.data.find((e: Employee) => e.email.toLowerCase() === email.toLowerCase()) || jsonEmp.data[0];
-        if (expertObj) {
-          setExpertInfo(expertObj);
-          setProfileForm({
-            name: expertObj.name,
-            designation: expertObj.designation,
-            department: expertObj.department,
-            phone: expertObj.phone,
-          });
-        }
+      if (jsonEmp.success && jsonEmp.data && jsonEmp.data.length > 0) {
+        expertObj = jsonEmp.data.find((e: Employee) => e.email.toLowerCase() === email.toLowerCase()) || null;
       }
+
+      if (!expertObj) {
+        const dynamicName = formatEmailToName(email);
+        expertObj = {
+          id: `emp-${Date.now()}`,
+          name: dynamicName,
+          email: email,
+          designation: "Senior Expert Mentor",
+          department: "Software Engineering",
+          phone: "+91 98765 00000",
+          role: "Employee",
+          status: "Active",
+          createdAt: new Date().toISOString(),
+        };
+      }
+
+      setExpertInfo(expertObj);
+      setProfileForm({
+        name: expertObj.name,
+        designation: expertObj.designation,
+        department: expertObj.department,
+        phone: expertObj.phone || "",
+      });
 
       // Filter Tasks assigned ONLY to this Expert
       if (jsonTasks.success && jsonTasks.data) {
@@ -76,7 +96,7 @@ export default function ExpertDashboardPage() {
           (s: StudentProfile) => 
             s.expertId === expertObj?.id || 
             s.expertName?.toLowerCase() === expertObj?.name?.toLowerCase() ||
-            !s.expertId
+            s.expertId === "emp-101"
         );
         setMyStudents(filteredStudents);
       }
@@ -93,7 +113,7 @@ export default function ExpertDashboardPage() {
   };
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem("lb_employee_email") || "sneha@learnbuildhub.com";
+    const storedEmail = localStorage.getItem("lb_employee_email") || "expert@learnbuildhub.com";
     setExpertEmail(storedEmail);
     fetchExpertScopedData(storedEmail);
   }, []);

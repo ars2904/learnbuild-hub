@@ -121,10 +121,16 @@ export default function AdminDashboardPage() {
             <span className="text-xs font-bold text-slate-500 block mb-1">Total Clients / Leads</span>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-slate-900">{totalClientsCount}</span>
-              <span className="text-xs font-extrabold text-emerald-600 flex items-center gap-0.5 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                <TrendingUp className="w-3 h-3" />
-                <span>+14%</span>
-              </span>
+              {totalClientsCount > 0 ? (
+                <span className="text-xs font-extrabold text-emerald-600 flex items-center gap-0.5 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <TrendingUp className="w-3 h-3" />
+                  <span>Active</span>
+                </span>
+              ) : (
+                <span className="text-xs font-extrabold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+                  0 Leads
+                </span>
+              )}
             </div>
             <span className="text-[11px] text-slate-400 font-medium">Acquired lead accounts</span>
           </div>
