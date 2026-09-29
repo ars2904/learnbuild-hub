@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { 
   GraduationCap, BookOpen, Award, CheckCircle2, Clock, 
-  Search, Bell, ArrowRight, Play, Video, Loader2, Sparkles, User, Briefcase, Lock, Unlock, Save, ExternalLink, ShieldCheck, Mail, Phone, Code2
+  Search, Bell, ArrowRight, Play, Video, Loader2, Sparkles, User, Briefcase, Lock, Unlock, Save, ExternalLink, ShieldCheck, Mail, Phone, Code2, Users, Star, MessageSquare, Calendar
 } from "lucide-react";
 import { getUserSession } from "@/lib/supabase/auth";
 import { StudentProfile, IssuedCertificate } from "@/lib/data/studentStore";
+import { INSTRUCTORS, Instructor } from "@/data/instructors";
+import { SITE_CONFIG } from "@/lib/constants";
 
 function formatEmailToName(email: string): string {
   if (!email || !email.includes("@")) return "Student User";
@@ -15,9 +19,12 @@ function formatEmailToName(email: string): string {
   return username.replace(/[._-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export default function StudentDashboardPage() {
+function StudentDashboardContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get("tab") || "tracks";
+
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"tracks" | "mentor" | "certificates" | "profile" | "internship">("tracks");
   
   const [student, setStudent] = useState<StudentProfile>({
     id: "std-user",
@@ -33,6 +40,7 @@ export default function StudentDashboardPage() {
     bio: "Learning software engineering with live mentorship.",
     profileLocked: false,
     hasInternship: false,
+    progress: 65,
     createdAt: new Date().toISOString(),
   });
 
@@ -50,6 +58,12 @@ export default function StudentDashboardPage() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState("");
 
+  // Mentors Tab States
+  const [mentors, setMentors] = useState<Instructor[]>(INSTRUCTORS.slice(0, 3));
+  const [selectedMentor, setSelectedMentor] = useState<Instructor | null>(INSTRUCTORS[0]);
+  const [sessionNote, setSessionNote] = useState("");
+  const [sessionSubmitted, setSessionSubmitted] = useState(false);
+
   const fetchStudentData = async (email: string, userMetaName?: string) => {
     setLoading(true);
     try {
@@ -65,7 +79,10 @@ export default function StudentDashboardPage() {
 
       if (jsonStd.success && jsonStd.data && jsonStd.data.length > 0) {
         const found = jsonStd.data[0];
-        setStudent(found);
+        setStudent({
+          ...found,
+          progress: found.progress !== undefined ? found.progress : 65,
+        });
         setProfileForm({
           name: found.name,
           phone: found.phone || "",
@@ -90,6 +107,7 @@ export default function StudentDashboardPage() {
           bio: "Student software engineer pursuing full-stack engineering & cloud track.",
           profileLocked: false,
           hasInternship: false,
+          progress: 65,
           createdAt: new Date().toISOString(),
         };
         setStudent(dynamicStudent);
@@ -138,7 +156,7 @@ export default function StudentDashboardPage() {
           id: student.id,
           email: student.email,
           ...profileForm,
-          isStudentEdit: true, // Triggers profile locking on save!
+          isStudentEdit: true,
         }),
       });
 
@@ -154,6 +172,15 @@ export default function StudentDashboardPage() {
     } finally {
       setProfileSaving(false);
     }
+  };
+
+  const handleBookSession = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSessionSubmitted(true);
+    setTimeout(() => {
+      setSessionSubmitted(false);
+      setSessionNote("");
+    }, 4000);
   };
 
   return (
@@ -185,39 +212,6 @@ export default function StudentDashboardPage() {
         </div>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white border-2 border-slate-200/80 shadow-sm overflow-x-auto text-xs font-bold">
-        {[
-          { id: "tracks", label: "My Enrolled Tracks", icon: BookOpen },
-          { id: "mentor", label: "My Assigned Expert", icon: User },
-          { id: "certificates", label: "Verified Certificates", icon: Award, count: certificates.length },
-          { id: "profile", label: "Profile Settings", icon: User },
-          ...(student.hasInternship ? [{ id: "internship", label: "My Internship Application", icon: Briefcase }] : []),
-        ].map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
-                isActive
-                  ? "bg-slate-900 text-white shadow-md font-extrabold"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
-              <span>{tab.label}</span>
-              {tab.count !== undefined && (
-                <span className={`px-2 py-0.5 rounded-full text-[10px] ${isActive ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700"}`}>
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
       {/* Loading state */}
       {loading ? (
         <div className="py-20 text-center text-slate-500">
@@ -226,7 +220,7 @@ export default function StudentDashboardPage() {
         </div>
       ) : (
         <>
-          {/* TAB 1: MY ENROLLED TRACKS */}
+          {/* VIEW 1: MY ENROLLED TRACKS */}
           {activeTab === "tracks" && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
@@ -262,7 +256,7 @@ export default function StudentDashboardPage() {
                   </Link>
                 </div>
 
-                {/* Progress & Modules Grid */}
+                {/* Dynamic Progress & Modules Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-semibold">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-slate-500 font-bold block">Course Duration:</span>
@@ -270,7 +264,9 @@ export default function StudentDashboardPage() {
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-slate-500 font-bold block">Curriculum Progress:</span>
-                    <span className="text-emerald-600 font-bold text-sm">65% Completed</span>
+                    <span className="text-emerald-600 font-bold text-sm">
+                      {student.progress !== undefined ? `${student.progress}%` : "65%"} Completed
+                    </span>
                   </div>
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
                     <span className="text-slate-500 font-bold block">Certificate Status:</span>
@@ -281,7 +277,7 @@ export default function StudentDashboardPage() {
             </div>
           )}
 
-          {/* TAB 2: MY ASSIGNED EXPERT */}
+          {/* VIEW 2: MY ASSIGNED EXPERT MENTOR (Refactored to Crisp Light Theme) */}
           {activeTab === "mentor" && (
             <div className="space-y-6">
               <div>
@@ -289,40 +285,172 @@ export default function StudentDashboardPage() {
                 <p className="text-xs text-slate-500">Guide and reviewer assigned to your learning track by LearnBuild Hub.</p>
               </div>
 
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md flex flex-col md:flex-row items-start md:items-center gap-6">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-blue-100 p-1 border-2 border-brand-blue overflow-hidden flex-shrink-0">
-                  <img
-                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
-                    alt={student.expertName}
-                    className="w-full h-full object-cover rounded-full"
-                  />
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Mentors Selection List */}
+                <div className="space-y-4">
+                  <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-brand-blue" />
+                    <span>Your Assigned Mentors</span>
+                  </h2>
+
+                  <div className="space-y-3">
+                    {mentors.map((mentor) => {
+                      const isSelected = selectedMentor?.id === mentor.id;
+                      return (
+                        <button
+                          key={mentor.id}
+                          onClick={() => setSelectedMentor(mentor)}
+                          className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-4 ${
+                            isSelected
+                              ? "bg-blue-50/90 border-brand-blue ring-2 ring-brand-blue/20 shadow-md"
+                              : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
+                          }`}
+                        >
+                          <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
+                            <Image
+                              src={mentor.avatar}
+                              alt={mentor.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-black text-slate-900 text-sm truncate">{mentor.name}</h3>
+                            <p className="text-xs text-brand-blue font-bold truncate">{mentor.role}</p>
+                            <div className="flex items-center gap-1 mt-1 text-[11px] text-amber-600 font-bold">
+                              <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                              <span>{mentor.rating} Mentor Rating</span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Guaranteed SLA Info */}
+                  <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200/80 space-y-2 text-emerald-950">
+                    <div className="flex items-center gap-2 text-xs font-black text-emerald-800">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>Guaranteed Response SLA</span>
+                    </div>
+                    <p className="text-xs text-emerald-800 font-medium leading-relaxed">
+                      Mentors review pull requests & answer queries within 24 hours. Emergency code support available on WhatsApp.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-xl font-black text-slate-900">{student.expertName}</h4>
-                    <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black uppercase">
-                      Lead Mentor
-                    </span>
-                  </div>
-                  <p className="text-xs font-bold text-slate-500">Lead Software Architect & Tech Educator • 8+ Years Experience</p>
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                    Conducts 1-on-1 code reviews, architectural feedback, and capstone project evaluations for your enrolled track.
-                  </p>
+                {/* Mentor Profile Detail & Booking View */}
+                {selectedMentor && (
+                  <div className="lg:col-span-2 space-y-6">
+                    <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                        <div className="flex items-center gap-4">
+                          <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-blue-100 border-2 border-brand-blue flex-shrink-0">
+                            <Image
+                              src={selectedMentor.avatar}
+                              alt={selectedMentor.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h2 className="text-xl font-black text-slate-900">{selectedMentor.name}</h2>
+                              <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-black uppercase">
+                                Active Mentor
+                              </span>
+                            </div>
+                            <p className="text-xs font-bold text-brand-blue">{selectedMentor.role}</p>
+                            <p className="text-xs text-slate-500 font-medium mt-1">Verified Senior Instructor at LearnBuild Hub</p>
+                          </div>
+                        </div>
 
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {["Full-Stack Web", "React & Next.js", "Node.js", "System Design"].map((skill, i) => (
-                      <span key={i} className="px-2.5 py-1 rounded-full bg-blue-50 text-brand-blue border border-blue-100 text-[10px] font-bold">
-                        {skill}
-                      </span>
-                    ))}
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <a
+                            href={`${SITE_CONFIG.whatsappLink}?text=Hi%20${encodeURIComponent(selectedMentor.name)},%20I%20am%20${encodeURIComponent(student.name)}%20from%20LearnBuild%20Student%20Portal.%20I%20have%20a%20mentorship%20question.`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                            <span>WhatsApp</span>
+                          </a>
+                          <a
+                            href={`mailto:${SITE_CONFIG.email}?subject=Mentorship%20Request%20-%20${encodeURIComponent(selectedMentor.name)}`}
+                            className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 transition-all"
+                          >
+                            <Mail className="w-4 h-4" />
+                            <span>Email</span>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Mentor Expertise & Specialization</h4>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                          {selectedMentor.bio}
+                        </p>
+                      </div>
+
+                      <div>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Technical Skills & Technologies</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedMentor.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-slate-100 space-y-4">
+                        <h4 className="text-sm font-black text-slate-900 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-brand-blue" />
+                          <span>Schedule 1-on-1 Code Review or Doubt Clearing</span>
+                        </h4>
+
+                        {sessionSubmitted ? (
+                          <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-3">
+                            <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                            <span>Your 1-on-1 mentorship session request has been submitted! Your mentor will confirm your meeting slot shortly.</span>
+                          </div>
+                        ) : (
+                          <form onSubmit={handleBookSession} className="space-y-3">
+                            <textarea
+                              rows={3}
+                              required
+                              placeholder={`Describe what you'd like to work on with ${selectedMentor.name}...`}
+                              value={sessionNote}
+                              onChange={(e) => setSessionNote(e.target.value)}
+                              className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue placeholder:text-slate-400 font-medium"
+                            />
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-slate-500 font-medium">
+                                Logged in as: <strong className="text-slate-900 font-bold">{student.email}</strong>
+                              </span>
+                              <button
+                                type="submit"
+                                className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                              >
+                                <span>Request Slot</span>
+                                <ArrowRight className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </form>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           )}
 
-          {/* TAB 3: VERIFIED CERTIFICATES */}
+          {/* VIEW 3: VERIFIED CERTIFICATES */}
           {activeTab === "certificates" && (
             <div className="space-y-6">
               <div>
@@ -367,7 +495,7 @@ export default function StudentDashboardPage() {
             </div>
           )}
 
-          {/* TAB 4: PROFILE SETTINGS & 1-TIME LOCK */}
+          {/* VIEW 4: PROFILE SETTINGS */}
           {activeTab === "profile" && (
             <div className="max-w-2xl p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-6">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -498,45 +626,17 @@ export default function StudentDashboardPage() {
             </div>
           )}
 
-          {/* TAB 5: CONDITIONAL INTERNSHIP APPLICATION (Only rendered if student.hasInternship === true) */}
-          {activeTab === "internship" && student.hasInternship && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-black text-slate-900">My Internship Application & Status</h3>
-                <p className="text-xs text-slate-500">Track your merit-based internship application details.</p>
-              </div>
-
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-4">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                  <div>
-                    <span className="px-3 py-1 rounded-full bg-orange-100 text-brand-orange text-[10px] font-black uppercase tracking-wider border border-orange-200">
-                      Internship Record
-                    </span>
-                    <h4 className="text-xl font-black text-slate-900 mt-2">{student.internshipDetails?.role || "Full-Stack Web Intern"}</h4>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">Company / Unit: {student.internshipDetails?.company || "LearnBuild Hub Labs"}</p>
-                  </div>
-
-                  <span className="px-3.5 py-1.5 rounded-full bg-blue-50 text-brand-blue border border-blue-200 text-xs font-black uppercase">
-                    Status: {student.internshipDetails?.status || "In Review"}
-                  </span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs text-slate-700">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-bold">Applied Date:</span>
-                    <span className="font-semibold">{student.internshipDetails?.appliedDate || "2026-09-20"}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-500 font-bold">Evaluation Mentor:</span>
-                    <span className="font-extrabold text-brand-blue">{student.expertName}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </>
       )}
 
     </div>
+  );
+}
+
+export default function StudentDashboardPage() {
+  return (
+    <Suspense fallback={<div className="py-12 text-center text-slate-400 font-bold text-xs">Loading Student Portal...</div>}>
+      <StudentDashboardContent />
+    </Suspense>
   );
 }

@@ -77,17 +77,17 @@ export default function StudentMentorsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-sans">
       {/* Header Banner */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950 border border-slate-800 shadow-xl">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/20 border border-blue-400/30 text-xs font-bold text-blue-300 mb-3">
-          <ShieldCheck className="w-3.5 h-3.5 text-brand-blue" />
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white border border-blue-800/50 shadow-xl">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-blue-200 mb-3">
+          <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
           <span>Verified 1-on-1 Mentorship</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
           Assigned Industry Mentors
         </h1>
-        <p className="text-xs sm:text-sm text-slate-300 font-normal mt-1 max-w-2xl">
+        <p className="text-xs sm:text-sm text-blue-200 font-normal mt-1 max-w-2xl">
           Connect directly with your assigned Lead Instructor for 1-on-1 code reviews, architectural feedback, career strategy, and live project debugging.
         </p>
       </div>
@@ -101,7 +101,7 @@ export default function StudentMentorsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Mentors Selection List */}
           <div className="space-y-4">
-            <h2 className="text-lg font-black text-white flex items-center gap-2">
+            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <Users className="w-5 h-5 text-brand-blue" />
               <span>Your Assigned Mentors</span>
             </h2>
@@ -115,11 +115,11 @@ export default function StudentMentorsPage() {
                     onClick={() => setSelectedMentor(mentor)}
                     className={`w-full p-4 rounded-2xl border text-left transition-all flex items-center gap-4 ${
                       isSelected
-                        ? "bg-slate-900 border-brand-blue shadow-lg shadow-brand-blue/10 ring-1 ring-brand-blue"
-                        : "bg-slate-900/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700"
+                        ? "bg-blue-50/90 border-brand-blue ring-2 ring-brand-blue/20 shadow-md"
+                        : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
                   >
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
                       <Image
                         src={mentor.avatar}
                         alt={mentor.name}
@@ -129,10 +129,10 @@ export default function StudentMentorsPage() {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-white text-sm truncate">{mentor.name}</h3>
-                      <p className="text-xs text-brand-blue font-semibold truncate">{mentor.role}</p>
-                      <div className="flex items-center gap-1 mt-1 text-[11px] text-amber-400 font-bold">
-                        <Star className="w-3 h-3 fill-amber-400" />
+                      <h3 className="font-black text-slate-900 text-sm truncate">{mentor.name}</h3>
+                      <p className="text-xs text-brand-blue font-bold truncate">{mentor.role}</p>
+                      <div className="flex items-center gap-1 mt-1 text-[11px] text-amber-600 font-bold">
+                        <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
                         <span>{mentor.rating} Mentor Rating</span>
                       </div>
                     </div>
@@ -142,12 +142,12 @@ export default function StudentMentorsPage() {
             </div>
 
             {/* Quick Mentorship SLA Info */}
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                <CheckCircle2 className="w-4 h-4" />
-                <span> Guaranteed Response SLA</span>
+            <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200/80 space-y-2 text-emerald-950">
+              <div className="flex items-center gap-2 text-xs font-black text-emerald-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Guaranteed Response SLA</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-emerald-800 font-medium leading-relaxed">
                 Mentors review pull requests & answer queries within 24 hours. Emergency code support available on WhatsApp.
               </p>
             </div>
@@ -157,10 +157,10 @@ export default function StudentMentorsPage() {
           {selectedMentor && (
             <div className="lg:col-span-2 space-y-6">
               {/* Mentor Detail Card */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 space-y-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                   <div className="flex items-center gap-4">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-800 border-2 border-brand-blue flex-shrink-0">
+                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-blue-100 border-2 border-brand-blue flex-shrink-0">
                       <Image
                         src={selectedMentor.avatar}
                         alt={selectedMentor.name}
@@ -170,13 +170,13 @@ export default function StudentMentorsPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h2 className="text-xl font-black text-white">{selectedMentor.name}</h2>
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-extrabold">
+                        <h2 className="text-xl font-black text-slate-900">{selectedMentor.name}</h2>
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-black uppercase">
                           Active Mentor
                         </span>
                       </div>
                       <p className="text-xs font-bold text-brand-blue">{selectedMentor.role}</p>
-                      <p className="text-xs text-slate-400 mt-1">Verified Senior Instructor at LearnBuild Hub</p>
+                      <p className="text-xs text-slate-500 font-medium mt-1">Verified Senior Instructor at LearnBuild Hub</p>
                     </div>
                   </div>
 
@@ -186,14 +186,14 @@ export default function StudentMentorsPage() {
                       href={`${SITE_CONFIG.whatsappLink}?text=Hi%20${encodeURIComponent(selectedMentor.name)},%20I%20am%20${encodeURIComponent(studentName)}%20from%20LearnBuild%20Student%20Portal.%20I%20have%20a%20mentorship%20question.`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
+                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md"
                     >
                       <MessageSquare className="w-4 h-4" />
                       <span>WhatsApp</span>
                     </a>
                     <a
                       href={`mailto:${SITE_CONFIG.email}?subject=Mentorship%20Request%20-%20${encodeURIComponent(selectedMentor.name)}`}
-                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 transition-all"
+                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 transition-all"
                     >
                       <Mail className="w-4 h-4" />
                       <span>Email</span>
@@ -203,20 +203,20 @@ export default function StudentMentorsPage() {
 
                 {/* Mentor Bio */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Mentor Expertise & Specialization</h4>
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Mentor Expertise & Specialization</h4>
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
                     {selectedMentor.bio}
                   </p>
                 </div>
 
                 {/* Skills Badges */}
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Technical Skills & Technologies</h4>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Technical Skills & Technologies</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedMentor.skills.map((skill) => (
                       <span
                         key={skill}
-                        className="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold"
+                        className="px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold"
                       >
                         {skill}
                       </span>
@@ -225,15 +225,15 @@ export default function StudentMentorsPage() {
                 </div>
 
                 {/* Book 1-on-1 Session Form */}
-                <div className="pt-6 border-t border-slate-800 space-y-4">
-                  <h4 className="text-sm font-black text-white flex items-center gap-2">
+                <div className="pt-6 border-t border-slate-100 space-y-4">
+                  <h4 className="text-sm font-black text-slate-900 flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-brand-blue" />
                     <span>Schedule 1-on-1 Code Review or Doubt Clearing</span>
                   </h4>
 
                   {sessionSubmitted ? (
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                       <span>Your 1-on-1 mentorship session request has been submitted! Your mentor will confirm your meeting slot shortly.</span>
                     </div>
                   ) : (
@@ -244,15 +244,15 @@ export default function StudentMentorsPage() {
                         placeholder={`Describe what you'd like to work on with ${selectedMentor.name} (e.g. debugging project errors, code review, setup advice)...`}
                         value={sessionNote}
                         onChange={(e) => setSessionNote(e.target.value)}
-                        className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-slate-100 text-xs focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue placeholder:text-slate-500"
+                        className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue placeholder:text-slate-400 font-medium"
                       />
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] text-slate-500">
-                          Logged in as: <strong className="text-slate-300">{studentEmail}</strong>
+                        <span className="text-[11px] text-slate-500 font-medium">
+                          Logged in as: <strong className="text-slate-900 font-bold">{studentEmail}</strong>
                         </span>
                         <button
                           type="submit"
-                          className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-brand-blue/20 transition-all"
+                          className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer"
                         >
                           <span>Request Slot</span>
                           <ArrowRight className="w-4 h-4" />

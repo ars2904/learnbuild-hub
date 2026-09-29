@@ -14,6 +14,7 @@ export interface StudentProfile {
   linkedinUrl?: string;
   profileLocked: boolean;
   hasInternship: boolean;
+  progress?: number;
   internshipDetails?: {
     role: string;
     company: string;
