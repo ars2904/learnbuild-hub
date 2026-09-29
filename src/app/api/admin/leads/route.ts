@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("demo_requests").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) {
+          if (!error && data) {
             const existingIds = new Set(data.map((d) => d.id));
             const extraMemory = memoryDemos.filter((m) => !existingIds.has(m.id));
             return NextResponse.json({ success: true, data: [...extraMemory, ...data] });
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("contact_submissions").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) {
+          if (!error && data) {
             const existingIds = new Set(data.map((d) => d.id));
             const extraMemory = memoryMessages.filter((m) => !existingIds.has(m.id));
             return NextResponse.json({ success: true, data: [...extraMemory, ...data] });
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
     if (supabase) {
       try {
         const { data, error } = await supabase.from("enrollments").select("*").order("created_at", { ascending: false });
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           const existingIds = new Set(data.map((d) => d.id));
           const extraMemory = memoryEnrollments.filter((m) => !existingIds.has(m.id));
           return NextResponse.json({ success: true, data: [...extraMemory, ...data] });

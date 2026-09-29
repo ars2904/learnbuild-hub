@@ -9,7 +9,7 @@ export async function GET() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("instructors").select("*").order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         return NextResponse.json({ success: true, data });
       }
     } catch (e) {

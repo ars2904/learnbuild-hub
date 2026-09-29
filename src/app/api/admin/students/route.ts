@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         if (expertId) query = query.eq("expert_id", expertId);
         if (email) query = query.eq("email", email);
         const { data, error } = await query;
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return NextResponse.json({ success: true, data });
         }
       } catch (e) {

@@ -188,41 +188,7 @@ export const INITIAL_SOLUTIONS: CMSSolution[] = [
   },
 ];
 
-export const INITIAL_INSTRUCTORS: CMSInstructor[] = [
-  {
-    id: "inst-101",
-    name: "Sneha Sharma",
-    role: "Lead Software Architect & Tech Educator",
-    bio: "Ex-SDE at Tier-1 Tech, 8+ years experience building scalable microservices and mentoring over 2,000 engineers.",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-    expertise: ["Full-Stack Engineering", "React", "Next.js", "System Design"],
-    experienceYears: 8,
-    rating: 4.9,
-    studentsCount: 2100,
-  },
-  {
-    id: "inst-102",
-    name: "Rohit Verma",
-    role: "Senior AI Engineer & Cloud Architect",
-    bio: "AI Researcher and Full-Stack Consultant specializing in Large Language Models, PyTorch, and cloud infrastructure.",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-    expertise: ["AI / ML", "PyTorch", "LangChain", "Python", "Kubernetes"],
-    experienceYears: 7,
-    rating: 4.95,
-    studentsCount: 1850,
-  },
-  {
-    id: "inst-103",
-    name: "Amit Kumar",
-    role: "DevOps Specialist & Cloud Infrastructure Lead",
-    bio: "Cloud Systems Consultant with expertise in AWS, Terraform, Docker, and automated CI/CD deployment pipelines.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    expertise: ["DevOps", "AWS", "Docker", "Kubernetes", "Linux"],
-    experienceYears: 9,
-    rating: 4.88,
-    studentsCount: 1400,
-  },
-];
+export const INITIAL_INSTRUCTORS: CMSInstructor[] = [];
 
 export const INITIAL_BLOGS: CMSBlog[] = [
   {

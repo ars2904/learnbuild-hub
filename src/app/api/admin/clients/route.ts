@@ -8,7 +8,7 @@ export async function GET() {
   if (supabase) {
     try {
       const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false });
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         // Merge Supabase clients with memory clients (which include newly created leads from demos/contact/enrollments)
         const dbIds = new Set(data.map((c) => c.id));
         const extraMemory = memoryClients.filter((m) => !dbIds.has(m.id));

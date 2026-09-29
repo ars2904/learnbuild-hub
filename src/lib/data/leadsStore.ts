@@ -36,59 +36,11 @@ export interface EnrollmentLead {
   created_at: string;
 }
 
-export const INITIAL_DEMOS: DemoLead[] = [
-  {
-    id: "demo-101",
-    full_name: "Rahul Verma",
-    email: "rahul.verma@apexacademy.edu",
-    phone: "+91 98111 22334",
-    solution_title: "School & College Management Software Suite",
-    company_name: "Apex International Academy",
-    project_requirements: "Need custom student attendance & fee collection module for 1,200 students.",
-    budget_range: "₹1,50,000 - ₹3,00,000",
-    status: "pending",
-    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: "demo-102",
-    full_name: "Dr. Ananya Roy",
-    email: "ananya@healthpulse.com",
-    phone: "+91 97222 33445",
-    solution_title: "Hospital & Multi-Specialty Clinic Management Software",
-    company_name: "HealthPulse Clinic Network",
-    project_requirements: "Doctor appointment booking, digital prescriptions, and patient records.",
-    budget_range: "₹2,00,000+",
-    status: "contacted",
-    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-];
+export const INITIAL_DEMOS: DemoLead[] = [];
 
-export const INITIAL_MESSAGES: MessageLead[] = [
-  {
-    id: "msg-101",
-    name: "Suresh Gupta",
-    email: "suresh.gupta@techventures.in",
-    subject: "Custom ERP & CRM Solution Query",
-    message: "We are interested in building a cloud ERP for our distribution logistics business. Please share details and pricing.",
-    status: "unread",
-    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-  },
-];
+export const INITIAL_MESSAGES: MessageLead[] = [];
 
-export const INITIAL_ENROLLMENTS: EnrollmentLead[] = [
-  {
-    id: "enroll-101",
-    full_name: "Priya Sharma",
-    email: "priya.sharma@gmail.com",
-    phone: "+91 98333 44556",
-    course_title: "Full-Stack Web Engineering Track",
-    instructor_name: "Rohit Verma",
-    qualification: "B.Tech Final Year",
-    message: "Enrolling for the October batch. Interested in placement assistance.",
-    status: "pending",
-    created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
-  },
-];
+export const INITIAL_ENROLLMENTS: EnrollmentLead[] = [];
 
 // Global Module Memory Stores
 export let memoryDemos: DemoLead[] = [...INITIAL_DEMOS];
