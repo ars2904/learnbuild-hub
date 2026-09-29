@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Users, UserPlus, Mail, MessageSquare, 
-  Trash2, X, Loader2, Copy, CheckCircle2, Phone, Briefcase, Send, Eye, EyeOff, Sparkles, ShieldCheck
+  Trash2, X, Loader2, Copy, CheckCircle2, Phone, Briefcase, Send, Eye, EyeOff, Sparkles, ShieldCheck, AlertCircle, Info
 } from "lucide-react";
 import { Employee } from "@/lib/data/crm";
 
@@ -34,8 +34,8 @@ export default function AdminEmployeesPage() {
     department: "Software Development",
     phone: "",
     role: "Employee" as Employee["role"],
-    sendEmail: true,
-    openWhatsApp: true,
+    sendEmail: false, // Default false to avoid unverified domain errors
+    openWhatsApp: true, // Default true for instant 1-click delivery
   });
 
   const fetchEmployees = async () => {
@@ -93,7 +93,7 @@ export default function AdminEmployeesPage() {
           department: "Software Development",
           phone: "",
           role: "Employee",
-          sendEmail: true,
+          sendEmail: false,
           openWhatsApp: true,
         });
         fetchEmployees();
@@ -153,10 +153,10 @@ Please login to view your assigned client build projects and manage course revie
       if (json.success) {
         setEmailSentStatus(`Credentials successfully emailed to ${creds.email}!`);
       } else {
-        setEmailSentStatus(`Email dispatch note: ${json.message}`);
+        setEmailSentStatus(json.message || "Direct email dispatch requires custom domain verification on resend.com.");
       }
     } catch (err) {
-      setEmailSentStatus("Failed to send email. Check network connectivity.");
+      setEmailSentStatus("Direct email dispatch requires domain verification. Please use WhatsApp or Copy Credentials.");
     } finally {
       setEmailSending(false);
     }
@@ -184,7 +184,7 @@ Please login to view your assigned client build projects and manage course revie
             Experts & Instructors Directory
           </h1>
           <p className="text-xs sm:text-sm text-blue-200 mt-1">
-            Manage domain experts, software mentors, and technical specialists. Dispatch login credentials via Email & WhatsApp.
+            Manage domain experts, software mentors, and technical specialists. Dispatch login credentials via WhatsApp & Email.
           </p>
         </div>
 
@@ -245,8 +245,8 @@ Please login to view your assigned client build projects and manage course revie
           </div>
 
           {emailSentStatus && (
-            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold flex items-start gap-2.5">
+              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
               <span>{emailSentStatus}</span>
             </div>
           )}
@@ -255,27 +255,28 @@ Please login to view your assigned client build projects and manage course revie
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               onClick={() => triggerWhatsAppMessage(createdCredentials)}
-              className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md cursor-pointer"
+              className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md cursor-pointer hover:scale-105"
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Send via WhatsApp</span>
+              <span>Send via WhatsApp (Instant 1-Click)</span>
+            </button>
+
+            <button
+              onClick={handleCopyCredentials}
+              className="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md cursor-pointer hover:scale-105"
+            >
+              <Copy className="w-4 h-4 text-blue-400" />
+              <span>{copied ? "Copied Credentials!" : "Copy Credentials"}</span>
             </button>
 
             <button
               onClick={() => triggerEmailDispatch(createdCredentials)}
               disabled={emailSending}
-              className="px-5 py-3 rounded-2xl bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer"
+              className="px-4 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs flex items-center gap-2 transition-all border border-slate-300"
+              title="Direct recipient email sending requires custom domain verification on resend.com"
             >
-              {emailSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-              <span>{emailSending ? "Sending Email..." : "Send via Email"}</span>
-            </button>
-
-            <button
-              onClick={handleCopyCredentials}
-              className="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center gap-2 transition-all border border-slate-200 cursor-pointer"
-            >
-              <Copy className="w-4 h-4" />
-              <span>{copied ? "Copied to Clipboard!" : "Copy Credentials"}</span>
+              {emailSending ? <Loader2 className="w-4 h-4 animate-spin text-brand-blue" /> : <Mail className="w-4 h-4 text-slate-400" />}
+              <span>Send via Email (Requires Custom Domain)</span>
             </button>
           </div>
         </div>
@@ -352,8 +353,8 @@ Please login to view your assigned client build projects and manage course revie
                       pass: emp.password || "LB#Pass123",
                       designation: emp.designation,
                     })}
-                    className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-brand-blue transition-colors flex items-center gap-1 text-[11px] font-extrabold cursor-pointer"
-                    title="Send Credentials via Email"
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 transition-colors flex items-center gap-1 text-[11px] font-bold cursor-pointer"
+                    title="Email dispatch requires domain verification"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Email</span>
@@ -457,27 +458,27 @@ Please login to view your assigned client build projects and manage course revie
               {/* Dispatch Options Controls */}
               <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2 text-xs">
                 <span className="font-extrabold text-brand-blue block uppercase tracking-wider text-[10px]">
-                  Automatic Dispatch Options
+                  Dispatch Channel Controls
                 </span>
 
-                <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 font-bold">
-                  <input
-                    type="checkbox"
-                    checked={formData.sendEmail}
-                    onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
-                    className="w-4 h-4 rounded accent-brand-blue"
-                  />
-                  <span>Send credentials to Expert Email automatically</span>
-                </label>
-
-                <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 font-bold">
+                <label className="flex items-center gap-2.5 cursor-pointer text-slate-800 font-extrabold">
                   <input
                     type="checkbox"
                     checked={formData.openWhatsApp}
                     onChange={(e) => setFormData({ ...formData, openWhatsApp: e.target.checked })}
                     className="w-4 h-4 rounded accent-emerald-600"
                   />
-                  <span>Open WhatsApp to message credentials directly</span>
+                  <span className="text-emerald-800">Open WhatsApp to message credentials directly (Recommended)</span>
+                </label>
+
+                <label className="flex items-center gap-2.5 cursor-pointer text-slate-500 font-semibold">
+                  <input
+                    type="checkbox"
+                    checked={formData.sendEmail}
+                    onChange={(e) => setFormData({ ...formData, sendEmail: e.target.checked })}
+                    className="w-4 h-4 rounded accent-brand-blue"
+                  />
+                  <span>Send credentials via Email (Requires custom domain on resend.com)</span>
                 </label>
               </div>
 

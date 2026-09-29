@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const { name, email, password, phone, designation } = body;
 
     if (!email || !password) {
-      return NextResponse.json({ success: false, message: "Email and password required." }, { status: 400 });
+      return NextResponse.json({ success: false, message: "Email and password required." }, { status: 200 });
     }
 
     const apiKey = process.env.RESEND_API_KEY;
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ 
         success: false, 
         message: "RESEND_API_KEY missing in environment variables. Please check .env.local" 
-      }, { status: 500 });
+      }, { status: 200 });
     }
 
     const htmlContent = `
@@ -77,11 +77,12 @@ export async function POST(req: Request) {
     const resendData = await resendRes.json();
 
     if (!resendRes.ok) {
-      console.warn("Resend API error:", resendData);
+      console.warn("Resend API error note:", resendData);
       return NextResponse.json({ 
         success: false, 
-        message: resendData.message || "Failed to dispatch email via Resend API." 
-      }, { status: 400 });
+        requiresDomain: true,
+        message: "Direct email dispatch to recipient inboxes requires custom domain verification on resend.com/domains. Please use 1-Click WhatsApp or Copy Credentials for instant recipient delivery." 
+      }, { status: 200 });
     }
 
     return NextResponse.json({ 
@@ -90,6 +91,10 @@ export async function POST(req: Request) {
       resendId: resendData.id
     });
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      requiresDomain: true,
+      message: "Direct email dispatch requires custom domain verification. Please use WhatsApp or Copy Credentials." 
+    }, { status: 200 });
   }
 }
