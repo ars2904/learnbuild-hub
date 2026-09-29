@@ -50,6 +50,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Contact Inquiries", href: "/admin/messages", icon: Mail },
     { label: "Demo Applications", href: "/admin/demos", icon: MonitorPlay },
     { label: "Student Enrollments", href: "/admin/enrollments", icon: GraduationCap },
+    { label: "Students Directory", href: "/admin/students", icon: Users },
   ];
 
   return (

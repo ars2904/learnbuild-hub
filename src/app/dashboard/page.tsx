@@ -4,309 +4,513 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   GraduationCap, BookOpen, Award, CheckCircle2, Clock, 
-  Search, Bell, ArrowRight, Play, Video, Loader2, Sparkles
+  Search, Bell, ArrowRight, Play, Video, Loader2, Sparkles, User, Briefcase, Lock, Unlock, Save, ExternalLink, ShieldCheck, Mail, Phone, Code2
 } from "lucide-react";
 import { getUserSession } from "@/lib/supabase/auth";
+import { StudentProfile, IssuedCertificate } from "@/lib/data/studentStore";
 
 export default function StudentDashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [studentName, setStudentName] = useState("Rahul Gupta");
-  const [studentEmail, setStudentEmail] = useState("rahul@example.com");
+  const [activeTab, setActiveTab] = useState<"tracks" | "mentor" | "certificates" | "profile" | "internship">("tracks");
+  
+  const [student, setStudent] = useState<StudentProfile>({
+    id: "std-101",
+    name: "Priya Sharma",
+    email: "priya.sharma@gmail.com",
+    phone: "+91 98333 44556",
+    courseTitle: "Full-Stack Web Engineering Track",
+    courseSlug: "full-stack-web-engineering",
+    expertId: "emp-101",
+    expertName: "Sneha Sharma",
+    status: "active",
+    qualification: "B.Tech Computer Science",
+    bio: "Passionate full-stack developer focusing on Next.js 14, React, and Supabase cloud backends.",
+    githubUrl: "https://github.com/priyasharma",
+    linkedinUrl: "https://linkedin.com/in/priyasharma",
+    profileLocked: false,
+    hasInternship: true,
+    internshipDetails: {
+      role: "Full-Stack Web Intern",
+      company: "LearnBuild Hub Labs",
+      status: "reviewing",
+      appliedDate: "2026-09-20",
+    },
+    createdAt: "2026-09-15T10:00:00Z",
+  });
+
+  const [certificates, setCertificates] = useState<IssuedCertificate[]>([]);
+
+  // Profile Edit Form
+  const [profileForm, setProfileForm] = useState({
+    name: student.name,
+    phone: student.phone,
+    qualification: student.qualification,
+    bio: student.bio,
+    githubUrl: student.githubUrl || "",
+    linkedinUrl: student.linkedinUrl || "",
+  });
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileMsg, setProfileMsg] = useState("");
+
+  const fetchStudentData = async (email: string) => {
+    setLoading(true);
+    try {
+      const [resStd, resCert] = await Promise.all([
+        fetch(`/api/admin/students?email=${encodeURIComponent(email)}`),
+        fetch(`/api/admin/certificates?email=${encodeURIComponent(email)}`),
+      ]);
+
+      const [jsonStd, jsonCert] = await Promise.all([
+        resStd.json(),
+        resCert.json(),
+      ]);
+
+      if (jsonStd.success && jsonStd.data && jsonStd.data.length > 0) {
+        const found = jsonStd.data[0];
+        setStudent(found);
+        setProfileForm({
+          name: found.name,
+          phone: found.phone || "",
+          qualification: found.qualification || "",
+          bio: found.bio || "",
+          githubUrl: found.githubUrl || "",
+          linkedinUrl: found.linkedinUrl || "",
+        });
+      }
+
+      if (jsonCert.success && jsonCert.data) {
+        setCertificates(jsonCert.data);
+      }
+    } catch (err) {
+      console.error("Error fetching student dashboard data:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getUserSession().then((session) => {
-      if (session?.user) {
-        const email = session.user.email || "rahul@example.com";
-        const name = session.user.user_metadata?.full_name || email.split("@")[0] || "Rahul Gupta";
-        setStudentEmail(email);
-        setStudentName(name);
-      }
-      setLoading(false);
+      const email = session?.user?.email || "priya.sharma@gmail.com";
+      fetchStudentData(email);
     });
   }, []);
 
+  const handleSaveStudentProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (student.profileLocked) {
+      alert("🔒 Profile is locked for student editing. Please contact Admin to update your profile.");
+      return;
+    }
+
+    setProfileSaving(true);
+    setProfileMsg("");
+    try {
+      const res = await fetch("/api/admin/students", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: student.id,
+          email: student.email,
+          ...profileForm,
+          isStudentEdit: true, // Triggers profile locking on save!
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        setStudent(json.data);
+        setProfileMsg("🔒 Profile updated and locked successfully! Contact Admin for further changes.");
+      } else {
+        setProfileMsg(json.message || "Failed to update profile.");
+      }
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   return (
-    <div className="space-y-6 font-sans">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+    <div className="space-y-8 font-sans">
+      
+      {/* Top Banner Header */}
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-950 text-white border border-blue-800/50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Welcome Back, {studentName} 👋</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-blue-200 mb-2">
+            <GraduationCap className="w-3.5 h-3.5 text-blue-300" />
+            <span>Student Learning Portal</span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            Welcome Back, {student.name} 👋
           </h1>
-          <p className="text-xs text-slate-500 font-medium">Continue your learning journey.</p>
+          <p className="text-xs sm:text-sm text-blue-200 mt-1">
+            Enrolled Track: <strong className="text-amber-300">{student.courseTitle}</strong> • Assigned Mentor: <strong className="text-emerald-300">{student.expertName}</strong>
+          </p>
         </div>
 
-        {/* Header Controls */}
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 text-xs focus:outline-none focus:bg-white"
-            />
-          </div>
-
-          <button className="p-2 rounded-xl bg-slate-100 text-slate-600 hover:text-slate-900 relative">
-            <Bell className="w-4 h-4" />
-            <span className="w-2 h-2 rounded-full bg-brand-blue absolute top-1.5 right-1.5 ring-2 ring-white" />
-          </button>
-
-          <div className="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-100 border border-slate-200">
-            <div className="w-7 h-7 rounded-lg bg-brand-blue text-white font-black text-xs flex items-center justify-center">
-              R
-            </div>
-            <div className="text-[11px] leading-tight hidden sm:block">
-              <p className="font-bold text-slate-900">{studentName}</p>
-              <p className="text-slate-500 font-medium">Student</p>
-            </div>
-          </div>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/learn"
+            className="px-5 py-3 rounded-full bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-blue/30 transition-all flex items-center gap-2 flex-shrink-0 cursor-pointer"
+          >
+            <span>Browse Skill Tracks</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
 
-      {/* Top 4 Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-500 block mb-1">Enrolled Courses</span>
-            <span className="text-2xl font-black text-slate-900">3</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-blue-50 text-brand-blue flex items-center justify-center">
-            <GraduationCap className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-500 block mb-1">In Progress</span>
-            <span className="text-2xl font-black text-blue-600">2</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <Clock className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-500 block mb-1">Completed</span>
-            <span className="text-2xl font-black text-emerald-600">1</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-500 block mb-1">Certificates</span>
-            <span className="text-2xl font-black text-purple-600">1</span>
-          </div>
-          <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-            <Award className="w-5 h-5" />
-          </div>
-        </div>
+      {/* Tabs Navigation */}
+      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white border-2 border-slate-200/80 shadow-sm overflow-x-auto text-xs font-bold">
+        {[
+          { id: "tracks", label: "My Enrolled Tracks", icon: BookOpen },
+          { id: "mentor", label: "My Assigned Expert", icon: User },
+          { id: "certificates", label: "Verified Certificates", icon: Award, count: certificates.length },
+          { id: "profile", label: "Profile Settings", icon: User },
+          ...(student.hasInternship ? [{ id: "internship", label: "My Internship Application", icon: Briefcase }] : []),
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
+                isActive
+                  ? "bg-slate-900 text-white shadow-md font-extrabold"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? "text-blue-400" : "text-slate-400"}`} />
+              <span>{tab.label}</span>
+              {tab.count !== undefined && (
+                <span className={`px-2 py-0.5 rounded-full text-[10px] ${isActive ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-700"}`}>
+                  {tab.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Main Row: My Courses & Upcoming Live Classes */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* My Courses */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900">My Courses</h3>
-            <Link href="/learn" className="text-xs font-bold text-brand-blue hover:underline">
-              View All
-            </Link>
-          </div>
-
-          <div className="space-y-4">
-            {/* Course 1 */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                    {`</>`}
-                  </div>
-                  <div>
-                    <h4 className="font-black text-slate-900 text-sm">Full-Stack Web Development</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">HTML • CSS • JavaScript • React • Node</p>
-                  </div>
+      {/* Loading state */}
+      {loading ? (
+        <div className="py-20 text-center text-slate-500">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-brand-blue" />
+          <p className="text-xs font-medium">Loading your student dashboard...</p>
+        </div>
+      ) : (
+        <>
+          {/* TAB 1: MY ENROLLED TRACKS */}
+          {activeTab === "tracks" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">Enrolled Learning Tracks</h3>
+                  <p className="text-xs text-slate-500">View course syllabus, progress, and 1-on-1 mentor sessions.</p>
                 </div>
 
                 <Link
                   href="/learn"
-                  className="px-4 py-2 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs shadow-md shadow-brand-blue/20 self-start sm:self-auto"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-blue hover:underline uppercase tracking-wider"
                 >
-                  Continue
+                  <span>Browse All Skill Tracks</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
-              {/* Progress bar */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
-                  <span>Progress</span>
-                  <span className="text-brand-blue">65%</span>
+              <div className="p-6 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                  <div>
+                    <span className="px-3 py-1 rounded-full bg-blue-100 text-brand-blue text-[10px] font-black uppercase tracking-wider border border-blue-200">
+                      Active Enrollment
+                    </span>
+                    <h4 className="text-xl sm:text-2xl font-black text-slate-900 mt-2">{student.courseTitle}</h4>
+                    <p className="text-xs text-slate-600 mt-1 font-medium">Assigned Expert Mentor: <strong className="text-amber-700">{student.expertName}</strong></p>
+                  </div>
+
+                  <Link
+                    href={`/learn/${student.courseSlug}`}
+                    className="px-6 py-3 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider transition-all shadow flex items-center gap-2"
+                  >
+                    <span>View Track Syllabus →</span>
+                  </Link>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div className="h-full bg-brand-blue rounded-full w-[65%]" />
+
+                {/* Progress & Modules Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-semibold">
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                    <span className="text-slate-500 font-bold block">Course Duration:</span>
+                    <span className="text-slate-900 font-bold text-sm">16 Weeks • Live Mentorship</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                    <span className="text-slate-500 font-bold block">Curriculum Progress:</span>
+                    <span className="text-emerald-600 font-bold text-sm">65% Completed</span>
+                  </div>
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                    <span className="text-slate-500 font-bold block">Certificate Status:</span>
+                    <span className="text-amber-600 font-bold text-sm">Eligible for Capstone Exam</span>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Course 2 */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                    Py
-                  </div>
-                  <div>
-                    <h4 className="font-black text-slate-900 text-sm">Python for Beginners</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">Python • Projects • Automation • Data</p>
-                  </div>
-                </div>
-
-                <Link
-                  href="/learn"
-                  className="px-4 py-2 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs shadow-md shadow-brand-blue/20 self-start sm:self-auto"
-                >
-                  Continue
-                </Link>
-              </div>
-
-              {/* Progress bar */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
-                  <span>Progress</span>
-                  <span className="text-brand-blue">30%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div className="h-full bg-brand-blue rounded-full w-[30%]" />
-                </div>
-              </div>
-            </div>
-
-            {/* Course 3 */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white font-bold flex items-center justify-center text-sm shadow-md">
-                    DM
-                  </div>
-                  <div>
-                    <h4 className="font-black text-slate-900 text-sm">Digital Marketing & Growth</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">SEO • Social Media • Performance Ads</p>
-                  </div>
-                </div>
-
-                <Link
-                  href="/dashboard/certificates"
-                  className="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold text-xs border border-emerald-200 self-start sm:self-auto"
-                >
-                  View Certificate
-                </Link>
-              </div>
-
-              {/* Progress bar */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
-                  <span>Progress</span>
-                  <span className="text-emerald-600">100% Completed</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full w-full" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Upcoming Classes */}
-        <div className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-black text-slate-900">Upcoming Live Classes</h3>
-            <span className="text-xs font-bold text-brand-blue">View All</span>
-          </div>
-
-          <div className="space-y-3 text-xs">
-            {[
-              { day: "26", month: "SEP", topic: "React Components & State", track: "Web Development", time: "5:00 PM - 6:00 PM" },
-              { day: "27", month: "SEP", topic: "Python Automation Scripts", track: "Python for Beginners", time: "6:00 PM - 7:00 PM" },
-              { day: "29", month: "SEP", topic: "Digital Marketing Campaign Optimization", track: "Digital Marketing", time: "5:00 PM - 6:00 PM" },
-            ].map((cls, idx) => (
-              <div key={idx} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-brand-blue flex flex-col items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-black leading-none">{cls.day}</span>
-                    <span className="text-[9px] font-bold uppercase">{cls.month}</span>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-xs">{cls.topic}</h4>
-                    <p className="text-[11px] text-slate-500 font-medium">{cls.track} • {cls.time}</p>
-                  </div>
-                </div>
-
-                <a
-                  href="https://meet.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3.5 py-1.5 rounded-lg bg-brand-blue hover:bg-blue-600 text-white font-bold text-xs shadow-sm flex-shrink-0"
-                >
-                  Join
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Announcements & Circular Progress Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Recent Announcements */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
-          <h3 className="text-base font-black text-slate-900">Recent Announcements</h3>
-          <div className="space-y-2 text-xs">
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-brand-blue mt-1.5 flex-shrink-0" />
+          {/* TAB 2: MY ASSIGNED EXPERT */}
+          {activeTab === "mentor" && (
+            <div className="space-y-6">
               <div>
-                <p className="font-bold text-slate-900">New course material uploaded for Web Development</p>
-                <span className="text-[11px] text-slate-400 font-medium">2 days ago</span>
+                <h3 className="text-lg font-black text-slate-900">Your Assigned Expert Mentor</h3>
+                <p className="text-xs text-slate-500">Guide and reviewer assigned to your learning track by LearnBuild Hub.</p>
               </div>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
-              <div>
-                <p className="font-bold text-slate-900">Live class schedule updated for this week</p>
-                <span className="text-[11px] text-slate-400 font-medium">3 days ago</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* My Progress */}
-        <div className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
-          <h3 className="text-base font-black text-slate-900">Overall Track Progress</h3>
-          <div className="flex items-center justify-around text-center pt-2">
-            <div>
-              <div className="w-14 h-14 rounded-full border-4 border-brand-blue flex items-center justify-center font-black text-xs text-slate-900 mx-auto mb-1">
-                65%
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md flex flex-col md:flex-row items-start md:items-center gap-6">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-blue-100 p-1 border-2 border-brand-blue overflow-hidden flex-shrink-0">
+                  <img
+                    src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80"
+                    alt={student.expertName}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xl font-black text-slate-900">{student.expertName}</h4>
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-black uppercase">
+                      Lead Mentor
+                    </span>
+                  </div>
+                  <p className="text-xs font-bold text-slate-500">Lead Software Architect & Tech Educator • 8+ Years Experience</p>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    Conducts 1-on-1 code reviews, architectural feedback, and capstone project evaluations for your enrolled track.
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {["Full-Stack Web", "React & Next.js", "Node.js", "System Design"].map((skill, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-full bg-blue-50 text-brand-blue border border-blue-100 text-[10px] font-bold">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <span className="text-[11px] font-bold text-slate-600 block">Web Dev</span>
             </div>
-            <div>
-              <div className="w-14 h-14 rounded-full border-4 border-indigo-500 flex items-center justify-center font-black text-xs text-slate-900 mx-auto mb-1">
-                30%
+          )}
+
+          {/* TAB 3: VERIFIED CERTIFICATES */}
+          {activeTab === "certificates" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">Verified Certificates of Completion</h3>
+                <p className="text-xs text-slate-500">Official certificates issued to you by the LearnBuild Hub Academic Board.</p>
               </div>
-              <span className="text-[11px] font-bold text-slate-600 block">Python</span>
+
+              {certificates.length === 0 ? (
+                <div className="p-12 rounded-3xl bg-white border-2 border-slate-200/80 text-center text-slate-500 space-y-3">
+                  <Award className="w-12 h-12 text-slate-400 mx-auto" />
+                  <h4 className="text-base font-bold text-slate-900">No Certificates Issued Yet</h4>
+                  <p className="text-xs max-w-sm mx-auto text-slate-500">
+                    Complete your capstone project and course evaluations to receive your official verified certificate issued by Admin.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {certificates.map((cert) => (
+                    <div
+                      key={cert.id}
+                      className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950 text-white border-2 border-amber-400 shadow-xl space-y-4 relative overflow-hidden"
+                    >
+                      <div className="flex items-center justify-between text-[10px] font-mono text-amber-300">
+                        <span>LEARNBUILD HUB VERIFIED CERTIFICATE</span>
+                        <span>{cert.certificateNumber}</span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-blue-300 block">Certificate of Completion</span>
+                        <h4 className="text-xl font-black text-amber-400">{cert.studentName}</h4>
+                        <p className="text-xs font-semibold text-white">{cert.courseTitle}</p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 border-t border-white/10 text-[11px] text-slate-300 font-bold">
+                        <span>Grade: <strong className="text-emerald-400">{cert.grade}</strong></span>
+                        <span className="text-amber-300 font-mono">CODE: {cert.verificationCode}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div>
-              <div className="w-14 h-14 rounded-full border-4 border-emerald-500 flex items-center justify-center font-black text-xs text-slate-900 mx-auto mb-1">
-                100%
+          )}
+
+          {/* TAB 4: PROFILE SETTINGS & 1-TIME LOCK */}
+          {activeTab === "profile" && (
+            <div className="max-w-2xl p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div>
+                  <h3 className="text-xl font-black text-slate-900">Student Profile Settings</h3>
+                  <p className="text-xs text-slate-500">Edit your profile details. Note: Profile locks for editing after your first save.</p>
+                </div>
+
+                <div className={`px-3.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 border ${
+                  student.profileLocked
+                    ? "bg-rose-50 border-rose-200 text-rose-700"
+                    : "bg-emerald-50 border-emerald-200 text-emerald-700"
+                }`}>
+                  {student.profileLocked ? <Lock className="w-3.5 h-3.5 text-rose-600" /> : <Unlock className="w-3.5 h-3.5 text-emerald-600" />}
+                  <span>{student.profileLocked ? "Profile Locked" : "Editable Once"}</span>
+                </div>
               </div>
-              <span className="text-[11px] font-bold text-slate-600 block">Marketing</span>
+
+              {profileMsg && (
+                <div className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2 ${
+                  student.profileLocked
+                    ? "bg-amber-50 border border-amber-200 text-amber-900"
+                    : "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                }`}>
+                  <ShieldCheck className="w-4 h-4 flex-shrink-0" />
+                  <span>{profileMsg}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleSaveStudentProfile} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase text-slate-700 mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    disabled={student.profileLocked}
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold disabled:opacity-70 disabled:bg-slate-100"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">Phone Number</label>
+                    <input
+                      type="text"
+                      disabled={student.profileLocked}
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold disabled:opacity-70 disabled:bg-slate-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">Qualification</label>
+                    <input
+                      type="text"
+                      disabled={student.profileLocked}
+                      value={profileForm.qualification}
+                      onChange={(e) => setProfileForm({ ...profileForm, qualification: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-bold disabled:opacity-70 disabled:bg-slate-100"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase text-slate-700 mb-1">Bio / Student Intro</label>
+                  <textarea
+                    rows={3}
+                    disabled={student.profileLocked}
+                    value={profileForm.bio}
+                    onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium resize-none disabled:opacity-70 disabled:bg-slate-100"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">GitHub Profile URL</label>
+                    <input
+                      type="text"
+                      disabled={student.profileLocked}
+                      placeholder="https://github.com/..."
+                      value={profileForm.githubUrl}
+                      onChange={(e) => setProfileForm({ ...profileForm, githubUrl: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium disabled:opacity-70 disabled:bg-slate-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">LinkedIn Profile URL</label>
+                    <input
+                      type="text"
+                      disabled={student.profileLocked}
+                      placeholder="https://linkedin.com/in/..."
+                      value={profileForm.linkedinUrl}
+                      onChange={(e) => setProfileForm({ ...profileForm, linkedinUrl: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium disabled:opacity-70 disabled:bg-slate-100"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  {student.profileLocked ? (
+                    <span className="text-xs text-rose-600 font-bold flex items-center gap-1">
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Profile locked for editing. Only Admin can modify.</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-500 font-medium">
+                      ⚠️ Note: Profile locks for editing after saving.
+                    </span>
+                  )}
+
+                  {!student.profileLocked && (
+                    <button
+                      type="submit"
+                      disabled={profileSaving}
+                      className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-blue-600 text-white font-black text-xs uppercase tracking-wider shadow-md disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      {profileSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <span>Save & Lock Profile</span>
+                    </button>
+                  )}
+                </div>
+              </form>
             </div>
-          </div>
-        </div>
-      </div>
+          )}
+
+          {/* TAB 5: CONDITIONAL INTERNSHIP APPLICATION (Only rendered if student.hasInternship === true) */}
+          {activeTab === "internship" && student.hasInternship && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">My Internship Application & Status</h3>
+                <p className="text-xs text-slate-500">Track your merit-based internship application details.</p>
+              </div>
+
+              <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-md space-y-4">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                  <div>
+                    <span className="px-3 py-1 rounded-full bg-orange-100 text-brand-orange text-[10px] font-black uppercase tracking-wider border border-orange-200">
+                      Internship Record
+                    </span>
+                    <h4 className="text-xl font-black text-slate-900 mt-2">{student.internshipDetails?.role || "Full-Stack Web Intern"}</h4>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">Company / Unit: {student.internshipDetails?.company || "LearnBuild Hub Labs"}</p>
+                  </div>
+
+                  <span className="px-3.5 py-1.5 rounded-full bg-blue-50 text-brand-blue border border-blue-200 text-xs font-black uppercase">
+                    Status: {student.internshipDetails?.status || "In Review"}
+                  </span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs text-slate-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 font-bold">Applied Date:</span>
+                    <span className="font-semibold">{student.internshipDetails?.appliedDate || "2026-09-20"}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500 font-bold">Evaluation Mentor:</span>
+                    <span className="font-extrabold text-brand-blue">{student.expertName}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
     </div>
   );
 }
