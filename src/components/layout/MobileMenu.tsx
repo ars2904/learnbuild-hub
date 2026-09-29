@@ -28,7 +28,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
   navLinks,
 }) => {
   const pathname = usePathname();
-  const [ctaHref, setCtaHref] = useState("/login");
+  const [ctaHref, setCtaHref] = useState("/contact");
   const [ctaText, setCtaText] = useState("Get Started");
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           setCtaText("My Dashboard");
         }
       } else {
-        setCtaHref("/login");
+        setCtaHref("/contact");
         setCtaText("Get Started");
       }
     });

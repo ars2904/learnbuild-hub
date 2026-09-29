@@ -12,7 +12,7 @@ import { getUserSession, isAdminEmail } from "@/lib/supabase/auth";
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [ctaHref, setCtaHref] = useState("/login");
+  const [ctaHref, setCtaHref] = useState("/contact");
   const [ctaText, setCtaText] = useState("Get Started");
   const pathname = usePathname();
 
@@ -39,7 +39,7 @@ export const Navbar: React.FC = () => {
           setCtaText("My Dashboard");
         }
       } else {
-        setCtaHref("/login");
+        setCtaHref("/contact");
         setCtaText("Get Started");
       }
     });
