@@ -81,9 +81,27 @@ export default function LearnCatalogPage() {
       .catch((e) => console.warn("Dynamic courses fetch error:", e));
   }, []);
 
+  const techTrackSlugs = [
+    "php-laravel-mastery",
+    "dotnet-csharp-enterprise-engineering",
+    "dotnet-csharp-enterprise",
+    "java-spring-boot-fullstack",
+    "java-springboot-fullstack",
+    "python-fullstack-automation",
+    "nodejs-react-modern-stack",
+    "golang-cloud-microservices",
+    "sql-data-engineering-mastery",
+    "uiux-product-design-track",
+  ];
+
   const activeCourseList = dynamicCourses.length > 0 ? dynamicCourses : sampleCourses;
 
-  const filteredCourses = activeCourseList.filter((course) => {
+  // Filter out language/tech tracks from main featured courses section to prevent duplication
+  const featuredCoursesList = activeCourseList.filter(
+    (course) => !techTrackSlugs.includes(course.slug)
+  );
+
+  const filteredCourses = featuredCoursesList.filter((course) => {
     const matchesCategory =
       selectedCategory === "All" || course.category === selectedCategory;
     const matchesSearch =
@@ -91,6 +109,24 @@ export default function LearnCatalogPage() {
       (course.shortDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       (course.whatYouWillLearn || []).some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
+  });
+
+  // Dynamically map admin courses into TECH_TRACKS so edits in /admin/courses immediately reflect on Advanced Tech Tracks
+  const activeTechTracks = TECH_TRACKS.map((tTrack) => {
+    const adminMatch = activeCourseList.find(
+      (c) => c.slug === tTrack.slug || c.id === tTrack.id
+    );
+    if (adminMatch) {
+      return {
+        ...tTrack,
+        title: adminMatch.title || tTrack.title,
+        description: adminMatch.shortDescription || adminMatch.tagline || adminMatch.overview || tTrack.description,
+        deliverables: (adminMatch.whatYouWillLearn && adminMatch.whatYouWillLearn.length > 0)
+          ? adminMatch.whatYouWillLearn
+          : tTrack.deliverables,
+      };
+    }
+    return tTrack;
   });
 
   const handleOpenEnrollModal = (courseTitle: string) => {
@@ -299,7 +335,7 @@ export default function LearnCatalogPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TECH_TRACKS.map((track) => (
+            {activeTechTracks.map((track) => (
               <div
                 key={track.id}
                 className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:border-brand-blue transition-all duration-300 flex flex-col justify-between group"
@@ -326,7 +362,7 @@ export default function LearnCatalogPage() {
 
                   {/* Deliverables */}
                   <div className="space-y-2 mb-6">
-                    {track.deliverables.map((item, idx) => (
+                    {track.deliverables.map((item: string, idx: number) => (
                       <div key={idx} className="flex items-start gap-2 text-xs text-slate-700">
                         <CheckCircle2 className="w-3.5 h-3.5 text-brand-blue flex-shrink-0 mt-0.5" />
                         <span className="font-medium">{item}</span>
