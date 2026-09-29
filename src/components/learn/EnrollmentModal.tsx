@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, CheckCircle2, AlertCircle, Send, GraduationCap, Users, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
-import { getInstructorsForCourse, Instructor } from "@/data/instructors";
+import { X, CheckCircle2, AlertCircle, Send, GraduationCap, Users, Loader2 } from "lucide-react";
 
 interface EnrollmentModalProps {
   isOpen: boolean;
@@ -18,40 +17,29 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   selectedCourseTitle = "Full-Stack Web Engineering Track",
   selectedInstructorName = "",
 }) => {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
     course: selectedCourseTitle,
     qualification: "Undergraduate",
-    instructor: selectedInstructorName,
+    instructor: selectedInstructorName || "Any Available Senior Mentor",
     message: "",
   });
 
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const availableInstructors = getInstructorsForCourse(formData.course);
-
-  // Sync props when modal opens or selected instructor/course changes
+  // Sync props when modal opens or selected course changes
   useEffect(() => {
     if (isOpen) {
-      const instructors = getInstructorsForCourse(selectedCourseTitle || "Full-Stack Web Engineering Track");
-      const defaultInst = selectedInstructorName || (instructors.length > 0 ? instructors[0].name : "");
-
       setFormData((prev) => ({
         ...prev,
         course: selectedCourseTitle || prev.course,
-        instructor: defaultInst,
+        instructor: selectedInstructorName || "Any Available Senior Mentor",
       }));
-
-      // If mentor was explicitly pre-selected, go directly to Step 2, else start on Step 1
-      if (selectedInstructorName) {
-        setStep(2);
-      } else {
-        setStep(1);
-      }
+      setStep(1);
     }
   }, [isOpen, selectedCourseTitle, selectedInstructorName]);
 
@@ -69,21 +57,6 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectInstructorCard = (instructorName: string) => {
-    setFormData((prev) => ({ ...prev, instructor: instructorName }));
-  };
-
-  const handleNextStep = () => {
-    setErrorMessage("");
-    if (step === 1) {
-      if (!formData.instructor) {
-        setErrorMessage("Please select a preferred instructor to proceed.");
-        return;
-      }
-      setStep(2);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,7 +91,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
 
       if (response.ok && data.success) {
         setStatus("success");
-        setStep(3);
+        setStep(2);
       } else {
         setStatus("error");
         setErrorMessage(data.message || "Failed to submit enrollment enquiry. Please try again.");
@@ -171,40 +144,29 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   Enroll in {formData.course}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium">
-                  Fill in your details and select your preferred instructor.
+                  Fill in your contact details to enroll in this track.
                 </p>
               </div>
             </div>
 
             {/* Stepper Bar */}
-            <div className="grid grid-cols-3 gap-2 mt-6 pt-4 border-t border-slate-100 text-xs font-bold">
+            <div className="grid grid-cols-2 gap-2 mt-6 pt-4 border-t border-slate-100 text-xs font-bold">
               <div className={`flex items-center gap-2 ${step >= 1 ? "text-brand-blue" : "text-slate-400"}`}>
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black ${
-                  step === 1 ? "bg-brand-blue text-white" : step > 1 ? "bg-blue-100 text-brand-blue" : "bg-slate-100 text-slate-400"
+                  step === 1 ? "bg-brand-blue text-white" : "bg-blue-100 text-brand-blue"
                 }`}>
                   1
                 </span>
-                <span className="hidden sm:inline">Choose Instructor</span>
-                <span className="sm:hidden">Instructor</span>
+                <span>Your Contact Details</span>
               </div>
 
-              <div className={`flex items-center gap-2 ${step >= 2 ? "text-brand-blue" : "text-slate-400"}`}>
+              <div className={`flex items-center gap-2 ${step === 2 ? "text-brand-blue" : "text-slate-400"}`}>
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black ${
-                  step === 2 ? "bg-brand-blue text-white" : step > 2 ? "bg-blue-100 text-brand-blue" : "bg-slate-100 text-slate-400"
+                  step === 2 ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"
                 }`}>
                   2
                 </span>
-                <span className="hidden sm:inline">Your Details</span>
-                <span className="sm:hidden">Details</span>
-              </div>
-
-              <div className={`flex items-center gap-2 ${step === 3 ? "text-brand-blue" : "text-slate-400"}`}>
-                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-black ${
-                  step === 3 ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-400"
-                }`}>
-                  3
-                </span>
-                <span>Submit</span>
+                <span>Confirmation</span>
               </div>
             </div>
           </div>
@@ -218,108 +180,12 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </div>
             )}
 
-            {/* STEP 1: CHOOSE INSTRUCTOR */}
+            {/* STEP 1: YOUR CONTACT DETAILS */}
             {step === 1 && (
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-base font-black text-slate-900 mb-0.5">Select Your Instructor</h4>
-                  <p className="text-xs text-slate-500">Choose the instructor you would like to learn from.</p>
-                </div>
-
-                <div className="space-y-3">
-                  {availableInstructors.map((inst: Instructor) => {
-                    const isSelected = formData.instructor === inst.name;
-                    return (
-                      <div
-                        key={inst.id}
-                        onClick={() => handleSelectInstructorCard(inst.name)}
-                        className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                          isSelected
-                            ? "bg-blue-50/60 border-brand-blue shadow-md"
-                            : "bg-white border-slate-200 hover:border-slate-300"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3.5 min-w-0">
-                          <img
-                            src={inst.avatar}
-                            alt={inst.name}
-                            className="w-12 h-12 rounded-full object-cover bg-slate-100 border border-slate-200 flex-shrink-0"
-                            onError={(e) => {
-                              e.currentTarget.src = inst.gender === "female"
-                                ? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop"
-                                : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop";
-                            }}
-                          />
-                          <div className="min-w-0">
-                            <h5 className="text-sm font-black text-slate-900 truncate">{inst.name}</h5>
-                            <p className="text-xs font-bold text-slate-500 truncate mb-1">{inst.role}</p>
-                            <div className="flex flex-wrap gap-1">
-                              {inst.skills.slice(0, 3).map((sk, idx) => (
-                                <span
-                                  key={idx}
-                                  className="px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-bold text-slate-600"
-                                >
-                                  {sk}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Radio Check Circle */}
-                        <div
-                          className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                            isSelected
-                              ? "border-brand-blue bg-brand-blue"
-                              : "border-slate-300 bg-white"
-                          }`}
-                        >
-                          {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Limited Seats Banner */}
-                <div className="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200/80 flex items-center gap-3 text-xs text-brand-blue font-semibold">
-                  <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0 text-brand-blue">
-                    <Users className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-slate-900 block">Limited Seats</span>
-                    <span className="text-slate-600 text-[11px]">20 Seats for this program.</span>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    onClick={handleNextStep}
-                    className="w-full py-4 rounded-2xl bg-brand-blue hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center justify-center gap-2 transition-all"
-                  >
-                    <span>Next: Your Details</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: YOUR DETAILS */}
-            {step === 2 && (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-base font-black text-slate-900">Your Contact Details</h4>
-                    <p className="text-xs text-slate-500">Instructor: <span className="font-bold text-brand-blue">{formData.instructor || "Any Senior Mentor"}</span></p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="text-xs font-bold text-brand-blue hover:underline flex items-center gap-1"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Change Mentor</span>
-                  </button>
+                <div>
+                  <h4 className="text-base font-black text-slate-900">Student Information</h4>
+                  <p className="text-xs text-slate-500">Provide your contact details below to apply for admission.</p>
                 </div>
 
                 <div className="space-y-3">
@@ -394,7 +260,7 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                     <textarea
                       name="message"
                       rows={2}
-                      placeholder="Any specific questions for your mentor?"
+                      placeholder="Any specific goals or questions regarding this program?"
                       value={formData.message}
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-2xl bg-white border-2 border-slate-200 text-slate-900 text-sm font-bold focus:outline-none focus:border-brand-blue transition-all resize-none"
@@ -402,29 +268,21 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-3 flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="w-1/3 py-4 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition-colors"
-                  >
-                    Back
-                  </button>
-
+                <div className="pt-3">
                   <button
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-2/3 py-4 rounded-2xl bg-brand-blue hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center justify-center gap-2 transition-all disabled:opacity-70"
+                    className="w-full py-4 rounded-2xl bg-brand-blue hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center justify-center gap-2 transition-all disabled:opacity-70 cursor-pointer"
                   >
                     {status === "submitting" ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Submitting...</span>
+                        <span>Submitting Application...</span>
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        <span>Submit Enrollment</span>
+                        <span>Submit Enrollment Application</span>
                       </>
                     )}
                   </button>
@@ -432,8 +290,8 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
               </form>
             )}
 
-            {/* STEP 3: SUBMIT / SUCCESS */}
-            {step === 3 && (
+            {/* STEP 2: SUCCESS / CONFIRMATION */}
+            {step === 2 && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -447,18 +305,19 @@ export const EnrollmentModal: React.FC<EnrollmentModalProps> = ({
                   Enrollment Enquiry Submitted!
                 </h4>
                 <p className="text-slate-600 text-xs sm:text-sm max-w-sm leading-relaxed mb-6 font-medium">
-                  Thank you! Your enrollment enquiry has been received. Our admissions team will reach out to you shortly.
+                  Thank you! Your enrollment application has been received. Our admissions team will contact you shortly to complete your onboarding.
                 </p>
 
                 <div className="p-4 rounded-2xl bg-white border border-slate-200 text-xs text-slate-700 w-full mb-6 text-left space-y-1.5 shadow-xs">
                   <div><span className="font-bold text-slate-900">Course Track:</span> {formData.course}</div>
-                  <div><span className="font-bold text-slate-900">Selected Mentor:</span> {formData.instructor}</div>
-                  <div><span className="font-bold text-slate-900">Applicant:</span> {formData.fullName} ({formData.email})</div>
+                  <div><span className="font-bold text-slate-900">Applicant Name:</span> {formData.fullName}</div>
+                  <div><span className="font-bold text-slate-900">Email:</span> {formData.email}</div>
+                  <div><span className="font-bold text-slate-900">Phone:</span> {formData.phone}</div>
                 </div>
 
                 <button
                   onClick={onClose}
-                  className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-md transition-all"
+                  className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider shadow-md transition-all cursor-pointer"
                 >
                   Done & Close
                 </button>
