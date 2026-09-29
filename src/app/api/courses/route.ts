@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { memoryCourses } from "@/lib/data/cmsStore";
+import { dynamicCourseStore } from "@/data/courses";
 import { createServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -17,5 +17,5 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({ success: true, data: memoryCourses });
+  return NextResponse.json({ success: true, data: dynamicCourseStore });
 }

@@ -927,3 +927,5 @@ export const sampleCourses: Course[] = [
     prerequisites: "Tailored based on your chosen track.",
   },
 ];
+
+export let dynamicCourseStore: Course[] = [...sampleCourses];

@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
-import { sampleCourses, Course } from "@/data/courses";
-
-// In-memory working copy if Supabase is offline
-let localCourses: any[] = [...sampleCourses];
+import { dynamicCourseStore, Course } from "@/data/courses";
 
 export async function GET() {
   try {
@@ -14,9 +11,9 @@ export async function GET() {
         return NextResponse.json({ success: true, data });
       }
     }
-    return NextResponse.json({ success: true, data: localCourses });
+    return NextResponse.json({ success: true, data: dynamicCourseStore });
   } catch (err) {
-    return NextResponse.json({ success: true, data: localCourses });
+    return NextResponse.json({ success: true, data: dynamicCourseStore });
   }
 }
 
@@ -74,13 +71,12 @@ export async function POST(request: Request) {
       }).select();
 
       if (!error && data) {
-        // also keep local in sync
-        localCourses.unshift(data[0]);
+        dynamicCourseStore.unshift(data[0]);
         return NextResponse.json({ success: true, data: data[0] });
       }
     }
 
-    localCourses.unshift(newCourseObj);
+    dynamicCourseStore.unshift(newCourseObj);
     return NextResponse.json({ success: true, data: newCourseObj });
   } catch (err) {
     return NextResponse.json({ success: false, message: "Server error creating course." }, { status: 500 });
@@ -116,19 +112,21 @@ export async function PUT(request: Request) {
       }).eq("id", id).select();
 
       if (!error && data && data.length > 0) {
+        const idx = dynamicCourseStore.findIndex((c) => c.id === id || c.slug === id);
+        if (idx !== -1) dynamicCourseStore[idx] = { ...dynamicCourseStore[idx], ...data[0] };
         return NextResponse.json({ success: true, data: data[0] });
       }
     }
 
     // Fallback in-memory update
-    const idx = localCourses.findIndex((c) => c.id === id || c.slug === id);
+    const idx = dynamicCourseStore.findIndex((c) => c.id === id || c.slug === id);
     if (idx !== -1) {
-      localCourses[idx] = {
-        ...localCourses[idx],
+      dynamicCourseStore[idx] = {
+        ...dynamicCourseStore[idx],
         ...body,
-        rating: parseFloat(rating) || localCourses[idx].rating || 4.9,
+        rating: parseFloat(rating) || dynamicCourseStore[idx].rating || 4.9,
       };
-      return NextResponse.json({ success: true, data: localCourses[idx] });
+      return NextResponse.json({ success: true, data: dynamicCourseStore[idx] });
     }
 
     return NextResponse.json({ success: false, message: "Course not found." }, { status: 444 });
@@ -151,10 +149,13 @@ export async function DELETE(request: Request) {
       await supabase.from("courses").delete().eq("id", id);
     }
 
-    localCourses = localCourses.filter((c) => c.id !== id && c.slug !== id);
+    const idx = dynamicCourseStore.findIndex((c) => c.id === id || c.slug === id);
+    if (idx !== -1) {
+      dynamicCourseStore.splice(idx, 1);
+    }
+
     return NextResponse.json({ success: true, message: "Course deleted successfully." });
   } catch (err) {
     return NextResponse.json({ success: false, message: "Server error deleting course." }, { status: 500 });
   }
 }
-

@@ -64,22 +64,16 @@ export default function LearnCatalogPage() {
             slug: c.slug || c.id,
             title: c.title,
             category: c.category || "Web Engineering",
-            level: "Intermediate",
-            duration: c.duration || "12 Weeks",
+            level: c.level || "Beginner to Advanced",
+            duration: c.duration || "10 Weeks",
             rating: c.rating || 4.9,
-            studentsCount: c.studentsCount || 1200,
+            studentsEnrolled: c.studentsEnrolled || c.studentsCount || 1200,
             image: c.image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
             badge: c.badge || "Popular",
-            shortDescription: c.description,
-            fullDescription: c.description,
-            whatYouWillLearn: c.skills || ["React", "Node.js"],
-            modules: (c.syllabus || []).map((s: string, i: number) => ({
-              id: i + 1,
-              title: s,
-              lessonsCount: 5,
-              duration: "2 Weeks",
-            })),
-            price: c.price || 34999,
+            shortDescription: c.tagline || c.shortDescription || c.overview || "",
+            fullDescription: c.overview || c.tagline || "",
+            whatYouWillLearn: Array.isArray(c.whatYouWillLearn) ? c.whatYouWillLearn : (c.skills || ["React", "Node.js"]),
+            curriculum: c.curriculum || [],
           }));
           setDynamicCourses(mapped);
         }
@@ -87,17 +81,15 @@ export default function LearnCatalogPage() {
       .catch((e) => console.warn("Dynamic courses fetch error:", e));
   }, []);
 
-  const techTrackSlugs = TECH_TRACKS.map((t) => t.slug);
   const activeCourseList = dynamicCourses.length > 0 ? dynamicCourses : sampleCourses;
-  const coreFeaturedCourses = activeCourseList.filter((course) => !techTrackSlugs.includes(course.slug));
 
-  const filteredCourses = coreFeaturedCourses.filter((course) => {
+  const filteredCourses = activeCourseList.filter((course) => {
     const matchesCategory =
       selectedCategory === "All" || course.category === selectedCategory;
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.shortDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.whatYouWillLearn.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+      (course.shortDescription || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (course.whatYouWillLearn || []).some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
