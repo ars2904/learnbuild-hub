@@ -165,10 +165,10 @@ export default function ContactPage() {
                       GET IN TOUCH DIRECTLY
                     </div>
                     <a
-                      href={`mailto:${SITE_CONFIG.email}`}
+                      href="mailto:Info@learnbuildhub.com"
                       className="text-2xl sm:text-3xl font-black text-white hover:text-blue-400 transition-colors block mb-2 tracking-tight"
                     >
-                      {SITE_CONFIG.email}
+                      Info@learnbuildhub.com
                     </a>
                     <p className="text-xs sm:text-sm text-slate-400 font-medium">
                       We usually reply within 24-48 hours.
@@ -397,7 +397,7 @@ export default function ContactPage() {
 
                   {/* Email Box */}
                   <a
-                    href={`mailto:${SITE_CONFIG.email}`}
+                    href="mailto:Info@learnbuildhub.com"
                     className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-start gap-4 hover:border-orange-500 transition-all group"
                   >
                     <div className="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 border border-orange-200 flex items-center justify-center flex-shrink-0 group-hover:bg-orange-600 group-hover:text-white transition-colors">
@@ -406,7 +406,7 @@ export default function ContactPage() {
                     <div>
                       <h5 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-1">Email Address</h5>
                       <span className="text-sm font-extrabold text-slate-900 group-hover:text-orange-600 block">
-                        {SITE_CONFIG.email}
+                        Info@learnbuildhub.com
                       </span>
                       <span className="text-[11px] text-slate-400">Click to compose email</span>
                     </div>
