@@ -140,11 +140,11 @@ export const Footer: React.FC = () => {
 
                 <div className="space-y-3 text-xs">
                   <a
-                    href={`mailto:${SITE_CONFIG.email}`}
+                    href="mailto:Info@learnbuildhub.com"
                     className="flex items-center gap-2.5 p-3 rounded-2xl bg-slate-800/60 hover:bg-slate-800 text-blue-400 font-semibold transition-all group border border-slate-700/50"
                   >
                     <Mail className="w-4 h-4 text-blue-400 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="truncate">{SITE_CONFIG.email}</span>
+                    <span className="truncate">Info@learnbuildhub.com</span>
                   </a>
 
                   <a
