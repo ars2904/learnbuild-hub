@@ -159,25 +159,25 @@ export async function getUserSession() {
   try {
     const supabase = createClient();
     const { data, error } = await supabase.auth.getSession();
-    if (error || !data?.session) {
-      if (typeof window !== "undefined") {
-        const storedAdmin = localStorage.getItem("lb_admin_email");
-        if (storedAdmin) {
-          return {
-            user: { email: storedAdmin, user_metadata: { full_name: storedAdmin.includes("saurabh") ? "Saurabh Srivastav" : "Admin User" } },
-          } as any;
-        }
-      }
-      return null;
+    if (!error && data?.session) {
+      return data.session;
     }
-    return data.session;
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("lb_admin_email");
+      if (storedAdmin) {
+        return {
+          user: { email: storedAdmin, user_metadata: { full_name: "Admin User" } },
+        } as any;
+      }
+    }
+    return null;
   } catch (err) {
     console.warn("getUserSession fallback:", err);
     if (typeof window !== "undefined") {
       const storedAdmin = localStorage.getItem("lb_admin_email");
       if (storedAdmin) {
         return {
-          user: { email: storedAdmin, user_metadata: { full_name: "Saurabh Srivastav" } },
+          user: { email: storedAdmin, user_metadata: { full_name: "Admin User" } },
         } as any;
       }
     }
