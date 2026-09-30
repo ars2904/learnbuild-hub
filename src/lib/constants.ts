@@ -16,7 +16,7 @@ export const NAV_LINKS: NavLink[] = [
 export const SITE_CONFIG = {
   name: "LearnBuild Hub",
   tagline: "Learn skills. Build solutions.",
-  email: "learnbuildh@gmail.com",
+  email: "Info@learnbuildhub.com",
   phone: "+91 81495 65351",
   phoneRaw: "+918149565351",
   whatsapp: "+91 81495 65351",

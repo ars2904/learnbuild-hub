@@ -225,7 +225,7 @@ export const INITIAL_SITE_SETTINGS: CMSSiteSettings = {
   heroTitle: "Build Real Software Products & Master In-Demand Engineering Tracks",
   heroSubtitle: "LearnBuild Hub empowers students, developers, and businesses with live mentorship, ready-to-deploy software solutions, and industry-aligned full-stack engineering programs.",
   announcementBanner: "🎉 Admissions Open for Fall 2026 Engineering & AI Internship Cohorts! Apply Today.",
-  contactEmail: "learnbuildh@gmail.com",
+  contactEmail: "Info@learnbuildhub.com",
   contactPhone: "+91 81495 65351",
   whatsappPhone: "+91 81495 65351",
   studentsTrainedCount: "5,000+",

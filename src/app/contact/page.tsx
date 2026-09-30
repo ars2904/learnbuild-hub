@@ -63,7 +63,7 @@ export default function ContactPage() {
       }
     } catch (err) {
       console.error("Contact form submit error:", err);
-      setErrorMessage("Something went wrong. Please try again or email learnbuildh@gmail.com directly.");
+      setErrorMessage("Something went wrong. Please try again or email Info@learnbuildhub.com directly.");
     } finally {
       setIsSubmitting(false);
     }
