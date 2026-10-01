@@ -1,17 +1,17 @@
-// Path in your project: app/blog/website-development-cost-india/page.js
+// Path in your project: app/blogs/website-development-cost-india/page.js
 
 export const metadata = {
   title: "Website Development Cost in India 2026 | LearnBuild Hub",
   description:
     "How much does a website cost in 2026? Compare simple, e-commerce and custom website prices and tips to choose the right developer.",
   alternates: {
-    canonical: "https://learnbuildhub.com/blog/website-development-cost-india",
+    canonical: "https://learnbuildhub.com/blogs/website-development-cost-india",
   },
   openGraph: {
     title: "How Much Does a Website Cost in 2026?",
     description:
       "Simple, e-commerce and custom website prices explained, plus tips to choose the right developer.",
-    url: "https://learnbuildhub.com/blog/website-development-cost-india",
+    url: "https://learnbuildhub.com/blogs/website-development-cost-india",
     type: "article",
   },
 };
