@@ -111,6 +111,21 @@ export async function loginUser(email: string, pass: string) {
 }
 
 export async function loginAdmin(email: string, pass: string) {
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password: pass }),
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || "Admin login failed.");
+    }
+  } catch (err: any) {
+    console.warn("JWT auth login warning:", err.message);
+  }
+
   return loginUser(email, pass);
 }
 
@@ -152,6 +167,11 @@ export async function logoutUser() {
 }
 
 export async function logoutAdmin() {
+  try {
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch (err) {
+    console.warn("JWT auth logout warning:", err);
+  }
   return logoutUser();
 }
 

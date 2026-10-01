@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { saveInternshipApplication } from "@/lib/supabase/db";
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +13,17 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Persist to Supabase internship_applications table
+    await saveInternshipApplication({
+      name,
+      email,
+      phone,
+      track,
+      experience,
+      duration,
+      message,
+    });
 
     const apiKey = process.env.RESEND_API_KEY;
     const toEmail = process.env.TO_EMAIL || "learnbuildh@gmail.com";

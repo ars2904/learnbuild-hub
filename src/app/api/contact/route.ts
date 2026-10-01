@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
+import { saveContactSubmission } from "@/lib/supabase/db";
 import { addMessageLead } from "@/lib/data/leadsStore";
 
 export async function POST(request: Request) {
@@ -23,32 +23,13 @@ export async function POST(request: Request) {
       message,
     });
 
-    // 2. Try persisting directly into Supabase database tables if available
-    try {
-      const supabase = createServerClient();
-      if (supabase) {
-        await supabase.from("contact_submissions").insert({
-          name,
-          email,
-          subject,
-          message,
-        });
-
-        await supabase.from("clients").insert({
-          name,
-          company: "Contact Form Lead",
-          email,
-          phone: "N/A",
-          status: "lead",
-          service_interested: `Inquiry: ${subject}`,
-          contract_value: 50000,
-          assigned_employee_name: "Sneha Sharma",
-          notes: `[Contact Inquiry] Subject: ${subject}. Message: ${message}`,
-        });
-      }
-    } catch (dbErr) {
-      console.warn("Supabase database insert warning (using memory store fallback):", dbErr);
-    }
+    // 2. Persist directly into Supabase database tables (contact_submissions + clients CRM)
+    await saveContactSubmission({
+      name,
+      email,
+      subject,
+      message,
+    });
 
     // 3. Dispatch email via Resend API
     const apiKey = process.env.RESEND_API_KEY;
