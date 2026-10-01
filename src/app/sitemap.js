@@ -6,4 +6,3 @@ export default function sitemap() {
    lastModified: new Date(),
  }));
 }
-
