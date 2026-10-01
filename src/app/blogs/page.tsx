@@ -20,6 +20,16 @@ interface BlogArticle {
 }
 
 const ALL_BLOGS: BlogArticle[] = [
+ {
+   id: "website-development-cost-india",
+   title: "How Much Does a Website Cost in 2026? (Complete Guide)",
+   excerpt: "Simple, e-commerce and custom website prices explained, plus tips to choose the right developer for your business.",
+   category: "Digital Marketing",
+   author: "LearnBuild Hub Team",
+   date: "Oct 1, 2026",
+   readTime: "5 min read",
+   image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+ },
   {
     id: "featured-1",
     title: "The Shift to Full-Stack Next.js 14 App Router & Server Components in Production",
