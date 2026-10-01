@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { dynamicCourseStore, Course } from "@/data/courses";
 
 export async function GET() {
   try {
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       const { data, error } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
       if (!error && data && data.length > 0) {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       prerequisites: prerequisites || "",
     };
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       const { data, error } = await supabase.from("courses").insert({
         id: courseId,
@@ -92,7 +92,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, message: "Course ID is required for update." }, { status: 400 });
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       const { data, error } = await supabase.from("courses").update({
         title,
@@ -144,7 +144,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, message: "Course ID required." }, { status: 400 });
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       await supabase.from("courses").delete().eq("id", id);
     }

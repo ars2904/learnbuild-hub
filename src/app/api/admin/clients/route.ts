@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { Client } from "@/lib/data/crm";
 import { memoryClients } from "@/lib/data/leadsStore";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 
 export async function GET() {
-  const supabase = createServerClient();
+  const supabase = getSupabaseAdminClient();
   if (supabase) {
     try {
       const { data, error } = await supabase.from("clients").select("*").order("created_at", { ascending: false });
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
 
     memoryClients.unshift(newClient);
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from("clients").insert([{
@@ -113,7 +113,7 @@ export async function PUT(req: Request) {
       memoryClients.unshift(updatedClient);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         const updatePayload: Record<string, any> = {};
@@ -148,7 +148,7 @@ export async function DELETE(req: Request) {
       const idx = memoryClients.findIndex((c) => c.id === id);
       if (idx !== -1) memoryClients.splice(idx, 1);
 
-      const supabase = createServerClient();
+      const supabase = getSupabaseAdminClient();
       if (supabase) {
         try {
           await supabase.from("clients").delete().eq("id", id);

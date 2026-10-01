@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { memoryDemos, memoryMessages, memoryEnrollments } from "@/lib/data/leadsStore";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "enrollments";
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
 
     if (type === "demos") {
       if (supabase) {
@@ -95,7 +95,7 @@ export async function PUT(request: Request) {
       }
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         const tableName = type === "demos" ? "demo_requests" : type === "messages" ? "contact_submissions" : "enrollments";
@@ -138,7 +138,7 @@ export async function DELETE(request: Request) {
       if (idx !== -1) memoryEnrollments.splice(idx, 1);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         const tableName = type === "demos" ? "demo_requests" : type === "messages" ? "contact_submissions" : "enrollments";

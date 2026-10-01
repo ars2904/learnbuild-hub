@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { INITIAL_EMPLOYEES, Employee } from "@/lib/data/crm";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 
 let memoryEmployees: Employee[] = [...INITIAL_EMPLOYEES];
 
 export async function GET() {
-  const supabase = createServerClient();
+  const supabase = getSupabaseAdminClient();
   if (supabase) {
     try {
       const { data, error } = await supabase.from("employees").select("*").order("created_at", { ascending: false });
@@ -46,14 +46,15 @@ export async function POST(req: Request) {
 
     memoryEmployees.unshift(newEmployee);
 
-    // Try Supabase insert
-    const supabase = createServerClient();
+    // Try Supabase insert using admin service role client
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from("employees").insert([{
           id: newEmployee.id,
           name: newEmployee.name,
           email: newEmployee.email,
+          password: autoPassword,
           designation: newEmployee.designation,
           department: newEmployee.department,
           phone: newEmployee.phone,
@@ -193,7 +194,7 @@ export async function PUT(req: Request) {
       memoryEmployees.unshift(updatedObj);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from("employees").update({
@@ -222,7 +223,7 @@ export async function DELETE(req: Request) {
 
     if (id) {
       memoryEmployees = memoryEmployees.filter((e) => e.id !== id);
-      const supabase = createServerClient();
+      const supabase = getSupabaseAdminClient();
       if (supabase) {
         try {
           await supabase.from("employees").delete().eq("id", id);

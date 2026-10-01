@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { INITIAL_TASKS, CRMTask } from "@/lib/data/crm";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 
 let memoryTasks: CRMTask[] = [...INITIAL_TASKS];
 
@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   const employeeId = searchParams.get("employeeId");
   const employeeEmail = searchParams.get("employeeEmail");
 
-  const supabase = createServerClient();
+  const supabase = getSupabaseAdminClient();
   if (supabase) {
     try {
       let query = supabase.from("tasks").select("*").order("created_at", { ascending: false });
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 
     memoryTasks.unshift(newTask);
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from("tasks").insert([{
@@ -125,7 +125,7 @@ export async function PUT(req: Request) {
       memoryTasks.unshift(updatedTask);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         const updatePayload: Record<string, any> = {};
@@ -153,7 +153,7 @@ export async function DELETE(req: Request) {
 
     if (id) {
       memoryTasks = memoryTasks.filter((t) => t.id !== id);
-      const supabase = createServerClient();
+      const supabase = getSupabaseAdminClient();
       if (supabase) {
         try {
           await supabase.from("tasks").delete().eq("id", id);
