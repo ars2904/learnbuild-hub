@@ -27,7 +27,10 @@ function EmployeeLoginForm() {
 
     try {
       // Save employee email in localStorage for persistent session
-      localStorage.setItem("lb_employee_email", email.trim().toLowerCase());
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("lb_admin_email");
+        localStorage.setItem("lb_employee_email", email.trim().toLowerCase());
+      }
       setSuccessMsg("Employee verified! Redirecting to Employee Dashboard...");
       setTimeout(() => router.push("/employee"), 800);
     } catch (err: any) {

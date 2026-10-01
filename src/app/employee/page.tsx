@@ -115,11 +115,17 @@ function ExpertDashboardContent() {
   };
 
   useEffect(() => {
-    getUserSession().then((session) => {
-      const email = session?.user?.email || localStorage.getItem("lb_employee_email") || "expert@learnbuildhub.com";
-      setExpertEmail(email);
-      fetchExpertScopedData(email);
-    });
+    const storedEmp = typeof window !== "undefined" ? localStorage.getItem("lb_employee_email") : null;
+    if (storedEmp) {
+      setExpertEmail(storedEmp);
+      fetchExpertScopedData(storedEmp);
+    } else {
+      getUserSession().then((session) => {
+        const email = session?.user?.email || "expert@learnbuildhub.com";
+        setExpertEmail(email);
+        fetchExpertScopedData(email);
+      });
+    }
   }, []);
 
   const handleUpdateTaskStatus = async (task: CRMTask, newStatus: CRMTask["status"]) => {
