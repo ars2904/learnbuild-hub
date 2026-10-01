@@ -111,9 +111,10 @@ export const Navbar: React.FC = () => {
               ) : (
                 <Link
                   href={ctaHref}
+                  suppressHydrationWarning
                   className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-bold uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:shadow-lg transition-all"
                 >
-                  <span>{ctaText}</span>
+                  <span suppressHydrationWarning>{ctaText}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}

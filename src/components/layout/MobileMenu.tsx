@@ -133,9 +133,10 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
           <Link
             href={ctaHref}
             onClick={onClose}
+            suppressHydrationWarning
             className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full bg-brand-blue hover:bg-brand-blue-hover text-white text-sm font-bold uppercase tracking-wider shadow-lg shadow-brand-blue/30"
           >
-            <span>{ctaText}</span>
+            <span suppressHydrationWarning>{ctaText}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
 
