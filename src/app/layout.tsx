@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { MainLayout } from "@/components/layout/MainLayout";
 
@@ -42,15 +41,6 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased relative">
         <MainLayout>{children}</MainLayout>
-        <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-2CJ0WJTP8J"></script>
-      <script>
-      window.dataLayer = window.dataLayer || [];
-     function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-     gtag('config', 'G-2CJ0WJTP8J');
-     </script>
       </body>
     </html>
   );
