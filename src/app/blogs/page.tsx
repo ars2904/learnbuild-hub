@@ -99,7 +99,11 @@ export default function BlogsPage() {
         {/* ================= FEATURED ARTICLE CARD (If available) ================= */}
         {featuredArticle && (
           <div className="mb-16">
-            <div className="rounded-3xl bg-slate-900 text-white overflow-hidden shadow-2xl border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-0">
+            <Link
+              href={featuredArticle.externalUrl || `/blogs/${featuredArticle.slug || featuredArticle.id}`}
+              target={featuredArticle.externalUrl ? "_blank" : "_self"}
+              className="group block rounded-3xl bg-slate-900 text-white overflow-hidden shadow-2xl border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-0 transition-transform duration-300 hover:border-slate-700 cursor-pointer"
+            >
               <div className="lg:col-span-7 relative min-h-[300px] lg:min-h-[400px]">
                 <CardVisualBanner
                   imageUrl={featuredArticle.image}
@@ -125,7 +129,7 @@ export default function BlogsPage() {
                     <span>{featuredArticle.readTime}</span>
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-black text-white mb-4 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-black text-white mb-4 leading-tight group-hover:text-blue-200 transition-colors">
                     {featuredArticle.title}
                   </h2>
 
@@ -139,13 +143,13 @@ export default function BlogsPage() {
                     By {featuredArticle.author}
                   </span>
 
-                  <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-orange-400 hover:text-orange-300 transition-colors cursor-pointer">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-orange-400 group-hover:text-orange-300 group-hover:translate-x-1 transition-all">
                     <span>Read Full Article</span>
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         )}
 
@@ -195,9 +199,11 @@ export default function BlogsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredBlogs.map((blog) => (
-              <article
+              <Link
                 key={blog.id}
-                className="rounded-3xl bg-white border border-slate-200 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group"
+                href={blog.externalUrl || `/blogs/${blog.slug || blog.id}`}
+                target={blog.externalUrl ? "_blank" : "_self"}
+                className="rounded-3xl bg-white border border-slate-200 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
                 <div>
                   <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
@@ -243,12 +249,12 @@ export default function BlogsPage() {
                     {blog.author}
                   </span>
 
-                  <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-blue group-hover:translate-x-1 transition-transform cursor-pointer">
+                  <span className="inline-flex items-center gap-1 text-xs font-bold text-brand-blue group-hover:translate-x-1 transition-transform">
                     <span>Read Article</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         )}
