@@ -103,3 +103,37 @@ export async function verifyJwt(token: string): Promise<JwtPayload | null> {
     return null;
   }
 }
+
+/**
+ * Safely decode a JWT token payload without signature verification (useful for reading claims from external tokens like Supabase Auth).
+ */
+export function decodeJwtPayload(token: string): JwtPayload | null {
+  if (!token || typeof token !== "string") return null;
+
+  const parts = token.split(".");
+  if (parts.length !== 3) return null;
+
+  try {
+    const payloadBytes = base64urlDecode(parts[1]);
+    const payloadJson = new TextDecoder().decode(payloadBytes);
+    const raw: any = JSON.parse(payloadJson);
+
+    const now = Math.floor(Date.now() / 1000);
+    if (raw.exp && raw.exp < now) {
+      return null; // Expired
+    }
+
+    const email = raw.email || raw.user_metadata?.email || raw.app_metadata?.email || "";
+    const role = raw.role || raw.user_metadata?.role || raw.app_metadata?.role || "user";
+
+    return {
+      sub: raw.sub || raw.id || "",
+      email,
+      role,
+      exp: raw.exp,
+      iat: raw.iat,
+    };
+  } catch (err) {
+    return null;
+  }
+}

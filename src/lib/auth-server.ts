@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { verifyJwt, JwtPayload } from "@/lib/jwt";
+import { verifyJwt, decodeJwtPayload, JwtPayload } from "@/lib/jwt";
 import { createClient } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/supabase/auth";
 
@@ -33,13 +33,19 @@ export async function verifyAdminRequest(request: Request): Promise<AdminAuthRes
   }
 
   if (token) {
-    // Attempt JWT verification
+    // 1. Attempt app-signed HMAC JWT verification
     const payload = await verifyJwt(token);
-    if (payload && payload.role === "admin") {
+    if (payload && (payload.role === "admin" || isAdminEmail(payload.email))) {
       return { authorized: true, payload };
     }
 
-    // Attempt Supabase Auth access token verification if JWT check didn't pass
+    // 2. Decode claims (Supabase Auth / OAuth JWT token)
+    const decoded = decodeJwtPayload(token);
+    if (decoded && (decoded.role === "admin" || isAdminEmail(decoded.email))) {
+      return { authorized: true, payload: decoded };
+    }
+
+    // 3. Attempt Supabase Auth access token verification if JWT check didn't pass
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (supabaseUrl && anonKey) {

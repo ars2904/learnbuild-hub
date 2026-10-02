@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { verifyJwt } from "@/lib/jwt";
+import { verifyJwt, decodeJwtPayload } from "@/lib/jwt";
+import { isAdminEmail } from "@/lib/supabase/auth";
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
@@ -23,9 +24,23 @@ export async function middleware(request: NextRequest) {
       request.cookies.get("lb_jwt_token")?.value ||
       request.headers.get("authorization")?.replace("Bearer ", "");
 
-    const payload = await verifyJwt(token || "");
+    let isValidAdmin = false;
 
-    if (!payload || payload.role !== "admin") {
+    if (token) {
+      // 1. Verify app-signed HMAC JWT
+      const payload = await verifyJwt(token);
+      if (payload && (payload.role === "admin" || isAdminEmail(payload.email))) {
+        isValidAdmin = true;
+      } else {
+        // 2. Fallback: decode Supabase Auth or OAuth JWT claims
+        const decoded = decodeJwtPayload(token);
+        if (decoded && (decoded.role === "admin" || isAdminEmail(decoded.email))) {
+          isValidAdmin = true;
+        }
+      }
+    }
+
+    if (!isValidAdmin) {
       return NextResponse.json(
         { success: false, message: "Unauthorized API access. Valid admin JWT token required." },
         { status: 401 }
