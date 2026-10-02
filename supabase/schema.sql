@@ -136,7 +136,11 @@ ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.employees ENABLE ROW LEVEL SECURITY;
 
--- Public Read Policies
+-- Clean up any legacy / overly permissive policies
+DROP POLICY IF EXISTS "Enable all access for blogs" ON public.blogs;
+DROP POLICY IF EXISTS "Public Read Blogs" ON public.blogs;
+
+-- Public Read Policies (Visitors can SELECT blog & catalog data)
 CREATE POLICY "Public Read Courses" ON public.courses FOR SELECT USING (true);
 CREATE POLICY "Public Read Instructors" ON public.instructors FOR SELECT USING (true);
 CREATE POLICY "Public Read Solutions" ON public.solutions FOR SELECT USING (true);

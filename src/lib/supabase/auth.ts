@@ -1,19 +1,23 @@
 import { createClient } from "./client";
 
-// Recognized Admin Email Identifiers
-const ADMIN_EMAILS = [
-  "saurabh.srivastav2023@gmail.com",
-  "saurabh@learnbuild.com",
-  "learnbuildh@gmail.com",
-  "admin@learnbuildhub.com",
-  "admin@learnbuild.com",
-  "saurabh@learnbuildhub.com",
-];
-
 export function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
   const lower = email.toLowerCase().trim();
-  return ADMIN_EMAILS.includes(lower) || lower.startsWith("admin@") || lower.includes("admin") || lower.includes("saurabh");
+  const envAdminEmails = (
+    process.env.NEXT_PUBLIC_ADMIN_EMAILS ||
+    process.env.ADMIN_EMAILS ||
+    ""
+  )
+    .toLowerCase()
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+
+  if (envAdminEmails.length > 0 && envAdminEmails.includes(lower)) {
+    return true;
+  }
+
+  return lower.startsWith("admin@") || lower.includes("@admin.");
 }
 
 export async function loginWithGoogle() {
@@ -66,7 +70,7 @@ export async function loginUser(email: string, pass: string) {
           password: pass,
           options: {
             data: {
-              full_name: email.toLowerCase().includes("saurabh") ? "Saurabh Srivastav" : "Admin User",
+              full_name: "Admin User",
               role: isAdminEmail(email) ? "admin" : "user",
             },
           },

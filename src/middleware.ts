@@ -5,6 +5,7 @@ import { verifyJwt } from "@/lib/jwt";
 export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const pathname = request.nextUrl.pathname;
+  const method = request.method;
 
   // 1. Restrict /admin UI routes on the primary public domain (e.g. learnbuildhub.com)
   if (pathname.startsWith("/admin")) {
@@ -13,8 +14,11 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Protect /api/admin/* API endpoints with JWT token verification
-  if (pathname.startsWith("/api/admin")) {
+  // 2. Protect /api/admin/* and mutating /api/cms API endpoints with JWT token verification
+  const isProtectedAdminApi = pathname.startsWith("/api/admin");
+  const isProtectedCmsMutation = pathname.startsWith("/api/cms") && method !== "GET";
+
+  if (isProtectedAdminApi || isProtectedCmsMutation) {
     const token =
       request.cookies.get("lb_jwt_token")?.value ||
       request.headers.get("authorization")?.replace("Bearer ", "");
@@ -33,5 +37,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/api/admin/:path*", "/api/cms"],
 };

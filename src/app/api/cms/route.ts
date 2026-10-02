@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
+import { verifyAdminRequest } from "@/lib/auth-server";
 import { 
   memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memorySiteSettings,
   CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings
@@ -92,6 +93,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const authCheck = await verifyAdminRequest(request);
+    if (!authCheck.authorized) {
+      return authCheck.errorResponse!;
+    }
+
     const body = await request.json();
     const { type, item } = body;
 
@@ -128,6 +134,11 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    const authCheck = await verifyAdminRequest(request);
+    if (!authCheck.authorized) {
+      return authCheck.errorResponse!;
+    }
+
     const body = await request.json();
     const { type, item, settings } = body;
 
@@ -181,6 +192,11 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const authCheck = await verifyAdminRequest(request);
+    if (!authCheck.authorized) {
+      return authCheck.errorResponse!;
+    }
+
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type");
     const id = searchParams.get("id");
