@@ -51,7 +51,7 @@ export async function saveContactSubmission(data: {
       status: "lead",
       service_interested: `Inquiry: ${data.subject}`,
       contract_value: 50000,
-      assigned_employee_name: "Sneha Sharma",
+      assigned_employee_name: "Unassigned",
       notes: `[Contact Inquiry] Subject: ${data.subject}. Message: ${data.message}`,
     });
 
@@ -97,7 +97,7 @@ export async function saveDemoRequest(data: {
       status: "lead",
       service_interested: `Demo: ${data.solutionTitle}`,
       contract_value: 120000,
-      assigned_employee_name: "Sneha Sharma",
+      assigned_employee_name: "Unassigned",
       notes: `[Demo Request] Solution: ${data.solutionTitle}. ${data.projectRequirements || ""}`,
     });
 

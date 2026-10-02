@@ -190,36 +190,7 @@ export const INITIAL_SOLUTIONS: CMSSolution[] = [
 
 export const INITIAL_INSTRUCTORS: CMSInstructor[] = [];
 
-export const INITIAL_BLOGS: CMSBlog[] = [
-  {
-    id: "blog-101",
-    slug: "building-scalable-nextjs-14-applications",
-    title: "How to Build High-Performance Next.js 14 Apps in 2026",
-    excerpt: "Discover the best practices for Server Components, App Router optimization, and Supabase integration.",
-    content: `Next.js 14 has redefined full-stack web development. In this guide, we dive deep into performance techniques, caching strategies, and seamless database integration using Supabase and Tailwind CSS.`,
-    category: "Engineering",
-    authorName: "Sneha Sharma",
-    authorAvatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-    coverImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
-    readTime: "5 min read",
-    publishedAt: "2026-09-20T10:00:00Z",
-    featured: true,
-  },
-  {
-    id: "blog-102",
-    slug: "ai-agents-llm-rag-architecture",
-    title: "Architecting Production-Grade AI Agents with RAG",
-    excerpt: "Learn how to combine vector databases, LangChain, and PyTorch models for enterprise intelligent search.",
-    content: `Retrieval-Augmented Generation (RAG) is transforming enterprise search. Here is how you can implement vector indexing and LLM prompt chaining to build zero-hallucination AI agents.`,
-    category: "Artificial Intelligence",
-    authorName: "Rohit Verma",
-    authorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-    coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
-    readTime: "7 min read",
-    publishedAt: "2026-09-24T14:30:00Z",
-    featured: true,
-  },
-];
+export const INITIAL_BLOGS: CMSBlog[] = [];
 
 export const INITIAL_SITE_SETTINGS: CMSSiteSettings = {
   heroTitle: "Build Real Software Products & Master In-Demand Engineering Tracks",

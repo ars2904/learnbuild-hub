@@ -26,8 +26,8 @@ export default function AdminStudentsPage() {
     phone: "",
     courseTitle: "Full-Stack Web Engineering Track",
     courseSlug: "full-stack-web-engineering",
-    expertId: "emp-101",
-    expertName: "Sneha Sharma",
+    expertId: "",
+    expertName: "Unassigned",
     qualification: "B.Tech Computer Science",
     status: "active" as StudentProfile["status"],
   });
@@ -69,8 +69,8 @@ export default function AdminStudentsPage() {
       phone: "",
       courseTitle: "Full-Stack Web Engineering Track",
       courseSlug: "full-stack-web-engineering",
-      expertId: "emp-101",
-      expertName: "Sneha Sharma",
+      expertId: "",
+      expertName: "Unassigned",
       qualification: "B.Tech Computer Science",
       status: "active",
     });
@@ -470,9 +470,10 @@ export default function AdminStudentsPage() {
                   onChange={(e) => setFormData({ ...formData, expertName: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
                 >
-                  <option value="Sneha Sharma">Sneha Sharma (Full-Stack Architect)</option>
-                  <option value="Rohit Verma">Rohit Verma (Senior AI Engineer)</option>
-                  <option value="Amit Kumar">Amit Kumar (DevOps Lead)</option>
+                  <option value="Unassigned">Unassigned (Pending Assignment)</option>
+                  <option value="Senior Lead Mentor">Senior Lead Mentor</option>
+                  <option value="AI Engineering Lab">AI Engineering Lab</option>
+                  <option value="Backend Architecture Team">Backend Architecture Team</option>
                 </select>
               </div>
 
@@ -539,9 +540,10 @@ export default function AdminStudentsPage() {
                   onChange={(e) => setFormData({ ...formData, expertName: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
                 >
-                  <option value="Sneha Sharma">Sneha Sharma (Full-Stack Architect)</option>
-                  <option value="Rohit Verma">Rohit Verma (Senior AI Engineer)</option>
-                  <option value="Amit Kumar">Amit Kumar (DevOps Lead)</option>
+                  <option value="Unassigned">Unassigned (Pending Assignment)</option>
+                  <option value="Senior Lead Mentor">Senior Lead Mentor</option>
+                  <option value="AI Engineering Lab">AI Engineering Lab</option>
+                  <option value="Backend Architecture Team">Backend Architecture Team</option>
                 </select>
               </div>
 

@@ -63,7 +63,7 @@ function ClientDetailsForm() {
         id: `f-${Date.now()}`,
         date: new Date().toISOString().split("T")[0],
         note: newNote,
-        addedBy: "Sneha Sharma",
+        addedBy: "Admin User",
       },
     ];
 
@@ -142,7 +142,7 @@ function ClientDetailsForm() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-xs text-white">
             <span className="text-[10px] font-bold text-blue-200 uppercase block">Assigned Executive:</span>
-            <span className="font-extrabold text-amber-300">{client.assignedEmployeeName || "Sneha Sharma"}</span>
+            <span className="font-extrabold text-amber-300">{client.assignedEmployeeName || "Unassigned"}</span>
           </div>
         </div>
       </div>

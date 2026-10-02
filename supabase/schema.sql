@@ -92,6 +92,37 @@ CREATE TABLE IF NOT EXISTS public.contact_submissions (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 7. BLOG POSTS & ARTICLES TABLE
+CREATE TABLE IF NOT EXISTS public.blogs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  excerpt TEXT,
+  content TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'Engineering',
+  author_name TEXT NOT NULL DEFAULT 'LearnBuild Hub Tech Team',
+  author_avatar TEXT,
+  cover_image TEXT,
+  read_time TEXT DEFAULT '5 min read',
+  external_url TEXT,
+  published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 8. EMPLOYEES & EXPERTS TABLE
+CREATE TABLE IF NOT EXISTS public.employees (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  phone TEXT,
+  designation TEXT NOT NULL,
+  department TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'expert',
+  status TEXT DEFAULT 'active',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ==========================================
@@ -102,11 +133,14 @@ ALTER TABLE public.solutions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.demo_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.employees ENABLE ROW LEVEL SECURITY;
 
 -- Public Read Policies
 CREATE POLICY "Public Read Courses" ON public.courses FOR SELECT USING (true);
 CREATE POLICY "Public Read Instructors" ON public.instructors FOR SELECT USING (true);
 CREATE POLICY "Public Read Solutions" ON public.solutions FOR SELECT USING (true);
+CREATE POLICY "Public Read Blogs" ON public.blogs FOR SELECT USING (true);
 
 -- Public Insert Policies for Leads & Forms
 CREATE POLICY "Public Submit Enrollments" ON public.enrollments FOR INSERT WITH CHECK (true);

@@ -64,28 +64,15 @@ function ExpertDashboardContent() {
         expertObj = jsonEmp.data.find((e: Employee) => e.email.toLowerCase() === email.toLowerCase()) || null;
       }
 
-      if (!expertObj) {
-        const dynamicName = formatEmailToName(email);
-        expertObj = {
-          id: `emp-${Date.now()}`,
-          name: dynamicName,
-          email: email,
-          designation: "Senior Expert Mentor",
-          department: "Software Engineering",
-          phone: "+91 98765 00000",
-          role: "Employee",
-          status: "Active",
-          createdAt: new Date().toISOString(),
-        };
-      }
-
       setExpertInfo(expertObj);
-      setProfileForm({
-        name: expertObj.name,
-        designation: expertObj.designation,
-        department: expertObj.department,
-        phone: expertObj.phone || "",
-      });
+      if (expertObj) {
+        setProfileForm({
+          name: expertObj.name,
+          designation: expertObj.designation,
+          department: expertObj.department,
+          phone: expertObj.phone || "",
+        });
+      }
 
       // Filter Tasks assigned ONLY to this Expert
       if (jsonTasks.success && jsonTasks.data) {
@@ -96,9 +83,8 @@ function ExpertDashboardContent() {
       if (jsonStudents.success && jsonStudents.data) {
         const filteredStudents = jsonStudents.data.filter(
           (s: StudentProfile) => 
-            s.expertId === expertObj?.id || 
-            s.expertName?.toLowerCase() === expertObj?.name?.toLowerCase() ||
-            s.expertId === "emp-101"
+            (expertObj?.id && s.expertId === expertObj.id) || 
+            (expertObj?.name && s.expertName?.toLowerCase() === expertObj.name.toLowerCase())
         );
         setMyStudents(filteredStudents);
       }
@@ -121,9 +107,13 @@ function ExpertDashboardContent() {
       fetchExpertScopedData(storedEmp);
     } else {
       getUserSession().then((session) => {
-        const email = session?.user?.email || "expert@learnbuildhub.com";
-        setExpertEmail(email);
-        fetchExpertScopedData(email);
+        const email = session?.user?.email || "";
+        if (email) {
+          setExpertEmail(email);
+          fetchExpertScopedData(email);
+        } else {
+          setLoading(false);
+        }
       });
     }
   }, []);
