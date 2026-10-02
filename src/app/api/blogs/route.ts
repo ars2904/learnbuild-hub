@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { memoryBlogs } from "@/lib/data/cmsStore";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const supabase = createServerClient();
+  const supabase = getSupabaseAdminClient();
   if (supabase) {
     try {
       const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });

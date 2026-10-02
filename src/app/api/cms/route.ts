@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { 
   memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memorySiteSettings,
   CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") || "all";
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
 
     if (type === "courses") {
       if (supabase) {
@@ -111,7 +111,7 @@ export async function POST(request: Request) {
       memoryBlogs.unshift(newItem);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from(type).insert([newItem]);
@@ -134,7 +134,7 @@ export async function PUT(request: Request) {
     if (type === "settings" && settings) {
       Object.assign(memorySiteSettings, settings);
 
-      const supabase = createServerClient();
+      const supabase = getSupabaseAdminClient();
       if (supabase) {
         try {
           await supabase.from("site_settings").upsert(settings);
@@ -164,7 +164,7 @@ export async function PUT(request: Request) {
       if (idx !== -1) memoryBlogs[idx] = { ...memoryBlogs[idx], ...item };
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from(type).update(item).eq("id", item.id);
@@ -203,7 +203,7 @@ export async function DELETE(request: Request) {
       if (idx !== -1) memoryBlogs.splice(idx, 1);
     }
 
-    const supabase = createServerClient();
+    const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
         await supabase.from(type).delete().eq("id", id);

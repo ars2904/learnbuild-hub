@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { 
   Globe, BookOpen, MonitorPlay, Users, FileText, Settings, 
-  Plus, Edit3, Trash2, X, CheckCircle2, Loader2, Save, Image, Sparkles, ExternalLink, Star, Check
+  Plus, Edit3, Trash2, X, CheckCircle2, Loader2, Save, Image, Sparkles, ExternalLink, Star, Check,
+  Columns, Eye, Clock, User, Layout
 } from "lucide-react";
 import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings } from "@/lib/data/cmsStore";
 
@@ -31,6 +32,7 @@ export default function AdminContentPage() {
 
   // Modal States
   const [modalType, setModalType] = useState<"course" | "solution" | "instructor" | "blog" | null>(null);
+  const [blogViewMode, setBlogViewMode] = useState<"split" | "form" | "preview">("split");
   const [editItem, setEditItem] = useState<any>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -154,12 +156,61 @@ export default function AdminContentPage() {
     setEditItem({ ...item });
   };
 
+  const renderMarkdownPreview = (text: string) => {
+    if (!text || text.trim() === "") {
+      return (
+        <p className="text-slate-400 italic text-xs py-4 text-center font-medium">
+          Start writing article content in the left form editor to see live rendering preview...
+        </p>
+      );
+    }
+    const lines = text.split("\n");
+    return lines.map((line, idx) => {
+      if (line.startsWith("# ")) {
+        return <h1 key={idx} className="text-xl font-extrabold text-slate-900 mt-5 mb-2 tracking-tight">{line.replace("# ", "")}</h1>;
+      }
+      if (line.startsWith("## ")) {
+        return <h2 key={idx} className="text-base font-black text-brand-blue mt-4 mb-2 tracking-tight">{line.replace("## ", "")}</h2>;
+      }
+      if (line.startsWith("### ")) {
+        return <h3 key={idx} className="text-sm font-bold text-slate-800 mt-3 mb-1">{line.replace("### ", "")}</h3>;
+      }
+      if (line.startsWith("> ")) {
+        return (
+          <blockquote key={idx} className="p-3 my-3 border-l-4 border-brand-blue bg-blue-50/70 rounded-r-2xl text-slate-700 italic text-xs font-medium">
+            {line.replace("> ", "")}
+          </blockquote>
+        );
+      }
+      if (line.startsWith("- ") || line.startsWith("* ")) {
+        return (
+          <li key={idx} className="ml-4 text-xs text-slate-700 list-disc font-medium my-1">
+            {line.replace(/^[-*]\s+/, "")}
+          </li>
+        );
+      }
+      if (line.trim() === "") {
+        return <div key={idx} className="h-2" />;
+      }
+      return <p key={idx} className="text-xs text-slate-700 leading-relaxed my-1.5 font-normal">{line}</p>;
+    });
+  };
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!modalType || !editItem) return;
     setSubmitting(true);
 
-    const isEdit = Boolean(editItem.id && editItem.id.length > 3 && !editItem.id.startsWith("temp"));
+    const payload = { ...editItem };
+    if (modalType === "blog") {
+      const generatedSlug = payload.slug || (payload.title ? payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : `blog-${Date.now()}`);
+      payload.slug = generatedSlug;
+      if (!payload.publishedAt) {
+        payload.publishedAt = new Date().toISOString();
+      }
+    }
+
+    const isEdit = Boolean(payload.id && payload.id.length > 3 && !payload.id.startsWith("temp"));
     const endpoint = "/api/cms";
     const method = isEdit ? "PUT" : "POST";
 
@@ -169,7 +220,7 @@ export default function AdminContentPage() {
       await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: typeKey, item: editItem }),
+        body: JSON.stringify({ type: typeKey, item: payload }),
       });
       setModalType(null);
       setEditItem(null);
@@ -580,193 +631,471 @@ export default function AdminContentPage() {
 
       {/* DYNAMIC ITEM EDIT / ADD MODAL */}
       {modalType && editItem && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl space-y-5 my-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <h3 className="text-xl font-black text-slate-900 capitalize">
-                {editItem.id ? `Edit ${modalType}` : `Add New ${modalType}`}
-              </h3>
-              <button
-                onClick={() => {
-                  setModalType(null);
-                  setEditItem(null);
-                }}
-                className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+          {modalType === "blog" ? (
+            /* ================= SPLIT-SCREEN BLOG STUDIO MODAL ================= */
+            <div className="w-full max-w-7xl h-[92vh] bg-white rounded-3xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden my-auto">
+              {/* STUDIO TOP HEADER */}
+              <div className="px-6 py-4 bg-slate-900 text-white border-b border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[10px] font-black uppercase tracking-wider mb-1">
+                    <Sparkles className="w-3 h-3 text-blue-400" />
+                    <span>Instant Live Publisher</span>
+                  </div>
+                  <h3 className="text-xl font-black text-white">
+                    {editItem.id ? "Edit Blog Article Studio" : "Live Split-Screen Blog Editor & Publisher"}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                  {/* Mode Switcher Buttons */}
+                  <div className="flex items-center p-1 rounded-2xl bg-slate-800 border border-slate-700 text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setBlogViewMode("split")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        blogViewMode === "split" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Columns className="w-3.5 h-3.5" />
+                      <span>Split View</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBlogViewMode("form")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        blogViewMode === "form" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>Form Only</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBlogViewMode("preview")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        blogViewMode === "preview" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Live Preview</span>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setModalType(null);
+                      setEditItem(null);
+                    }}
+                    className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* STUDIO MAIN BODY GRID */}
+              <form onSubmit={handleFormSubmit} className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 overflow-hidden bg-slate-50/50">
+                  
+                  {/* LEFT COLUMN: ARTICLE EDITOR FORM */}
+                  {(blogViewMode === "split" || blogViewMode === "form") && (
+                    <div className={`p-6 overflow-y-auto space-y-4 ${blogViewMode === "form" ? "lg:col-span-2 max-w-4xl mx-auto w-full" : ""}`}>
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2 pb-2 border-b border-slate-100">
+                          <FileText className="w-4 h-4 text-brand-blue" />
+                          <span>Article Core Details</span>
+                        </h4>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Article Title *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. How Much Does a Website Cost in 2026?"
+                            value={editItem.title || ""}
+                            onChange={(e) => {
+                              const titleVal = e.target.value;
+                              const autoSlug = titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                              setEditItem((prev: any) => ({
+                                ...prev,
+                                title: titleVal,
+                                name: titleVal,
+                                slug: prev.slugManual ? prev.slug : autoSlug,
+                              }));
+                            }}
+                            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">URL Slug (Auto-generated)</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="how-much-does-a-website-cost-in-2026"
+                              value={editItem.slug || ""}
+                              onChange={(e) => setEditItem({ ...editItem, slug: e.target.value, slugManual: true })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Category</label>
+                            <select
+                              value={editItem.category || "Engineering"}
+                              onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            >
+                              <option value="Engineering">Engineering</option>
+                              <option value="Technology">Technology</option>
+                              <option value="Artificial Intelligence">Artificial Intelligence</option>
+                              <option value="Programming">Programming</option>
+                              <option value="Career">Career</option>
+                              <option value="Digital Marketing">Digital Marketing</option>
+                              <option value="Projects">Projects</option>
+                              <option value="Learning">Learning</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Author Name</label>
+                            <input
+                              type="text"
+                              value={editItem.authorName || "LearnBuild Hub Tech Team"}
+                              onChange={(e) => setEditItem({ ...editItem, authorName: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Estimated Read Time</label>
+                            <input
+                              type="text"
+                              placeholder="5 min read"
+                              value={editItem.readTime || "5 min read"}
+                              onChange={(e) => setEditItem({ ...editItem, readTime: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Cover Image URL</label>
+                          <input
+                            type="text"
+                            placeholder="https://images.unsplash.com/..."
+                            value={editItem.coverImage || ""}
+                            onChange={(e) => setEditItem({ ...editItem, coverImage: e.target.value, image: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Short Excerpt / Summary</label>
+                          <textarea
+                            rows={2}
+                            placeholder="Brief summary displayed on blog cards..."
+                            value={editItem.excerpt || ""}
+                            onChange={(e) => setEditItem({ ...editItem, excerpt: e.target.value, description: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-medium resize-none focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="block text-xs font-black uppercase text-slate-700">Full Article Content (Markdown Supported)</label>
+                            <span className="text-[11px] text-slate-400 font-medium">Supports # H1, ## H2, &gt; Quote, - List</span>
+                          </div>
+                          <textarea
+                            rows={12}
+                            placeholder="Write your article here...
+# Section Header
+Here is the main paragraph explaining the architecture or concept...
+
+## Subheading Key Takeaways
+- Bullet point 1
+- Bullet point 2
+
+> Note: LearnBuild Hub provides hands-on mentorship."
+                            value={editItem.content || ""}
+                            onChange={(e) => setEditItem({ ...editItem, content: e.target.value })}
+                            className="w-full p-4 rounded-xl bg-slate-900 text-slate-100 border border-slate-700 text-xs font-mono leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-brand-blue"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">External Link (Optional - redirect if hosted on Medium/Substack)</label>
+                          <input
+                            type="text"
+                            placeholder="https://medium.com/@learnbuild/..."
+                            value={editItem.externalUrl || ""}
+                            onChange={(e) => setEditItem({ ...editItem, externalUrl: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* RIGHT COLUMN: REAL-TIME LIVE PREVIEW */}
+                  {(blogViewMode === "split" || blogViewMode === "preview") && (
+                    <div className={`p-6 overflow-y-auto ${blogViewMode === "preview" ? "lg:col-span-2 max-w-4xl mx-auto w-full" : ""}`}>
+                      <div className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden flex flex-col min-h-[500px]">
+                        {/* BROWSER STYLE HEADER BAR */}
+                        <div className="px-4 py-2.5 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+                            </div>
+                            <span className="text-[11px] text-slate-500 font-mono pl-2 border-l border-slate-300">
+                              https://learnbuildhub.com/blogs/{editItem.slug || "sample-article"}
+                            </span>
+                          </div>
+                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider border border-emerald-200">
+                            Real-Time Preview
+                          </span>
+                        </div>
+
+                        {/* LIVE ARTICLE PREVIEW BODY */}
+                        <div className="p-6 sm:p-8 space-y-6">
+                          {/* Banner & Category */}
+                          <div className="relative rounded-2xl overflow-hidden h-48 bg-slate-900 border border-slate-200">
+                            <img
+                              src={editItem.coverImage || "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80"}
+                              alt={editItem.title || "Cover image preview"}
+                              className="w-full h-full object-cover opacity-90"
+                            />
+                            <div className="absolute top-4 left-4 z-10 flex gap-2">
+                              <span className="px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md text-white text-[11px] font-black uppercase tracking-wider border border-white/20">
+                                {editItem.category || "Engineering"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Headline & Metadata */}
+                          <div className="space-y-3">
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-tight">
+                              {editItem.title || "Untitled Blog Post"}
+                            </h2>
+
+                            <div className="flex items-center gap-4 text-xs text-slate-500 font-bold border-b border-slate-100 pb-3">
+                              <div className="flex items-center gap-1.5">
+                                <User className="w-3.5 h-3.5 text-brand-blue" />
+                                <span>{editItem.authorName || "LearnBuild Hub Tech Team"}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                                <span>{editItem.readTime || "5 min read"}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Excerpt Callout */}
+                          {editItem.excerpt && (
+                            <div className="p-4 rounded-2xl bg-slate-50 border-l-4 border-brand-blue text-slate-700 text-xs font-semibold leading-relaxed">
+                              {editItem.excerpt}
+                            </div>
+                          )}
+
+                          {/* Formatted Content Body */}
+                          <div className="prose prose-slate max-w-none text-xs leading-relaxed">
+                            {renderMarkdownPreview(editItem.content)}
+                          </div>
+
+                          {/* CTA Callout */}
+                          <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-900 to-slate-900 text-white space-y-2 mt-8">
+                            <h4 className="text-sm font-black text-white">Ready to Build Production Software?</h4>
+                            <p className="text-xs text-blue-200">
+                              Learn full-stack engineering, AI microservices, and modern web application development with live mentor guidance at LearnBuild Hub.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* BOTTOM ACTION BAR */}
+                <div className="px-6 py-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
+                  <div className="text-xs text-slate-500 font-medium hidden sm:block">
+                    Changes are saved instantly to PostgreSQL database and pushed live to website visitors.
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModalType(null);
+                        setEditItem(null);
+                      }}
+                      className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="px-6 py-2.5 rounded-2xl bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <span>{editItem.id ? "Update Live Blog" : "Publish Live Article"}</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Title / Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={editItem.title || editItem.name || ""}
-                  onChange={(e) => setEditItem({ ...editItem, title: e.target.value, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Image / Avatar URL</label>
-                <input
-                  type="text"
-                  value={editItem.image || editItem.avatar || editItem.coverImage || ""}
-                  onChange={(e) => setEditItem({ ...editItem, image: e.target.value, avatar: e.target.value, coverImage: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-brand-blue"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Description / Bio / Excerpt</label>
-                <textarea
-                  rows={3}
-                  value={editItem.description || editItem.bio || editItem.excerpt || ""}
-                  onChange={(e) => setEditItem({ ...editItem, description: e.target.value, bio: e.target.value, excerpt: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-medium resize-none focus:outline-none focus:border-brand-blue"
-                />
-              </div>
-
-              {/* SPECIFIC FIELDS PER TYPE */}
-              {modalType === "solution" && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Category</label>
-                      <input
-                        type="text"
-                        value={editItem.category || ""}
-                        onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Price Estimate</label>
-                      <input
-                        type="text"
-                        value={editItem.priceEstimate || ""}
-                        onChange={(e) => setEditItem({ ...editItem, priceEstimate: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-emerald-600 text-xs font-bold"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Tech Stack (comma-separated)</label>
-                    <input
-                      type="text"
-                      placeholder="Next.js, Node.js, PostgreSQL"
-                      value={Array.isArray(editItem.techStack) ? editItem.techStack.join(", ") : editItem.techStack || ""}
-                      onChange={(e) => setEditItem({ ...editItem, techStack: e.target.value.split(",").map((s: string) => s.trim()) })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-semibold"
-                    />
-                  </div>
-                </>
-              )}
-
-              {modalType === "instructor" && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Role Title</label>
-                      <input
-                        type="text"
-                        value={editItem.role || ""}
-                        onChange={(e) => setEditItem({ ...editItem, role: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Rating Score</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        value={editItem.rating || 4.9}
-                        onChange={(e) => setEditItem({ ...editItem, rating: parseFloat(e.target.value) || 4.9 })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-amber-600 text-xs font-bold"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Expertise Tags (comma-separated)</label>
-                    <input
-                      type="text"
-                      value={Array.isArray(editItem.expertise) ? editItem.expertise.join(", ") : editItem.expertise || ""}
-                      onChange={(e) => setEditItem({ ...editItem, expertise: e.target.value.split(",").map((s: string) => s.trim()) })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-semibold"
-                    />
-                  </div>
-                </>
-              )}
-
-              {modalType === "blog" && (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Category</label>
-                      <select
-                        value={editItem.category || "Engineering"}
-                        onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
-                        className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                      >
-                        <option value="Engineering">Engineering</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Artificial Intelligence">Artificial Intelligence</option>
-                        <option value="Programming">Programming</option>
-                        <option value="Career">Career</option>
-                        <option value="Digital Marketing">Digital Marketing</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Read Time</label>
-                      <input
-                        type="text"
-                        placeholder="5 min read"
-                        value={editItem.readTime || ""}
-                        onChange={(e) => setEditItem({ ...editItem, readTime: e.target.value })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">External Article Link (Optional)</label>
-                    <input
-                      type="text"
-                      placeholder="https://medium.com/... or https://dev.to/..."
-                      value={editItem.externalUrl || ""}
-                      onChange={(e) => setEditItem({ ...editItem, externalUrl: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-mono"
-                    />
-                  </div>
-                </>
-              )}
-
-              <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+          ) : (
+            /* ================= STANDARD MODAL FOR COURSES, SOLUTIONS, INSTRUCTORS ================= */
+            <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl space-y-5 my-auto">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h3 className="text-xl font-black text-slate-900 capitalize">
+                  {editItem.id ? `Edit ${modalType}` : `Add New ${modalType}`}
+                </h3>
                 <button
-                  type="button"
                   onClick={() => {
                     setModalType(null);
                     setEditItem(null);
                   }}
-                  className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                  className="p-2 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-6 py-2.5 rounded-2xl bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md flex items-center gap-2 disabled:opacity-50"
-                >
-                  {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  <span>Save Item</span>
+                  <X className="w-5 h-5" />
                 </button>
               </div>
-            </form>
-          </div>
+
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Title / Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editItem.title || editItem.name || ""}
+                    onChange={(e) => setEditItem({ ...editItem, title: e.target.value, name: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Image / Avatar URL</label>
+                  <input
+                    type="text"
+                    value={editItem.image || editItem.avatar || editItem.coverImage || ""}
+                    onChange={(e) => setEditItem({ ...editItem, image: e.target.value, avatar: e.target.value, coverImage: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Description / Bio / Excerpt</label>
+                  <textarea
+                    rows={3}
+                    value={editItem.description || editItem.bio || editItem.excerpt || ""}
+                    onChange={(e) => setEditItem({ ...editItem, description: e.target.value, bio: e.target.value, excerpt: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-medium resize-none focus:outline-none focus:border-brand-blue"
+                  />
+                </div>
+
+                {/* SPECIFIC FIELDS PER TYPE */}
+                {modalType === "solution" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Category</label>
+                        <input
+                          type="text"
+                          value={editItem.category || ""}
+                          onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Price Estimate</label>
+                        <input
+                          type="text"
+                          value={editItem.priceEstimate || ""}
+                          onChange={(e) => setEditItem({ ...editItem, priceEstimate: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-emerald-600 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Tech Stack (comma-separated)</label>
+                      <input
+                        type="text"
+                        placeholder="Next.js, Node.js, PostgreSQL"
+                        value={Array.isArray(editItem.techStack) ? editItem.techStack.join(", ") : editItem.techStack || ""}
+                        onChange={(e) => setEditItem({ ...editItem, techStack: e.target.value.split(",").map((s: string) => s.trim()) })}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-semibold"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {modalType === "instructor" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Role Title</label>
+                        <input
+                          type="text"
+                          value={editItem.role || ""}
+                          onChange={(e) => setEditItem({ ...editItem, role: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Rating Score</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={editItem.rating || 4.9}
+                          onChange={(e) => setEditItem({ ...editItem, rating: parseFloat(e.target.value) || 4.9 })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-amber-600 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Expertise Tags (comma-separated)</label>
+                      <input
+                        type="text"
+                        value={Array.isArray(editItem.expertise) ? editItem.expertise.join(", ") : editItem.expertise || ""}
+                        onChange={(e) => setEditItem({ ...editItem, expertise: e.target.value.split(",").map((s: string) => s.trim()) })}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-semibold"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModalType(null);
+                      setEditItem(null);
+                    }}
+                    className="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-6 py-2.5 rounded-2xl bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    <span>Save Item</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       )}
     </div>
