@@ -7,6 +7,7 @@ import {
   Columns, Eye, Clock, User, Layout, Bold, Italic, Heading1, Heading2, Heading3, Table, List, ListOrdered, Quote, Code, Link as LinkIcon
 } from "lucide-react";
 import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings } from "@/lib/data/cmsStore";
+import { getUserSession } from "@/lib/supabase/auth";
 
 export default function AdminContentPage() {
   const [activeTab, setActiveTab] = useState<"courses" | "solutions" | "instructors" | "blogs" | "settings">("solutions");
@@ -64,9 +65,14 @@ export default function AdminContentPage() {
     e.preventDefault();
     setSubmitting(true);
     try {
+      const session = await getUserSession();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
       const res = await fetch("/api/cms", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ type: "settings", settings }),
       });
       const json = await res.json();
@@ -84,7 +90,12 @@ export default function AdminContentPage() {
   const handleDelete = async (type: string, id: string) => {
     if (!confirm(`Are you sure you want to delete this ${type.slice(0, -1)}?`)) return;
     try {
-      await fetch(`/api/cms?type=${type}&id=${id}`, { method: "DELETE" });
+      const session = await getUserSession();
+      const headers: Record<string, string> = {};
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+      await fetch(`/api/cms?type=${type}&id=${id}`, { method: "DELETE", headers });
       fetchAllContent();
     } catch (err) {
       console.error("Error deleting item:", err);
@@ -356,9 +367,15 @@ export default function AdminContentPage() {
     const typeKey = modalType === "course" ? "courses" : modalType === "solution" ? "solutions" : modalType === "instructor" ? "instructors" : "blogs";
 
     try {
+      const session = await getUserSession();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+
       await fetch(endpoint, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ type: typeKey, item: payload }),
       });
       setModalType(null);

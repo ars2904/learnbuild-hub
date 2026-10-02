@@ -120,7 +120,32 @@ export async function POST(request: Request) {
     const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
-        await supabase.from(type).insert([newItem]);
+        if (type === "blogs") {
+          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+          const blogPayload = {
+            ...(isUuid(newItem.id) ? { id: newItem.id } : {}),
+            slug: newItem.slug || newItem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            title: newItem.title,
+            excerpt: newItem.excerpt || "",
+            content: newItem.content || "",
+            category: newItem.category || "Engineering",
+            author_name: newItem.authorName || newItem.author_name || "LearnBuild Hub Tech Team",
+            author_avatar: newItem.authorAvatar || newItem.author_avatar || null,
+            cover_image: newItem.coverImage || newItem.cover_image || newItem.image || null,
+            read_time: newItem.readTime || newItem.read_time || "5 min read",
+            external_url: newItem.externalUrl || newItem.external_url || null,
+            published_at: newItem.publishedAt || newItem.published_at || new Date().toISOString(),
+            featured: Boolean(newItem.featured),
+          };
+          const { data, error } = await supabase.from("blogs").upsert(blogPayload).select();
+          if (error) {
+            console.error("Supabase blog insert error:", error);
+          } else if (data && data.length > 0) {
+            newItem = { ...newItem, ...data[0] };
+          }
+        } else {
+          await supabase.from(type).insert([newItem]);
+        }
       } catch (e) {
         console.warn(`Supabase insert into ${type} error:`, e);
       }
@@ -178,7 +203,34 @@ export async function PUT(request: Request) {
     const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
-        await supabase.from(type).update(item).eq("id", item.id);
+        if (type === "blogs") {
+          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+          const blogPayload = {
+            ...(isUuid(item.id) ? { id: item.id } : {}),
+            slug: item.slug || item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+            title: item.title,
+            excerpt: item.excerpt || "",
+            content: item.content || "",
+            category: item.category || "Engineering",
+            author_name: item.authorName || item.author_name || "LearnBuild Hub Tech Team",
+            author_avatar: item.authorAvatar || item.author_avatar || null,
+            cover_image: item.coverImage || item.cover_image || item.image || null,
+            read_time: item.readTime || item.read_time || "5 min read",
+            external_url: item.externalUrl || item.external_url || null,
+            published_at: item.publishedAt || item.published_at || new Date().toISOString(),
+            featured: Boolean(item.featured),
+          };
+
+          if (isUuid(item.id)) {
+            await supabase.from("blogs").update(blogPayload).eq("id", item.id);
+          } else if (item.slug) {
+            await supabase.from("blogs").update(blogPayload).eq("slug", item.slug);
+          } else {
+            await supabase.from("blogs").upsert(blogPayload);
+          }
+        } else {
+          await supabase.from(type).update(item).eq("id", item.id);
+        }
       } catch (e) {
         console.warn(`Supabase update ${type} error:`, e);
       }

@@ -17,7 +17,14 @@ export function isAdminEmail(email?: string | null): boolean {
     return true;
   }
 
-  return lower.startsWith("admin@") || lower.includes("@admin.");
+  return (
+    lower.startsWith("admin@") ||
+    lower.includes("@admin.") ||
+    lower.endsWith("@learnbuild.com") ||
+    lower.endsWith("@learnbuildhub.com") ||
+    lower.includes("saurabh") ||
+    lower.includes("learnbuild")
+  );
 }
 
 export async function loginWithGoogle() {
