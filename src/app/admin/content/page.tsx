@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { 
   Globe, BookOpen, MonitorPlay, Users, FileText, Settings, 
   Plus, Edit3, Trash2, X, CheckCircle2, Loader2, Save, Image, Sparkles, ExternalLink, Star, Check,
-  Columns, Eye, Clock, User, Layout
+  Columns, Eye, Clock, User, Layout, Bold, Italic, Heading1, Heading2, Heading3, Table, List, ListOrdered, Quote, Code, Link as LinkIcon
 } from "lucide-react";
 import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings } from "@/lib/data/cmsStore";
 
@@ -156,6 +156,50 @@ export default function AdminContentPage() {
     setEditItem({ ...item });
   };
 
+  const insertBlogSnippet = (prefix: string, suffix: string = "") => {
+    setEditItem((prev: any) => {
+      if (!prev) return prev;
+      const currentContent = prev.content || "";
+      return {
+        ...prev,
+        content: currentContent ? `${currentContent}\n${prefix}${suffix}` : `${prefix}${suffix}`,
+      };
+    });
+  };
+
+  const parseInlineMarkdown = (text: string) => {
+    if (!text) return "";
+    const regex = /(\*\*.*?\*\*|\*.*?\*|`.*?`|\[.*?\]\(.*?\))/g;
+    const parts = text.split(regex);
+
+    return parts.map((part, i) => {
+      if (part.startsWith("**") && part.endsWith("**")) {
+        return <strong key={i} className="font-black text-slate-900">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith("*") && part.endsWith("*")) {
+        return <em key={i} className="italic text-slate-800">{part.slice(1, -1)}</em>;
+      }
+      if (part.startsWith("`") && part.endsWith("`")) {
+        return (
+          <code key={i} className="px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 font-mono text-[11px]">
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+      if (part.startsWith("[") && part.includes("](")) {
+        const match = part.match(/\[(.*?)\]\((.*?)\)/);
+        if (match) {
+          return (
+            <a key={i} href={match[2]} target="_blank" rel="noopener noreferrer" className="text-brand-blue font-bold underline hover:text-blue-700">
+              {match[1]}
+            </a>
+          );
+        }
+      }
+      return part;
+    });
+  };
+
   const renderMarkdownPreview = (text: string) => {
     if (!text || text.trim() === "") {
       return (
@@ -164,36 +208,131 @@ export default function AdminContentPage() {
         </p>
       );
     }
+
     const lines = text.split("\n");
-    return lines.map((line, idx) => {
+    const elements: React.ReactNode[] = [];
+    let inCodeBlock = false;
+    let codeBlockLines: string[] = [];
+    let inTable = false;
+    let tableLines: string[] = [];
+
+    const processTable = (tLines: string[], keyPrefix: string) => {
+      const rows = tLines.filter(l => !l.match(/^\|?\s*[-:]+[-|\s:]*$/));
+      if (rows.length === 0) return null;
+
+      const parseRow = (rowStr: string) => {
+        return rowStr
+          .trim()
+          .replace(/^\|/, '')
+          .replace(/\|$/, '')
+          .split('|')
+          .map(cell => cell.trim());
+      };
+
+      const headerCells = parseRow(rows[0]);
+      const bodyRows = rows.slice(1).map(r => parseRow(r));
+
+      return (
+        <div key={keyPrefix} className="my-4 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-slate-900 text-white font-black">
+                {headerCells.map((h, i) => (
+                  <th key={i} className="px-3.5 py-2.5 border-b border-slate-800 uppercase tracking-wider text-[11px]">
+                    {parseInlineMarkdown(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {bodyRows.map((r, rIdx) => (
+                <tr key={rIdx} className={rIdx % 2 === 0 ? "bg-white" : "bg-slate-50/80 hover:bg-blue-50/30"}>
+                  {r.map((cell, cIdx) => (
+                    <td key={cIdx} className="px-3.5 py-2.5 text-slate-700 font-medium">
+                      {parseInlineMarkdown(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    lines.forEach((line, idx) => {
+      if (line.trim().startsWith("```")) {
+        if (inCodeBlock) {
+          elements.push(
+            <div key={`code-${idx}`} className="my-4 p-4 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800 shadow-inner">
+              <pre>{codeBlockLines.join("\n")}</pre>
+            </div>
+          );
+          codeBlockLines = [];
+          inCodeBlock = false;
+        } else {
+          if (inTable && tableLines.length > 0) {
+            elements.push(processTable(tableLines, `table-${idx}`));
+            tableLines = [];
+            inTable = false;
+          }
+          inCodeBlock = true;
+        }
+        return;
+      }
+
+      if (inCodeBlock) {
+        codeBlockLines.push(line);
+        return;
+      }
+
+      const isTableLine = line.trim().startsWith("|") && line.trim().endsWith("|");
+      if (isTableLine) {
+        inTable = true;
+        tableLines.push(line);
+        return;
+      } else if (inTable) {
+        elements.push(processTable(tableLines, `table-${idx}`));
+        tableLines = [];
+        inTable = false;
+      }
+
       if (line.startsWith("# ")) {
-        return <h1 key={idx} className="text-xl font-extrabold text-slate-900 mt-5 mb-2 tracking-tight">{line.replace("# ", "")}</h1>;
-      }
-      if (line.startsWith("## ")) {
-        return <h2 key={idx} className="text-base font-black text-brand-blue mt-4 mb-2 tracking-tight">{line.replace("## ", "")}</h2>;
-      }
-      if (line.startsWith("### ")) {
-        return <h3 key={idx} className="text-sm font-bold text-slate-800 mt-3 mb-1">{line.replace("### ", "")}</h3>;
-      }
-      if (line.startsWith("> ")) {
-        return (
-          <blockquote key={idx} className="p-3 my-3 border-l-4 border-brand-blue bg-blue-50/70 rounded-r-2xl text-slate-700 italic text-xs font-medium">
-            {line.replace("> ", "")}
+        elements.push(<h1 key={idx} className="text-xl font-extrabold text-slate-900 mt-5 mb-2 tracking-tight">{parseInlineMarkdown(line.replace("# ", ""))}</h1>);
+      } else if (line.startsWith("## ")) {
+        elements.push(<h2 key={idx} className="text-base font-black text-brand-blue mt-4 mb-2 tracking-tight">{parseInlineMarkdown(line.replace("## ", ""))}</h2>);
+      } else if (line.startsWith("### ")) {
+        elements.push(<h3 key={idx} className="text-sm font-bold text-slate-800 mt-3 mb-1">{parseInlineMarkdown(line.replace("### ", ""))}</h3>);
+      } else if (line.startsWith("> ")) {
+        elements.push(
+          <blockquote key={idx} className="p-3.5 my-3 border-l-4 border-brand-blue bg-blue-50/70 rounded-r-2xl text-slate-700 italic text-xs font-medium shadow-sm">
+            {parseInlineMarkdown(line.replace("> ", ""))}
           </blockquote>
         );
-      }
-      if (line.startsWith("- ") || line.startsWith("* ")) {
-        return (
+      } else if (line.startsWith("- ") || line.startsWith("* ")) {
+        elements.push(
           <li key={idx} className="ml-4 text-xs text-slate-700 list-disc font-medium my-1">
-            {line.replace(/^[-*]\s+/, "")}
+            {parseInlineMarkdown(line.replace(/^[-*]\s+/, ""))}
           </li>
         );
+      } else if (line.match(/^\d+\.\s+/)) {
+        elements.push(
+          <li key={idx} className="ml-4 text-xs text-slate-700 list-decimal font-medium my-1">
+            {parseInlineMarkdown(line.replace(/^\d+\.\s+/, ""))}
+          </li>
+        );
+      } else if (line.trim() === "") {
+        elements.push(<div key={idx} className="h-2" />);
+      } else {
+        elements.push(<p key={idx} className="text-xs text-slate-700 leading-relaxed my-1.5 font-normal">{parseInlineMarkdown(line)}</p>);
       }
-      if (line.trim() === "") {
-        return <div key={idx} className="h-2" />;
-      }
-      return <p key={idx} className="text-xs text-slate-700 leading-relaxed my-1.5 font-normal">{line}</p>;
     });
+
+    if (inTable && tableLines.length > 0) {
+      elements.push(processTable(tableLines, `table-end`));
+    }
+
+    return elements;
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -806,21 +945,129 @@ export default function AdminContentPage() {
                         </div>
 
                         <div>
-                          <div className="flex items-center justify-between mb-1">
-                            <label className="block text-xs font-black uppercase text-slate-700">Full Article Content (Markdown Supported)</label>
-                            <span className="text-[11px] text-slate-400 font-medium">Supports # H1, ## H2, &gt; Quote, - List</span>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="block text-xs font-black uppercase text-slate-700">Full Article Content & Rich Formatting</label>
+                            <span className="text-[11px] text-blue-600 font-bold">Live Markdown & Table Enabled</span>
                           </div>
+
+                          {/* RICH FORMATTING TOOLBAR */}
+                          <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-xl bg-slate-100 border border-slate-200 mb-2">
+                            <button
+                              type="button"
+                              title="Bold (**text**)"
+                              onClick={() => insertBlogSnippet("**", "bold text**")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-black text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Bold className="w-3.5 h-3.5" />
+                              <span>Bold</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Italic (*text*)"
+                              onClick={() => insertBlogSnippet("*", "italic text*")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 italic font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Italic className="w-3.5 h-3.5" />
+                              <span>Italic</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Heading 1 (Large)"
+                              onClick={() => insertBlogSnippet("# ", "Main Section Title")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-900 font-extrabold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Heading1 className="w-3.5 h-3.5 text-brand-blue" />
+                              <span>H1</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Heading 2 (Medium)"
+                              onClick={() => insertBlogSnippet("## ", "Section Subheading")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Heading2 className="w-3.5 h-3.5 text-brand-blue" />
+                              <span>H2</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Heading 3 (Small)"
+                              onClick={() => insertBlogSnippet("### ", "Subtopic Header")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Heading3 className="w-3.5 h-3.5 text-brand-blue" />
+                              <span>H3</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Insert Formatted Table"
+                              onClick={() => insertBlogSnippet(
+                                "| Track / Feature | Description | Duration |\n| --- | --- | --- |\n| Web Engineering | React 18, Next.js 14, Node.js & Postgres | 16 Weeks |\n| AI & ML Track | Python, PyTorch, RAG & Vector DBs | 20 Weeks |"
+                              )}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Table className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Table</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Bullet List"
+                              onClick={() => insertBlogSnippet("- Bullet Point Item 1\n- Bullet Point Item 2\n- Bullet Point Item 3")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <List className="w-3.5 h-3.5" />
+                              <span>Bullets</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Numbered List"
+                              onClick={() => insertBlogSnippet("1. First Step\n2. Second Step\n3. Third Step")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <ListOrdered className="w-3.5 h-3.5" />
+                              <span>Numbered</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Callout Quote"
+                              onClick={() => insertBlogSnippet("> 💡 TIP: LearnBuild Hub provides 1-on-1 live code reviews.")}
+                              className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 font-bold text-xs border border-blue-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Quote className="w-3.5 h-3.5 text-brand-blue" />
+                              <span>Quote</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Code Block"
+                              onClick={() => insertBlogSnippet("```javascript\nconst server = express();\nserver.listen(3000);\n```")}
+                              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 font-mono text-xs border border-slate-700 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <Code className="w-3.5 h-3.5 text-amber-400" />
+                              <span>Code</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              title="Insert Link"
+                              onClick={() => insertBlogSnippet("[LearnBuild Hub Website](https://learnbuildhub.com)")}
+                              className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                            >
+                              <LinkIcon className="w-3.5 h-3.5 text-brand-blue" />
+                              <span>Link</span>
+                            </button>
+                          </div>
+
                           <textarea
                             rows={12}
-                            placeholder="Write your article here...
-# Section Header
-Here is the main paragraph explaining the architecture or concept...
-
-## Subheading Key Takeaways
-- Bullet point 1
-- Bullet point 2
-
-> Note: LearnBuild Hub provides hands-on mentorship."
+                            placeholder="Write your article here using markdown or quick toolbar above..."
                             value={editItem.content || ""}
                             onChange={(e) => setEditItem({ ...editItem, content: e.target.value })}
                             className="w-full p-4 rounded-xl bg-slate-900 text-slate-100 border border-slate-700 text-xs font-mono leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-brand-blue"
