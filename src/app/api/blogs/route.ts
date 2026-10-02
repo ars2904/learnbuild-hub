@@ -18,7 +18,9 @@ export async function GET(req: Request) {
           .select("*")
           .eq("slug", slug)
           .single();
-        if (!error && data) {
+        if (error) {
+          console.error("Supabase blog slug query error:", error);
+        } else if (data) {
           return NextResponse.json(
             { success: true, data },
             {
@@ -30,7 +32,9 @@ export async function GET(req: Request) {
         }
       } else {
         const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
-        if (!error && data) {
+        if (error) {
+          console.error("Supabase blogs list query error:", error);
+        } else if (data) {
           return NextResponse.json(
             { success: true, data },
             {
