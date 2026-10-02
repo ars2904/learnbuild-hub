@@ -28,7 +28,7 @@ export default function BlogsPage() {
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
-    fetch("/api/blogs")
+    fetch("/api/blogs", { cache: "no-store", headers: { "Pragma": "no-cache", "Cache-Control": "no-cache" } })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
