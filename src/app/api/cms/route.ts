@@ -267,14 +267,23 @@ export async function DELETE(request: Request) {
       const idx = memoryInstructors.findIndex((i) => i.id === id);
       if (idx !== -1) memoryInstructors.splice(idx, 1);
     } else if (type === "blogs") {
-      const idx = memoryBlogs.findIndex((b) => b.id === id);
+      const idx = memoryBlogs.findIndex((b) => b.id === id || b.slug === id);
       if (idx !== -1) memoryBlogs.splice(idx, 1);
     }
 
     const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
-        await supabase.from(type).delete().eq("id", id);
+        if (type === "blogs") {
+          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+          if (isUuid) {
+            await supabase.from("blogs").delete().eq("id", id);
+          } else {
+            await supabase.from("blogs").delete().eq("slug", id);
+          }
+        } else {
+          await supabase.from(type).delete().eq("id", id);
+        }
       } catch (e) {
         console.warn(`Supabase delete from ${type} error:`, e);
       }

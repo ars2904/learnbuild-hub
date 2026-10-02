@@ -6,8 +6,7 @@ import {
   ArrowLeft, Calendar, Clock, User, Sparkles, BookOpen, ExternalLink, ArrowRight, Loader2, Share2, Check 
 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+
 
 const parseInlineMarkdown = (text: string) => {
   if (!text) return "";

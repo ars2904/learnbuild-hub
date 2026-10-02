@@ -13,13 +13,19 @@ export async function GET(req: Request) {
   if (supabase) {
     try {
       if (slug) {
-        const { data, error } = await supabase
-          .from("blogs")
-          .select("*")
-          .eq("slug", slug)
-          .single();
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+        let query = supabase.from("blogs").select("*");
+        
+        if (isUuid) {
+          query = query.or(`id.eq.${slug},slug.eq.${slug}`);
+        } else {
+          query = query.eq("slug", slug);
+        }
+
+        const { data, error } = await query.maybeSingle();
+
         if (error) {
-          console.error("Supabase blog slug query error:", error);
+          console.error("Supabase blog query error:", error);
         } else if (data) {
           return NextResponse.json(
             { success: true, data },
