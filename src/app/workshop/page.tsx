@@ -78,10 +78,10 @@ export default function WorkshopLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-20 overflow-hidden relative">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-20 overflow-hidden relative">
       {/* Ambient background glows */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand-blue/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-purple-600/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-blue-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-purple-500/10 blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-16 space-y-16 relative z-10">
         
@@ -90,9 +90,9 @@ export default function WorkshopLandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-bold shadow-lg"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-brand-blue text-xs font-black shadow-sm"
           >
-            <Sparkles className="w-4 h-4 text-amber-300" />
+            <Sparkles className="w-4 h-4 text-amber-500" />
             <span>EXCLUSIVE LIVE ENGINEERING MASTERCLASSES & WORKSHOPS</span>
           </motion.div>
 
@@ -100,18 +100,18 @@ export default function WorkshopLandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight"
+            className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-tight"
           >
-            LearnBuild Hub <span className="text-brand-blue">Live Workshops</span> & Tech Bootcamps
+            LearnBuild Hub <span className="text-brand-blue">Live Workshops</span> & Bootcamps
           </motion.h1>
 
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed"
+            className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed"
           >
-            Interactive live sessions with senior cloud software architects, AI engineers, and full-stack mentors. Build production microservices, LLM agents, and SaaS systems in real-time.
+            Interactive live sessions with senior software architects, AI engineers, and full-stack mentors. Build production microservices, LLM agents, and SaaS systems in real-time.
           </motion.p>
         </div>
 
@@ -119,63 +119,63 @@ export default function WorkshopLandingPage() {
         {loading ? (
           <div className="py-20 text-center space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-brand-blue mx-auto" />
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Loading Live Masterclass Schedule...</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Loading Live Masterclass Schedule...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {workshops.map((ws) => (
               <div 
                 key={ws.id}
-                className="rounded-3xl bg-slate-900/90 border border-slate-800 overflow-hidden shadow-2xl flex flex-col justify-between hover:border-slate-700 transition-all group"
+                className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-lg hover:shadow-xl transition-all flex flex-col justify-between group"
               >
                 <div>
-                  <div className="relative h-56 w-full bg-slate-950 overflow-hidden">
+                  <div className="relative h-56 w-full bg-slate-100 overflow-hidden">
                     <img 
                       src={ws.coverImage || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80"} 
                       alt={ws.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-4 left-4 flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md text-blue-300 text-[10px] font-black uppercase border border-blue-500/30">
+                      <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-brand-blue text-[10px] font-black uppercase border border-blue-200 shadow-sm">
                         {ws.category}
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-black uppercase">
+                      <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase shadow-sm">
                         {ws.price === 0 ? "FREE ENTRY" : `₹${ws.price}`}
                       </span>
                     </div>
                   </div>
 
                   <div className="p-6 sm:p-8 space-y-4">
-                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-bold">
-                      <span className="flex items-center gap-1.5 text-amber-400">
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 font-bold">
+                      <span className="flex items-center gap-1.5 text-amber-600">
                         <Calendar className="w-4 h-4" />
                         {new Date(ws.eventDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                       </span>
                       <span>•</span>
-                      <span className="flex items-center gap-1.5 text-blue-300">
+                      <span className="flex items-center gap-1.5 text-brand-blue">
                         <Video className="w-4 h-4" />
                         {ws.mode || "Live Online"}
                       </span>
                     </div>
 
-                    <h2 className="text-xl sm:text-2xl font-black text-white leading-snug group-hover:text-blue-200 transition-colors">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 leading-snug group-hover:text-brand-blue transition-colors">
                       {ws.title}
                     </h2>
 
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
                       {ws.description}
                     </p>
 
                     {/* Speaker Info */}
-                    <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-center gap-3">
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
                       <img 
                         src={ws.speakerAvatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"} 
                         alt={ws.speakerName} 
                         className="w-12 h-12 rounded-full object-cover border-2 border-brand-blue"
                       />
                       <div>
-                        <h4 className="text-xs font-black text-white">{ws.speakerName}</h4>
-                        <p className="text-[11px] text-blue-300 font-semibold">{ws.speakerRole}</p>
+                        <h4 className="text-xs font-black text-slate-900">{ws.speakerName}</h4>
+                        <p className="text-[11px] text-brand-blue font-bold">{ws.speakerRole}</p>
                       </div>
                     </div>
                   </div>
@@ -184,14 +184,14 @@ export default function WorkshopLandingPage() {
                 <div className="p-6 sm:p-8 pt-0 flex items-center justify-between gap-4">
                   <Link
                     href={`/workshop/${ws.slug}`}
-                    className="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-xs transition-colors"
+                    className="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs transition-colors"
                   >
                     View Details & Agenda
                   </Link>
 
                   <button
                     onClick={() => setSelectedWorkshop(ws)}
-                    className="px-6 py-3 rounded-2xl bg-brand-orange hover:bg-orange-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/20 flex items-center gap-2 transition-transform active:scale-95 cursor-pointer"
+                    className="px-6 py-3 rounded-2xl bg-brand-orange hover:bg-orange-600 text-white font-black text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 flex items-center gap-2 transition-transform active:scale-95 cursor-pointer"
                   >
                     <span>Reserve Seat Now</span>
                     <ArrowRight className="w-4 h-4" />
@@ -206,23 +206,23 @@ export default function WorkshopLandingPage() {
 
       {/* REGISTRATION MODAL */}
       {selectedWorkshop && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative my-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative my-auto text-slate-900">
             <button
               onClick={closeModal}
-              className="absolute top-5 right-5 p-2 rounded-full bg-slate-800 text-slate-400 hover:text-white transition-colors"
+              className="absolute top-5 right-5 p-2 rounded-full bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
 
             {registerSuccess ? (
               <div className="text-center py-6 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
                   <Check className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-black text-white">Seat Reserved Successfully!</h3>
-                <p className="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto">
-                  Thank you, <strong className="text-white">{fullName}</strong>! You are confirmed for <strong className="text-blue-300">{selectedWorkshop.title}</strong>. We have sent joining instructions to <span className="text-amber-300">{email}</span>.
+                <h3 className="text-2xl font-black text-slate-900">Seat Reserved Successfully!</h3>
+                <p className="text-xs text-slate-600 leading-relaxed max-w-sm mx-auto">
+                  Thank you, <strong className="text-slate-900">{fullName}</strong>! You are confirmed for <strong className="text-brand-blue">{selectedWorkshop.title}</strong>. We have sent joining instructions to <span className="text-amber-700 font-bold">{email}</span>.
                 </p>
                 <button
                   onClick={closeModal}
@@ -234,67 +234,67 @@ export default function WorkshopLandingPage() {
             ) : (
               <>
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-[10px] font-bold uppercase mb-2">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-brand-blue text-[10px] font-bold uppercase mb-2">
                     <Video className="w-3.5 h-3.5" />
                     <span>Masterclass Seat Registration</span>
                   </div>
-                  <h3 className="text-xl font-black text-white leading-tight">
+                  <h3 className="text-xl font-black text-slate-900 leading-tight">
                     {selectedWorkshop.title}
                   </h3>
-                  <p className="text-xs text-slate-400 mt-1 font-semibold">
+                  <p className="text-xs text-slate-500 mt-1 font-semibold">
                     {new Date(selectedWorkshop.eventDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })} • {selectedWorkshop.duration}
                   </p>
                 </div>
 
                 {errorMsg && (
-                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold">
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
                     {errorMsg}
                   </div>
                 )}
 
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-black uppercase text-slate-400 mb-1">Full Name</label>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">Full Name</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Saurabh Upadhyay"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-white text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-brand-blue"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase text-slate-400 mb-1">Email Address</label>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">Email Address</label>
                     <input
                       type="email"
                       required
                       placeholder="saurabh@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-white text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-brand-blue"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase text-slate-400 mb-1">WhatsApp / Phone Number</label>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">WhatsApp / Phone Number</label>
                     <input
                       type="tel"
                       required
                       placeholder="+91 98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-white text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-brand-blue"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase text-slate-400 mb-1">Current Role / Qualification</label>
+                    <label className="block text-xs font-black uppercase text-slate-700 mb-1">Current Role / Qualification</label>
                     <select
                       value={qualification}
                       onChange={(e) => setQualification(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-white text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                      className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-brand-blue"
                     >
                       <option value="Undergraduate Student">Undergraduate Student (B.Tech / BCA / B.Sc)</option>
                       <option value="Postgraduate Student">Postgraduate Student (M.Tech / MCA)</option>
