@@ -40,8 +40,8 @@ export async function GET(req: Request) {
             .from("workshops")
             .select("*")
             .order("event_date", { ascending: true });
-          if (!error && data && data.length > 0) {
-            const normalized = data.map(normalizeWorkshopFromDb);
+          if (!error && data) {
+            const normalized = data.length > 0 ? data.map(normalizeWorkshopFromDb) : memoryWorkshops;
             return NextResponse.json(
               { success: true, data: normalized },
               { headers: NO_CACHE_HEADERS }
