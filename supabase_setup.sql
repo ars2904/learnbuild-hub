@@ -23,32 +23,61 @@ CREATE TABLE IF NOT EXISTS public.workshops (
     agenda JSONB DEFAULT '[]'::jsonb,
     what_you_will_learn JSONB DEFAULT '[]'::jsonb,
     status TEXT DEFAULT 'upcoming',
+    show_on_home BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- Seed initial workshop into Supabase if empty
+-- Ensure show_on_home column exists if table was already created
+ALTER TABLE public.workshops ADD COLUMN IF NOT EXISTS show_on_home BOOLEAN DEFAULT false;
+
+-- Seed initial workshops into Supabase if empty
 INSERT INTO public.workshops (
     slug, title, tagline, description, category, event_date, duration, mode, price,
-    speaker_name, speaker_role, speaker_avatar, cover_image, agenda, what_you_will_learn, status
+    speaker_name, speaker_role, speaker_avatar, cover_image, agenda, what_you_will_learn, status, show_on_home
 )
 SELECT 
-    'generative-ai-llm-agent-workshop',
-    'Building Production Generative AI & Autonomous LLM Agents',
-    'Hands-on Live Masterclass on RAG, LangChain & Vector Databases',
-    'Join Senior AI Engineers to build and deploy production-ready LLM agents, vector database search systems, and custom RAG microservices in Python.',
-    'Artificial Intelligence',
-    '2026-10-18T14:00:00Z',
-    '2.5 Hours • Live Interactive',
-    'Live Online Masterclass',
+    'tech-career-guidance-call',
+    '1-to-1 Personalized Tech Career Guidance Call',
+    'Get personalized guidance, clear your doubts and plan your next step with confidence.',
+    'Confused about your tech career? Speak 1-to-1 with a Senior Software Architect for 49 minutes. Get clear direction on tech stacks (.NET, Java, Python, MERN), resume building, and job opportunities.',
+    'Career Guidance',
+    NOW() + INTERVAL '3 days',
+    '49 Minutes 1-to-1 Session',
+    'Personalized 1-to-1 Online Call',
+    49,
+    'Saurabh Upadhyay',
+    'Senior Software & AI Architect',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+    '/images/workshops/career-guidance-call.jpg',
+    '["Career Options & Industry Demands", "Technology Guidance (.NET / Java / Python / MERN)", "Courses & Learning Roadmap", "Internships & Opportunity Search Strategy", "Resume & Portfolio Project Tips", "Q&A - Ask Anything Freely"]'::jsonb,
+    '["Ask your questions freely in a 1-to-1 setup", "Understand the best technology & career path for your goals", "Plan your next step with clarity and confidence"]'::jsonb,
+    'upcoming',
+    true
+WHERE NOT EXISTS (SELECT 1 FROM public.workshops WHERE slug = 'tech-career-guidance-call');
+
+INSERT INTO public.workshops (
+    slug, title, tagline, description, category, event_date, duration, mode, price,
+    speaker_name, speaker_role, speaker_avatar, cover_image, agenda, what_you_will_learn, status, show_on_home
+)
+SELECT 
+    'learnbuild-saturday-tech-workshop',
+    'LearnBuild Saturday Live Tech Workshop',
+    'Learn something new. Ask your doubts. Build your skills.',
+    'Join our exclusive Saturday hands-on masterclass. Cover HTML/CSS, Git/GitHub, AI tools, and career roadmaps with live expert guidance. Limited to 50 participants!',
+    'Saturday Workshop',
+    NOW() + INTERVAL '7 days',
+    'Every Saturday Live',
+    'Online (Google Meet)',
     0,
     'Saurabh Upadhyay',
-    'Senior AI & Cloud Solutions Architect',
+    'Senior Software & AI Architect',
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-    'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80',
-    '["Architecture of Generative AI Systems & Transformer Models", "Building Custom Retrieval Augmented Generation (RAG) with Pinecone & LangChain", "Developing Autonomous AI Agents with Tool Calling Capabilities", "Deploying AI API Microservices on AWS & Vercel Edge"]'::jsonb,
-    '["How to build production LLM agents using Python & LangChain", "Vector Indexing & Embedding Search with Qdrant / Pinecone", "Deploying & Monitoring AI Services with FastAPI & Docker"]'::jsonb,
-    'upcoming'
-WHERE NOT EXISTS (SELECT 1 FROM public.workshops WHERE slug = 'generative-ai-llm-agent-workshop');
+    '/images/workshops/saturday-free-workshop.jpg',
+    '["How to Choose your Tech Career?", "Build Your First Website (HTML & CSS)", "Git & GitHub for Beginners", "How to Build a Developer Resume", ".NET vs Java vs Python vs MERN", "AI Tools Every Student Should Know", "Build a Project for Your Resume"]'::jsonb,
+    '["Practical Learning for a Brighter Tomorrow", "Limited to 50 Participants Only!", "Expert Guidance & Live Q&A"]'::jsonb,
+    'upcoming',
+    false
+WHERE NOT EXISTS (SELECT 1 FROM public.workshops WHERE slug = 'learnbuild-saturday-tech-workshop');
 
 
 -- 2. WORKSHOP REGISTRATIONS TABLE

@@ -15,6 +15,7 @@ import {
   MonitorPlay,
   FileText
 } from "lucide-react";
+import { HomeWorkshopBanner } from "@/components/home/HomeWorkshopBanner";
 import { CoursePlatformHero } from "@/components/home/CoursePlatformHero";
 import { RichDualModules } from "@/components/home/RichDualModules";
 import { TrackShowcase } from "@/components/home/TrackShowcase";
@@ -104,6 +105,9 @@ export default function HomePage() {
 
         {/* 3. FEATURED LEARNING TRACKS */}
         <TrackShowcase />
+
+        {/* 3.5 DYNAMIC FEATURED CAREER GUIDANCE & WORKSHOP BANNER */}
+        <HomeWorkshopBanner />
 
         {/* 4. SELECTED PROJECTS (Build Work Preview) */}
         <section className="py-16 md:py-24 bg-slate-900 text-white relative">

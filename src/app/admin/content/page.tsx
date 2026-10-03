@@ -1513,6 +1513,19 @@ export default function AdminContentPage() {
                             className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
                           />
                         </div>
+
+                        <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200">
+                          <input
+                            type="checkbox"
+                            id="showOnHome"
+                            checked={Boolean(editItem.showOnHome)}
+                            onChange={(e) => setEditItem({ ...editItem, showOnHome: e.target.checked })}
+                            className="w-4 h-4 rounded text-brand-blue focus:ring-brand-blue cursor-pointer"
+                          />
+                          <label htmlFor="showOnHome" className="text-xs font-extrabold text-slate-800 cursor-pointer select-none">
+                            Display Banner on Website Home Page (/)
+                          </label>
+                        </div>
                       </div>
 
                       {/* Section 2: Speaker Information */}

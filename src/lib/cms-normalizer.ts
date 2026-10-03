@@ -82,6 +82,7 @@ export function normalizeWorkshopFromDb(row: any): CMSWorkshop {
     agenda: parsedAgenda,
     whatYouWillLearn: parsedLearn,
     status: row.status || "upcoming",
+    showOnHome: Boolean(row.show_on_home || row.showOnHome),
     createdAt: row.created_at || row.createdAt,
   };
 }
@@ -105,6 +106,7 @@ export function normalizeWorkshopToDb(item: any): any {
     agenda: Array.isArray(item.agenda) ? item.agenda : [],
     what_you_will_learn: Array.isArray(item.whatYouWillLearn) ? item.whatYouWillLearn : (Array.isArray(item.what_you_will_learn) ? item.what_you_will_learn : []),
     status: item.status || "upcoming",
+    show_on_home: Boolean(item.showOnHome),
   };
   if (isUuid(item.id)) {
     payload.id = item.id;

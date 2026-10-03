@@ -76,6 +76,7 @@ export interface CMSWorkshop {
   agenda: string[];
   whatYouWillLearn: string[];
   status: "upcoming" | "live" | "completed";
+  showOnHome?: boolean;
   createdAt?: string;
 }
 
@@ -181,6 +182,69 @@ export const INITIAL_COURSES: CMSCourse[] = [
 
 export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
   {
+    id: "ws-career-49",
+    slug: "tech-career-guidance-call",
+    title: "1-to-1 Personalized Tech Career Guidance Call",
+    tagline: "Get personalized guidance, clear your doubts and plan your next step with confidence.",
+    description: "Confused about your tech career? Speak 1-to-1 with a Senior Software Architect for 49 minutes. Get clear direction on tech stacks (.NET, Java, Python, MERN), resume building, and job opportunities.",
+    category: "Career Guidance",
+    eventDate: new Date(Date.now() + 86400000 * 3).toISOString(),
+    duration: "49 Minutes 1-to-1 Session",
+    mode: "Personalized 1-to-1 Online Call",
+    price: 49,
+    speakerName: "Saurabh Upadhyay",
+    speakerRole: "Senior Software & AI Architect",
+    speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    coverImage: "/images/workshops/career-guidance-call.jpg",
+    agenda: [
+      "Career Options & Industry Demands",
+      "Technology Guidance (.NET / Java / Python / MERN)",
+      "Courses & Learning Roadmap",
+      "Internships & Opportunity Search Strategy",
+      "Resume & Portfolio Project Tips",
+      "Q&A - Ask Anything Freely",
+    ],
+    whatYouWillLearn: [
+      "Ask your questions freely in a 1-to-1 setup",
+      "Understand the best technology & career path for your goals",
+      "Plan your next step with clarity and confidence",
+    ],
+    status: "upcoming",
+    showOnHome: true,
+  },
+  {
+    id: "ws-saturday-live",
+    slug: "learnbuild-saturday-tech-workshop",
+    title: "LearnBuild Saturday Live Tech Workshop",
+    tagline: "Learn something new. Ask your doubts. Build your skills.",
+    description: "Join our exclusive Saturday hands-on masterclass. Cover HTML/CSS, Git/GitHub, AI tools, and career roadmaps with live expert guidance. Limited to 50 participants!",
+    category: "Saturday Workshop",
+    eventDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+    duration: "Every Saturday Live",
+    mode: "Online (Google Meet)",
+    price: 0,
+    speakerName: "Saurabh Upadhyay",
+    speakerRole: "Senior Software & AI Architect",
+    speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    coverImage: "/images/workshops/saturday-free-workshop.jpg",
+    agenda: [
+      "How to Choose your Tech Career?",
+      "Build Your First Website (HTML & CSS)",
+      "Git & GitHub for Beginners",
+      "How to Build a Developer Resume",
+      ".NET vs Java vs Python vs MERN",
+      "AI Tools Every Student Should Know",
+      "Build a Project for Your Resume",
+    ],
+    whatYouWillLearn: [
+      "Practical Learning for a Brighter Tomorrow",
+      "Limited to 50 Participants Only!",
+      "Expert Guidance & Live Q&A",
+    ],
+    status: "upcoming",
+    showOnHome: false,
+  },
+  {
     id: "ws-101",
     slug: "generative-ai-llm-agent-workshop",
     title: "Building Production Generative AI & Autonomous LLM Agents",
@@ -207,6 +271,7 @@ export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
       "Deploying & Monitoring AI Services with FastAPI & Docker",
     ],
     status: "upcoming",
+    showOnHome: false,
   },
 ];
 
