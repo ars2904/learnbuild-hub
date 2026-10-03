@@ -123,6 +123,41 @@ CREATE TABLE IF NOT EXISTS public.employees (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 9. WORKSHOPS & MASTERCLASSES TABLE
+CREATE TABLE IF NOT EXISTS public.workshops (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  tagline TEXT,
+  description TEXT NOT NULL,
+  category TEXT NOT NULL DEFAULT 'Engineering',
+  event_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  duration TEXT DEFAULT '2 Hours',
+  mode TEXT DEFAULT 'Live Online',
+  price NUMERIC(10,2) DEFAULT 0,
+  speaker_name TEXT NOT NULL,
+  speaker_role TEXT,
+  speaker_avatar TEXT,
+  cover_image TEXT,
+  agenda JSONB DEFAULT '[]'::jsonb,
+  what_you_will_learn JSONB DEFAULT '[]'::jsonb,
+  status TEXT DEFAULT 'upcoming',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 10. WORKSHOP STUDENT REGISTRATIONS TABLE
+CREATE TABLE IF NOT EXISTS public.workshop_registrations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workshop_id TEXT NOT NULL,
+  workshop_title TEXT NOT NULL,
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  qualification TEXT,
+  status TEXT DEFAULT 'confirmed',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ==========================================
@@ -135,19 +170,27 @@ ALTER TABLE public.demo_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blogs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.employees ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.workshops ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.workshop_registrations ENABLE ROW LEVEL SECURITY;
 
 -- Clean up any legacy / overly permissive policies
 DROP POLICY IF EXISTS "Enable all access for blogs" ON public.blogs;
 DROP POLICY IF EXISTS "Public Read Blogs" ON public.blogs;
+DROP POLICY IF EXISTS "Public Read Workshops" ON public.workshops;
+DROP POLICY IF EXISTS "Public Submit Workshop Registrations" ON public.workshop_registrations;
 
--- Public Read Policies (Visitors can SELECT blog & catalog data)
+-- Public Read Policies (Visitors can SELECT blog, catalog & workshop data)
 CREATE POLICY "Public Read Courses" ON public.courses FOR SELECT USING (true);
 CREATE POLICY "Public Read Instructors" ON public.instructors FOR SELECT USING (true);
 CREATE POLICY "Public Read Solutions" ON public.solutions FOR SELECT USING (true);
 CREATE POLICY "Public Read Blogs" ON public.blogs FOR SELECT USING (true);
+CREATE POLICY "Public Read Workshops" ON public.workshops FOR SELECT USING (true);
 
 -- Public Insert Policies for Leads & Forms
 CREATE POLICY "Public Submit Enrollments" ON public.enrollments FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Submit Demo Requests" ON public.demo_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Submit Contact Form" ON public.contact_submissions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Submit Workshop Registrations" ON public.workshop_registrations FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public Submit Demo Requests" ON public.demo_requests FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public Submit Contact Form" ON public.contact_submissions FOR INSERT WITH CHECK (true);
 

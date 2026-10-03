@@ -58,6 +58,39 @@ export interface CMSBlog {
   featured: boolean;
 }
 
+export interface CMSWorkshop {
+  id: string;
+  slug: string;
+  title: string;
+  tagline: string;
+  description: string;
+  category: string;
+  eventDate: string;
+  duration: string;
+  mode: string;
+  price: number;
+  speakerName: string;
+  speakerRole: string;
+  speakerAvatar: string;
+  coverImage: string;
+  agenda: string[];
+  whatYouWillLearn: string[];
+  status: "upcoming" | "live" | "completed";
+  createdAt?: string;
+}
+
+export interface CMSWorkshopRegistration {
+  id: string;
+  workshopId: string;
+  workshopTitle: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  qualification: string;
+  status: string;
+  createdAt: string;
+}
+
 export interface CMSSiteSettings {
   heroTitle: string;
   heroSubtitle: string;
@@ -146,6 +179,37 @@ export const INITIAL_COURSES: CMSCourse[] = [
   },
 ];
 
+export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
+  {
+    id: "ws-101",
+    slug: "generative-ai-llm-agent-workshop",
+    title: "Building Production Generative AI & Autonomous LLM Agents",
+    tagline: "Hands-on Live Masterclass on RAG, LangChain & Vector Databases",
+    description: "Join Senior AI Engineers to build and deploy production-ready LLM agents, vector database search systems, and custom RAG microservices in Python.",
+    category: "Artificial Intelligence",
+    eventDate: "2026-10-18T14:00:00Z",
+    duration: "2.5 Hours • Live Interactive",
+    mode: "Live Online Masterclass",
+    price: 0,
+    speakerName: "Saurabh Upadhyay",
+    speakerRole: "Senior AI & Cloud Solutions Architect",
+    speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
+    agenda: [
+      "Architecture of Generative AI Systems & Transformer Models",
+      "Building Custom Retrieval Augmented Generation (RAG) with Pinecone & LangChain",
+      "Developing Autonomous AI Agents with Tool Calling Capabilities",
+      "Deploying AI API Microservices on AWS & Vercel Edge",
+    ],
+    whatYouWillLearn: [
+      "How to build production LLM agents using Python & LangChain",
+      "Vector Indexing & Embedding Search with Qdrant / Pinecone",
+      "Deploying & Monitoring AI Services with FastAPI & Docker",
+    ],
+    status: "upcoming",
+  },
+];
+
 export const INITIAL_SOLUTIONS: CMSSolution[] = [
   {
     id: "sol-101",
@@ -210,4 +274,6 @@ export let memoryCourses: CMSCourse[] = [...INITIAL_COURSES];
 export let memorySolutions: CMSSolution[] = [...INITIAL_SOLUTIONS];
 export let memoryInstructors: CMSInstructor[] = [...INITIAL_INSTRUCTORS];
 export let memoryBlogs: CMSBlog[] = [...INITIAL_BLOGS];
+export let memoryWorkshops: CMSWorkshop[] = [...INITIAL_WORKSHOPS];
+export let memoryWorkshopRegistrations: CMSWorkshopRegistration[] = [];
 export let memorySiteSettings: CMSSiteSettings = { ...INITIAL_SITE_SETTINGS };

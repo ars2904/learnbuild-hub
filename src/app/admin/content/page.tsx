@@ -2,15 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { 
-  Globe, BookOpen, MonitorPlay, Users, FileText, Settings, 
+  Globe, BookOpen, MonitorPlay, Users, FileText, Settings, Video,
   Plus, Edit3, Trash2, X, CheckCircle2, Loader2, Save, Image, Sparkles, ExternalLink, Star, Check,
   Columns, Eye, Clock, User, Layout, Bold, Italic, Heading1, Heading2, Heading3, Table, List, ListOrdered, Quote, Code, Link as LinkIcon
 } from "lucide-react";
-import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSSiteSettings } from "@/lib/data/cmsStore";
+import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSWorkshop, CMSSiteSettings } from "@/lib/data/cmsStore";
 import { getUserSession } from "@/lib/supabase/auth";
 
 export default function AdminContentPage() {
-  const [activeTab, setActiveTab] = useState<"courses" | "solutions" | "instructors" | "blogs" | "settings">("solutions");
+  const [activeTab, setActiveTab] = useState<"courses" | "solutions" | "instructors" | "blogs" | "workshops" | "settings">("solutions");
   const [loading, setLoading] = useState(true);
 
   // Data States
@@ -18,6 +18,7 @@ export default function AdminContentPage() {
   const [solutions, setSolutions] = useState<CMSSolution[]>([]);
   const [instructors, setInstructors] = useState<CMSInstructor[]>([]);
   const [blogs, setBlogs] = useState<CMSBlog[]>([]);
+  const [workshops, setWorkshops] = useState<CMSWorkshop[]>([]);
   const [settings, setSettings] = useState<CMSSiteSettings>({
     heroTitle: "",
     heroSubtitle: "",
@@ -32,7 +33,7 @@ export default function AdminContentPage() {
   });
 
   // Modal States
-  const [modalType, setModalType] = useState<"course" | "solution" | "instructor" | "blog" | null>(null);
+  const [modalType, setModalType] = useState<"course" | "solution" | "instructor" | "blog" | "workshop" | null>(null);
   const [blogViewMode, setBlogViewMode] = useState<"split" | "form" | "preview">("split");
   const [editItem, setEditItem] = useState<any>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -48,6 +49,7 @@ export default function AdminContentPage() {
         setSolutions(json.data.solutions || []);
         setInstructors(json.data.instructors || []);
         setBlogs(json.data.blogs || []);
+        setWorkshops(json.data.workshops || []);
         if (json.data.settings) setSettings(json.data.settings);
       }
     } catch (err) {
@@ -102,7 +104,7 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleOpenAdd = (type: "course" | "solution" | "instructor" | "blog") => {
+  const handleOpenAdd = (type: "course" | "solution" | "instructor" | "blog" | "workshop") => {
     setModalType(type);
     if (type === "solution") {
       setEditItem({
@@ -129,6 +131,34 @@ export default function AdminContentPage() {
         experienceYears: 8,
         rating: 4.9,
         studentsCount: 1500,
+      });
+    } else if (type === "workshop") {
+      setEditItem({
+        id: "",
+        slug: "",
+        title: "",
+        tagline: "Live Hands-on Engineering Masterclass",
+        description: "",
+        category: "Engineering",
+        eventDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+        duration: "2 Hours • Live Interactive",
+        mode: "Live Online Masterclass",
+        price: 0,
+        speakerName: "Saurabh Upadhyay",
+        speakerRole: "Senior AI & Cloud Solutions Architect",
+        speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+        coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
+        agenda: [
+          "Architecture & Core Concepts Overview",
+          "Live Hands-on Coding & System Setup",
+          "Production Deployment & Monitoring Best Practices",
+          "Live Q&A & Mentorship Session",
+        ],
+        whatYouWillLearn: [
+          "Building production microservices",
+          "Real-time deployment & API integration",
+        ],
+        status: "upcoming",
       });
     } else if (type === "blog") {
       setEditItem({
@@ -162,7 +192,7 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleOpenEdit = (type: "course" | "solution" | "instructor" | "blog", item: any) => {
+  const handleOpenEdit = (type: "course" | "solution" | "instructor" | "blog" | "workshop", item: any) => {
     setModalType(type);
     setEditItem({ ...item });
   };
@@ -364,7 +394,7 @@ export default function AdminContentPage() {
     const endpoint = "/api/cms";
     const method = isEdit ? "PUT" : "POST";
 
-    const typeKey = modalType === "course" ? "courses" : modalType === "solution" ? "solutions" : modalType === "instructor" ? "instructors" : "blogs";
+    const typeKey = modalType === "course" ? "courses" : modalType === "solution" ? "solutions" : modalType === "instructor" ? "instructors" : modalType === "workshop" ? "workshops" : "blogs";
 
     try {
       const session = await getUserSession();
@@ -401,7 +431,7 @@ export default function AdminContentPage() {
             Website Content & Media Controller
           </h1>
           <p className="text-xs sm:text-sm text-blue-200 mt-1">
-            Manage software solutions, instructor profiles, blogs with external links, hero banners, and stat counters without code redeployment.
+            Manage software solutions, instructor profiles, blogs, live workshops, hero banners, and stat counters.
           </p>
         </div>
 
@@ -421,6 +451,7 @@ export default function AdminContentPage() {
           { id: "solutions", label: "Software Solutions", icon: MonitorPlay, count: solutions.length },
           { id: "instructors", label: "Instructors & Mentors", icon: Users, count: instructors.length },
           { id: "blogs", label: "Blog & Articles", icon: FileText, count: blogs.length },
+          { id: "workshops", label: "Live Workshops", icon: Video, count: workshops.length },
           { id: "settings", label: "Hero & Site Settings", icon: Settings },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -649,7 +680,72 @@ export default function AdminContentPage() {
             </div>
           )}
 
-          {/* TAB 4: HERO & SITE SETTINGS */}
+          {/* TAB 4: WORKSHOPS & MASTERCLASSES */}
+          {activeTab === "workshops" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">Live Workshops & Masterclasses</h3>
+                  <p className="text-xs text-slate-500">Manage unlisted live masterclasses displayed on <code className="text-blue-600 font-bold">/workshop</code>.</p>
+                </div>
+
+                <button
+                  onClick={() => handleOpenAdd("workshop")}
+                  className="px-5 py-2.5 rounded-full bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-2 shadow-md cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Create Workshop</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {workshops.map((ws) => (
+                  <div key={ws.id} className="p-5 rounded-3xl bg-white border-2 border-slate-200/80 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div className="space-y-3">
+                      <div className="relative h-40 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
+                        <img src={ws.coverImage} alt={ws.title} className="w-full h-full object-cover" />
+                        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-black uppercase">
+                          {ws.category}
+                        </span>
+                        <span className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-emerald-500 text-slate-950 font-black text-xs shadow">
+                          {ws.price === 0 ? "FREE ENTRY" : `₹${ws.price}`}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 className="text-base font-black text-slate-900 line-clamp-2">{ws.title}</h4>
+                        <p className="text-xs text-slate-600 line-clamp-2 mt-1 font-medium">{ws.description}</p>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 font-bold pt-1">
+                        <span>Speaker: {ws.speakerName}</span>
+                        <span className="text-blue-600 font-extrabold">{ws.status.toUpperCase()}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <button
+                        onClick={() => handleOpenEdit("workshop", ws)}
+                        className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center gap-1.5 border border-slate-200"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-brand-blue" />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete("workshops", ws.id)}
+                        className="p-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: HERO & SITE SETTINGS */}
           {activeTab === "settings" && (
             <div className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-slate-200/80 shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -1324,15 +1420,60 @@ export default function AdminContentPage() {
                         />
                       </div>
                     </div>
+                  </>
+                )}
 
-                    <div>
-                      <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Expertise Tags (comma-separated)</label>
-                      <input
-                        type="text"
-                        value={Array.isArray(editItem.expertise) ? editItem.expertise.join(", ") : editItem.expertise || ""}
-                        onChange={(e) => setEditItem({ ...editItem, expertise: e.target.value.split(",").map((s: string) => s.trim()) })}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-semibold"
-                      />
+                {modalType === "workshop" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Speaker Name</label>
+                        <input
+                          type="text"
+                          value={editItem.speakerName || ""}
+                          onChange={(e) => setEditItem({ ...editItem, speakerName: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Speaker Role</label>
+                        <input
+                          type="text"
+                          value={editItem.speakerRole || ""}
+                          onChange={(e) => setEditItem({ ...editItem, speakerRole: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-blue-600 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Price (₹, 0 for free)</label>
+                        <input
+                          type="number"
+                          value={editItem.price !== undefined ? editItem.price : 0}
+                          onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-emerald-600 text-xs font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Duration</label>
+                        <input
+                          type="text"
+                          value={editItem.duration || "2 Hours"}
+                          onChange={(e) => setEditItem({ ...editItem, duration: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Format / Mode</label>
+                        <input
+                          type="text"
+                          value={editItem.mode || "Live Online Masterclass"}
+                          onChange={(e) => setEditItem({ ...editItem, mode: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
+                        />
+                      </div>
                     </div>
                   </>
                 )}
