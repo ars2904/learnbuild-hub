@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
-import { memoryWorkshops } from "@/lib/data/cmsStore";
+import { memoryWorkshops, INITIAL_WORKSHOPS } from "@/lib/data/cmsStore";
 import { normalizeWorkshopFromDb, isUuid } from "@/lib/cms-normalizer";
 
 export const dynamic = "force-dynamic";
@@ -35,15 +35,25 @@ export async function GET(req: Request) {
               { headers: NO_CACHE_HEADERS }
             );
           }
+          const foundMem = INITIAL_WORKSHOPS.find((w) => w.slug === slug || w.id === slug);
+          if (foundMem) {
+            return NextResponse.json({ success: true, data: foundMem }, { headers: NO_CACHE_HEADERS });
+          }
         } else {
           const { data, error } = await supabase
             .from("workshops")
             .select("*")
             .order("event_date", { ascending: true });
           if (!error && data) {
-            const normalized = data.length > 0 ? data.map(normalizeWorkshopFromDb) : memoryWorkshops;
+            const dbNormalized = data.map(normalizeWorkshopFromDb);
+            const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
+            const existingIds = new Set(dbNormalized.map((w) => w.id));
+            const missingInitial = INITIAL_WORKSHOPS.filter(
+              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+            );
+            const combined = [...dbNormalized, ...missingInitial];
             return NextResponse.json(
-              { success: true, data: normalized },
+              { success: true, data: combined },
               { headers: NO_CACHE_HEADERS }
             );
           }

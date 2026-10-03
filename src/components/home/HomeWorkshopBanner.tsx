@@ -26,7 +26,9 @@ export function HomeWorkshopBanner() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data)) {
-          const featured = data.data.filter((w: CMSWorkshop) => Boolean(w.showOnHome));
+          const featured = data.data.filter(
+            (w: CMSWorkshop) => Boolean(w.showOnHome) || w.slug === "tech-career-guidance-call" || w.id === "ws-career-49"
+          );
           setHomeWorkshops(featured);
         }
       })
