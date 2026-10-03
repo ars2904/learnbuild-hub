@@ -202,8 +202,8 @@ CREATE POLICY "Public Submit Contact Form" ON public.contact_submissions FOR INS
 INSERT INTO public.instructors (id, name, role, gender, avatar, skills, bio, courses_taught, rating)
 VALUES
 (
-  'saurabh-upadhyay',
-  'Saurabh Upadhyay',
+  'saurabh-srivastava-net',
+  'Saurabh Srivastava',
   '.NET / Cloud & Backend Instructor',
   'male',
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop',

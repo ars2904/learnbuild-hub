@@ -192,8 +192,8 @@ export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
     duration: "49 Minutes 1-to-1 Session",
     mode: "Personalized 1-to-1 Online Call",
     price: 49,
-    speakerName: "Saurabh Upadhyay",
-    speakerRole: "Senior Software & AI Architect",
+    speakerName: "Saurabh Srivastava",
+    speakerRole: "Senior Software Engineer",
     speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
     coverImage: "/images/workshops/career-guidance-call.jpg",
     agenda: [
@@ -223,8 +223,8 @@ export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
     duration: "Every Saturday Live",
     mode: "Online (Google Meet)",
     price: 0,
-    speakerName: "Saurabh Upadhyay",
-    speakerRole: "Senior Software & AI Architect",
+    speakerName: "Saurabh Srivastava",
+    speakerRole: "Senior Software Engineer",
     speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
     coverImage: "/images/workshops/saturday-free-workshop.jpg",
     agenda: [

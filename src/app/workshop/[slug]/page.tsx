@@ -282,7 +282,7 @@ export default function WorkshopDetailPage({ params }: { params: { slug: string 
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Saurabh Upadhyay"
+                      placeholder="e.g. Saurabh Srivastava"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-brand-blue"
