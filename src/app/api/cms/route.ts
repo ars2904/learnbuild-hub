@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { verifyAdminRequest } from "@/lib/auth-server";
 import { 
-  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings, INITIAL_WORKSHOPS 
+  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings, INITIAL_WORKSHOPS, deletedWorkshops 
 } from "@/lib/data/cmsStore";
 import { 
   isUuid,
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
             const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
             const existingIds = new Set(dbNormalized.map((w) => w.id));
             const missingInitial = INITIAL_WORKSHOPS.filter(
-              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id) && !deletedWorkshops.has(iw.id) && !deletedWorkshops.has(iw.slug)
             );
             const combined = [...dbNormalized, ...missingInitial];
             return NextResponse.json({ success: true, data: combined }, { headers: NO_CACHE_HEADERS });
@@ -154,7 +154,7 @@ export async function GET(request: Request) {
           const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
           const existingIds = new Set(dbNormalized.map((w) => w.id));
           const missingInitial = INITIAL_WORKSHOPS.filter(
-            (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+            (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id) && !deletedWorkshops.has(iw.id) && !deletedWorkshops.has(iw.slug)
           );
           workshopsData = [...dbNormalized, ...missingInitial];
         }
@@ -338,11 +338,9 @@ export async function PUT(request: Request) {
         try {
           let res;
           if (isUuid(item.id)) {
-            res = await supabase.from("workshops").update(dbPayload).eq("id", item.id).select();
-          } else if (item.slug) {
-            res = await supabase.from("workshops").update(dbPayload).eq("slug", item.slug).select();
-          } else {
             res = await supabase.from("workshops").upsert(dbPayload).select();
+          } else {
+            res = await supabase.from("workshops").upsert(dbPayload, { onConflict: "slug" }).select();
           }
           if (res && !res.error && res.data && res.data.length > 0) {
             returnedItem = normalizeWorkshopFromDb(res.data[0]);
@@ -353,6 +351,7 @@ export async function PUT(request: Request) {
       }
       const idx = memoryWorkshops.findIndex((w) => w.id === item.id || w.slug === item.slug);
       if (idx !== -1) memoryWorkshops[idx] = { ...memoryWorkshops[idx], ...returnedItem };
+      else memoryWorkshops.unshift(returnedItem);
 
     } else if (type === "courses") {
       const dbPayload = normalizeCourseToDb(item);
@@ -430,8 +429,13 @@ export async function DELETE(request: Request) {
       const idx = memoryBlogs.findIndex((b) => b.id === id || b.slug === id);
       if (idx !== -1) memoryBlogs.splice(idx, 1);
     } else if (type === "workshops") {
+      deletedWorkshops.add(id);
       const idx = memoryWorkshops.findIndex((w) => w.id === id || w.slug === id);
-      if (idx !== -1) memoryWorkshops.splice(idx, 1);
+      if (idx !== -1) {
+        deletedWorkshops.add(memoryWorkshops[idx].slug);
+        deletedWorkshops.add(memoryWorkshops[idx].id);
+        memoryWorkshops.splice(idx, 1);
+      }
     }
 
     const supabase = getSupabaseAdminClient();
@@ -439,13 +443,10 @@ export async function DELETE(request: Request) {
       try {
         if (isUuid(id)) {
           await supabase.from(type).delete().eq("id", id);
+        } else if (type === "blogs" || type === "workshops" || type === "courses") {
+          await supabase.from(type).delete().eq("slug", id);
         } else {
-          // If ID is not UUID, delete by slug if table supports slug, else by id
-          if (type === "blogs" || type === "workshops" || type === "courses") {
-            await supabase.from(type).delete().or(`id.eq.${id},slug.eq.${id}`);
-          } else {
-            await supabase.from(type).delete().eq("id", id);
-          }
+          await supabase.from(type).delete().eq("id", id);
         }
       } catch (e) {
         console.warn(`Supabase delete from ${type} error:`, e);

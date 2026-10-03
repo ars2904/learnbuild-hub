@@ -313,3 +313,4 @@ export let memoryBlogs: CMSBlog[] = [...INITIAL_BLOGS];
 export let memoryWorkshops: CMSWorkshop[] = [...INITIAL_WORKSHOPS];
 export let memoryWorkshopRegistrations: CMSWorkshopRegistration[] = [];
 export let memorySiteSettings: CMSSiteSettings = { ...INITIAL_SITE_SETTINGS };
+export const deletedWorkshops = new Set<string>();

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
-import { memoryWorkshops, INITIAL_WORKSHOPS } from "@/lib/data/cmsStore";
+import { memoryWorkshops, INITIAL_WORKSHOPS, deletedWorkshops } from "@/lib/data/cmsStore";
 import { normalizeWorkshopFromDb, isUuid } from "@/lib/cms-normalizer";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,9 @@ export async function GET(req: Request) {
               { headers: NO_CACHE_HEADERS }
             );
           }
-          const foundMem = INITIAL_WORKSHOPS.find((w) => w.slug === slug || w.id === slug);
+          const foundMem = INITIAL_WORKSHOPS.find(
+            (w) => (w.slug === slug || w.id === slug) && !deletedWorkshops.has(w.id) && !deletedWorkshops.has(w.slug)
+          );
           if (foundMem) {
             return NextResponse.json({ success: true, data: foundMem }, { headers: NO_CACHE_HEADERS });
           }
@@ -49,7 +51,7 @@ export async function GET(req: Request) {
             const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
             const existingIds = new Set(dbNormalized.map((w) => w.id));
             const missingInitial = INITIAL_WORKSHOPS.filter(
-              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id) && !deletedWorkshops.has(iw.id) && !deletedWorkshops.has(iw.slug)
             );
             const combined = [...dbNormalized, ...missingInitial];
             return NextResponse.json(
