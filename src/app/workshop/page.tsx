@@ -140,7 +140,7 @@ export default function WorkshopLandingPage() {
                         {ws.category}
                       </span>
                       <span className="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase shadow-sm">
-                        {ws.price === 0 ? "FREE ENTRY" : `₹${ws.price}`}
+                        {ws.price > 0 ? `₹${ws.price}` : "REGISTRATION OPEN"}
                       </span>
                     </div>
                   </div>
@@ -308,7 +308,7 @@ export default function WorkshopLandingPage() {
                     disabled={submitting}
                     className="w-full py-4 rounded-2xl bg-brand-orange hover:bg-orange-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm Free Workshop Registration</span>}
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm Workshop Registration</span>}
                   </button>
                 </form>
               </>

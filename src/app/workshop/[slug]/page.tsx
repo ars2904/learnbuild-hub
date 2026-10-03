@@ -123,7 +123,7 @@ export default function WorkshopDetailPage({ params }: { params: { slug: string 
               {workshop.category}
             </span>
             <span className="px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-black text-xs uppercase border border-emerald-400/30">
-              {workshop.price === 0 ? "FREE ENTRY" : `₹${workshop.price}`}
+              {workshop.price > 0 ? `₹${workshop.price}` : "REGISTRATION OPEN"}
             </span>
           </div>
 
@@ -223,7 +223,7 @@ export default function WorkshopDetailPage({ params }: { params: { slug: string 
                 onClick={() => setModalOpen(true)}
                 className="w-full py-4 rounded-2xl bg-brand-orange hover:bg-orange-600 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-orange-500/30 transition-transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Reserve Free Seat</span>
+                <span>Reserve Seat Now</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -332,7 +332,7 @@ export default function WorkshopDetailPage({ params }: { params: { slug: string 
                     disabled={submitting}
                     className="w-full py-4 rounded-2xl bg-brand-orange hover:bg-orange-600 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 disabled:opacity-50"
                   >
-                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm Free Masterclass Registration</span>}
+                    {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Confirm Masterclass Registration</span>}
                   </button>
                 </form>
               </>
