@@ -244,35 +244,6 @@ export const INITIAL_WORKSHOPS: CMSWorkshop[] = [
     status: "upcoming",
     showOnHome: false,
   },
-  {
-    id: "ws-101",
-    slug: "generative-ai-llm-agent-workshop",
-    title: "Building Production Generative AI & Autonomous LLM Agents",
-    tagline: "Hands-on Live Masterclass on RAG, LangChain & Vector Databases",
-    description: "Join Senior AI Engineers to build and deploy production-ready LLM agents, vector database search systems, and custom RAG microservices in Python.",
-    category: "Artificial Intelligence",
-    eventDate: "2026-10-18T14:00:00Z",
-    duration: "2.5 Hours • Live Interactive",
-    mode: "Live Online Masterclass",
-    price: 0,
-    speakerName: "Saurabh Upadhyay",
-    speakerRole: "Senior AI & Cloud Solutions Architect",
-    speakerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    coverImage: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=800&q=80",
-    agenda: [
-      "Architecture of Generative AI Systems & Transformer Models",
-      "Building Custom Retrieval Augmented Generation (RAG) with Pinecone & LangChain",
-      "Developing Autonomous AI Agents with Tool Calling Capabilities",
-      "Deploying AI API Microservices on AWS & Vercel Edge",
-    ],
-    whatYouWillLearn: [
-      "How to build production LLM agents using Python & LangChain",
-      "Vector Indexing & Embedding Search with Qdrant / Pinecone",
-      "Deploying & Monitoring AI Services with FastAPI & Docker",
-    ],
-    status: "upcoming",
-    showOnHome: false,
-  },
 ];
 
 export const INITIAL_SOLUTIONS: CMSSolution[] = [
