@@ -35,6 +35,7 @@ export default function AdminContentPage() {
   // Modal States
   const [modalType, setModalType] = useState<"course" | "solution" | "instructor" | "blog" | "workshop" | null>(null);
   const [blogViewMode, setBlogViewMode] = useState<"split" | "form" | "preview">("split");
+  const [workshopViewMode, setWorkshopViewMode] = useState<"split" | "form" | "preview">("split");
   const [editItem, setEditItem] = useState<any>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -194,7 +195,18 @@ export default function AdminContentPage() {
 
   const handleOpenEdit = (type: "course" | "solution" | "instructor" | "blog" | "workshop", item: any) => {
     setModalType(type);
-    setEditItem({ ...item });
+    const itemCopy = { ...item };
+    if (type === "workshop") {
+      if (typeof itemCopy.agenda === "string") {
+        try { itemCopy.agenda = JSON.parse(itemCopy.agenda); } catch { itemCopy.agenda = []; }
+      }
+      if (!Array.isArray(itemCopy.agenda)) itemCopy.agenda = [];
+      if (typeof itemCopy.whatYouWillLearn === "string") {
+        try { itemCopy.whatYouWillLearn = JSON.parse(itemCopy.whatYouWillLearn); } catch { itemCopy.whatYouWillLearn = []; }
+      }
+      if (!Array.isArray(itemCopy.whatYouWillLearn)) itemCopy.whatYouWillLearn = [];
+    }
+    setEditItem(itemCopy);
   };
 
   const insertBlogSnippet = (prefix: string, suffix: string = "") => {
@@ -388,6 +400,9 @@ export default function AdminContentPage() {
       if (!payload.publishedAt) {
         payload.publishedAt = new Date().toISOString();
       }
+    } else if (modalType === "workshop") {
+      const generatedSlug = payload.slug || (payload.title ? payload.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : `workshop-${Date.now()}`);
+      payload.slug = generatedSlug;
     }
 
     const isEdit = Boolean(payload.id && payload.id.length > 3 && !payload.id.startsWith("temp"));
@@ -1310,6 +1325,547 @@ export default function AdminContentPage() {
                 </div>
               </form>
             </div>
+          ) : modalType === "workshop" ? (
+            /* ================= SPLIT-SCREEN WORKSHOP STUDIO MODAL ================= */
+            <div className="w-full max-w-7xl h-[92vh] bg-white rounded-3xl border border-slate-200 shadow-2xl flex flex-col overflow-hidden my-auto">
+              {/* STUDIO TOP HEADER */}
+              <div className="px-6 py-4 bg-slate-900 text-white border-b border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-wider mb-1">
+                    <Video className="w-3 h-3 text-emerald-400" />
+                    <span>Unlisted Workshop Masterclass Studio</span>
+                  </div>
+                  <h3 className="text-xl font-black text-white">
+                    {editItem.id ? "Edit Workshop Masterclass" : "Create New Unlisted Workshop"}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                  {/* Mode Switcher Buttons */}
+                  <div className="flex items-center p-1 rounded-2xl bg-slate-800 border border-slate-700 text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setWorkshopViewMode("split")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        workshopViewMode === "split" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Columns className="w-3.5 h-3.5" />
+                      <span>Split View</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWorkshopViewMode("form")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        workshopViewMode === "form" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      <span>Form Only</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWorkshopViewMode("preview")}
+                      className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                        workshopViewMode === "preview" ? "bg-brand-blue text-white shadow-md" : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Live Preview</span>
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setModalType(null);
+                      setEditItem(null);
+                    }}
+                    className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* STUDIO MAIN BODY GRID */}
+              <form onSubmit={handleFormSubmit} className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 overflow-hidden bg-slate-50/50">
+                  
+                  {/* LEFT COLUMN: WORKSHOP EDITOR FORM */}
+                  {(workshopViewMode === "split" || workshopViewMode === "form") && (
+                    <div className={`p-6 overflow-y-auto space-y-5 ${workshopViewMode === "form" ? "lg:col-span-2 max-w-4xl mx-auto w-full" : ""}`}>
+                      {/* Section 1: Workshop Core Details */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2 pb-2 border-b border-slate-100">
+                          <Video className="w-4 h-4 text-brand-blue" />
+                          <span>Workshop Core Details</span>
+                        </h4>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Workshop Title *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="e.g. Building Production AI Microservices with Python & Next.js"
+                            value={editItem.title || ""}
+                            onChange={(e) => {
+                              const titleVal = e.target.value;
+                              const autoSlug = titleVal.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                              setEditItem((prev: any) => ({
+                                ...prev,
+                                title: titleVal,
+                                name: titleVal,
+                                slug: prev.slugManual ? prev.slug : autoSlug,
+                              }));
+                            }}
+                            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">URL Slug</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="building-production-ai-microservices"
+                              value={editItem.slug || ""}
+                              onChange={(e) => setEditItem({ ...editItem, slug: e.target.value, slugManual: true })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Category</label>
+                            <select
+                              value={editItem.category || "Engineering"}
+                              onChange={(e) => setEditItem({ ...editItem, category: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            >
+                              <option value="Engineering">Engineering</option>
+                              <option value="Artificial Intelligence">Artificial Intelligence</option>
+                              <option value="Full-Stack Web">Full-Stack Web</option>
+                              <option value="Cloud & DevOps">Cloud & DevOps</option>
+                              <option value="Cybersecurity">Cybersecurity</option>
+                              <option value="Data Science">Data Science</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Tagline / Short Subtitle</label>
+                          <input
+                            type="text"
+                            placeholder="Live Hands-on Masterclass for Developers & Engineers"
+                            value={editItem.tagline || ""}
+                            onChange={(e) => setEditItem({ ...editItem, tagline: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Price (₹, 0 for Free)</label>
+                            <input
+                              type="number"
+                              value={editItem.price !== undefined ? editItem.price : 0}
+                              onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-emerald-700 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Duration & Type</label>
+                            <input
+                              type="text"
+                              value={editItem.duration || "2 Hours • Live Interactive"}
+                              onChange={(e) => setEditItem({ ...editItem, duration: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Status</label>
+                            <select
+                              value={editItem.status || "upcoming"}
+                              onChange={(e) => setEditItem({ ...editItem, status: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-blue-600 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            >
+                              <option value="upcoming">Upcoming</option>
+                              <option value="completed">Completed</option>
+                              <option value="canceled">Canceled</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Event Date & Time (ISO / Local)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Oct 15, 2026 • 6:30 PM IST"
+                            value={editItem.eventDate || ""}
+                            onChange={(e) => setEditItem({ ...editItem, eventDate: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Section 2: Speaker Information */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2 pb-2 border-b border-slate-100">
+                          <User className="w-4 h-4 text-brand-blue" />
+                          <span>Speaker Profile</span>
+                        </h4>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Speaker Name</label>
+                            <input
+                              type="text"
+                              value={editItem.speakerName || "Saurabh Upadhyay"}
+                              onChange={(e) => setEditItem({ ...editItem, speakerName: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-bold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-black uppercase text-slate-700 mb-1">Speaker Role / Designation</label>
+                            <input
+                              type="text"
+                              value={editItem.speakerRole || "Senior Software Architect & Mentor"}
+                              onChange={(e) => setEditItem({ ...editItem, speakerRole: e.target.value })}
+                              className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-blue-600 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Speaker Avatar URL</label>
+                          <input
+                            type="text"
+                            value={editItem.speakerAvatar || ""}
+                            onChange={(e) => setEditItem({ ...editItem, speakerAvatar: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Section 3: Media & Banner */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2 pb-2 border-b border-slate-100">
+                          <Image className="w-4 h-4 text-brand-blue" />
+                          <span>Cover Banner Image</span>
+                        </h4>
+
+                        <div>
+                          <label className="block text-xs font-black uppercase text-slate-700 mb-1">Cover Image URL</label>
+                          <input
+                            type="text"
+                            value={editItem.coverImage || ""}
+                            onChange={(e) => setEditItem({ ...editItem, coverImage: e.target.value, image: e.target.value })}
+                            className="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-mono focus:outline-none focus:border-brand-blue"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Section 4: Detailed Overview & Rich Formatting */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <FileText className="w-4 h-4 text-brand-blue" />
+                            <span>Detailed Masterclass Overview</span>
+                          </h4>
+                          <span className="text-[11px] text-blue-600 font-bold">Markdown & Formatting Supported</span>
+                        </div>
+
+                        {/* Formatting Toolbar */}
+                        <div className="flex flex-wrap items-center gap-1.5 p-2 rounded-xl bg-slate-100 border border-slate-200 mb-2">
+                          <button
+                            type="button"
+                            title="Bold (**text**)"
+                            onClick={() => insertBlogSnippet("**", "bold text**")}
+                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-black text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                          >
+                            <Bold className="w-3.5 h-3.5" />
+                            <span>Bold</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            title="Heading 2"
+                            onClick={() => insertBlogSnippet("## ", "Section Subheading")}
+                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-900 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                          >
+                            <Heading2 className="w-3.5 h-3.5 text-brand-blue" />
+                            <span>H2</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            title="Bullet List"
+                            onClick={() => insertBlogSnippet("- Bullet Point Item 1\n- Bullet Point Item 2")}
+                            className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-200 flex items-center gap-1 shadow-sm transition-all"
+                          >
+                            <List className="w-3.5 h-3.5" />
+                            <span>Bullets</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            title="Insert Table"
+                            onClick={() => insertBlogSnippet(
+                              "| Session | Topic | Key Takeaway |\n| --- | --- | --- |\n| Part 1 | Architecture & Setup | System Design |\n| Part 2 | Live Coding & Deploy | Cloud Deployment |"
+                            )}
+                            className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 flex items-center gap-1 shadow-sm transition-all"
+                          >
+                            <Table className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Table</span>
+                          </button>
+                        </div>
+
+                        <textarea
+                          rows={6}
+                          placeholder="Write workshop overview, key requirements, prerequisites, and learning highlights..."
+                          value={editItem.description || ""}
+                          onChange={(e) => setEditItem({ ...editItem, description: e.target.value })}
+                          className="w-full p-4 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-mono leading-relaxed resize-y focus:outline-none focus:border-brand-blue"
+                        />
+                      </div>
+
+                      {/* Section 5: Interactive Agenda Breakdown */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <ListOrdered className="w-4 h-4 text-brand-blue" />
+                            <span>Interactive Agenda Timeline</span>
+                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const currAgenda = Array.isArray(editItem.agenda) ? editItem.agenda : [];
+                              setEditItem({ ...editItem, agenda: [...currAgenda, ""] });
+                            }}
+                            className="px-3 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-brand-blue font-bold text-xs flex items-center gap-1 border border-blue-200 transition-all"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Agenda Step</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {(Array.isArray(editItem.agenda) ? editItem.agenda : []).map((agStep: string, agIdx: number) => (
+                            <div key={agIdx} className="flex items-center gap-2">
+                              <span className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 font-black text-xs flex items-center justify-center border border-slate-200 shrink-0">
+                                {agIdx + 1}
+                              </span>
+                              <input
+                                type="text"
+                                placeholder={`Agenda Step ${agIdx + 1}`}
+                                value={agStep}
+                                onChange={(e) => {
+                                  const newAgenda = [...(editItem.agenda || [])];
+                                  newAgenda[agIdx] = e.target.value;
+                                  setEditItem({ ...editItem, agenda: newAgenda });
+                                }}
+                                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newAgenda = (editItem.agenda || []).filter((_: any, i: number) => i !== agIdx);
+                                  setEditItem({ ...editItem, agenda: newAgenda });
+                                }}
+                                className="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 shrink-0"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Section 6: What You Will Learn Takeaways */}
+                      <div className="space-y-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                            <span>What Students Will Learn</span>
+                          </h4>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const currPoints = Array.isArray(editItem.whatYouWillLearn) ? editItem.whatYouWillLearn : [];
+                              setEditItem({ ...editItem, whatYouWillLearn: [...currPoints, ""] });
+                            }}
+                            className="px-3 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center gap-1 border border-emerald-200 transition-all"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Outcome Point</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {(Array.isArray(editItem.whatYouWillLearn) ? editItem.whatYouWillLearn : []).map((learnPoint: string, learnIdx: number) => (
+                            <div key={learnIdx} className="flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                              <input
+                                type="text"
+                                placeholder={`Takeaway Point ${learnIdx + 1}`}
+                                value={learnPoint}
+                                onChange={(e) => {
+                                  const newPoints = [...(editItem.whatYouWillLearn || [])];
+                                  newPoints[learnIdx] = e.target.value;
+                                  setEditItem({ ...editItem, whatYouWillLearn: newPoints });
+                                }}
+                                className="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-800 text-xs font-semibold focus:outline-none focus:border-brand-blue"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newPoints = (editItem.whatYouWillLearn || []).filter((_: any, i: number) => i !== learnIdx);
+                                  setEditItem({ ...editItem, whatYouWillLearn: newPoints });
+                                }}
+                                className="p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 shrink-0"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* RIGHT COLUMN: LIVE WORKSHOP PAGE PREVIEW */}
+                  {(workshopViewMode === "split" || workshopViewMode === "preview") && (
+                    <div className={`p-6 overflow-y-auto bg-slate-900 text-white ${workshopViewMode === "preview" ? "lg:col-span-2 max-w-5xl mx-auto w-full" : ""}`}>
+                      <div className="space-y-6">
+                        {/* URL Bar Preview Header */}
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300">
+                          <Globe className="w-3.5 h-3.5 text-blue-400" />
+                          <span className="font-mono text-[11px] text-slate-400">Previewing Direct Link:</span>
+                          <span className="font-mono text-[11px] text-blue-300 font-bold truncate">
+                            https://learnbuildhub.com/workshop/{editItem.slug || "masterclass-slug"}
+                          </span>
+                        </div>
+
+                        {/* Live Hero Banner Preview */}
+                        <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 border border-slate-800 shadow-xl space-y-4 relative overflow-hidden">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[11px] font-extrabold uppercase tracking-wider">
+                              {editItem.category || "Engineering"}
+                            </span>
+                            <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-extrabold uppercase tracking-wider">
+                              {(editItem.status || "UPCOMING").toUpperCase()}
+                            </span>
+                            <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-[11px] font-extrabold uppercase tracking-wider">
+                              {editItem.price === 0 || !editItem.price ? "FREE MASTERCLASS" : `₹${editItem.price}`}
+                            </span>
+                          </div>
+
+                          <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                            {editItem.title || "Masterclass Title Placeholder"}
+                          </h2>
+
+                          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+                            {editItem.tagline || "Live Hands-on Masterclass for Developers & Engineers"}
+                          </p>
+
+                          {/* Speaker Card Preview */}
+                          <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-800/60 border border-slate-700/80">
+                            <img
+                              src={editItem.speakerAvatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80"}
+                              alt={editItem.speakerName}
+                              className="w-10 h-10 rounded-xl object-cover border border-slate-600"
+                            />
+                            <div>
+                              <div className="text-xs font-black text-white">{editItem.speakerName || "Saurabh Upadhyay"}</div>
+                              <div className="text-[11px] text-blue-400 font-bold">{editItem.speakerRole || "Senior Software Architect"}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Cover Image Preview */}
+                        {editItem.coverImage && (
+                          <div className="rounded-2xl overflow-hidden border border-slate-800">
+                            <img src={editItem.coverImage} alt="Cover" className="w-full h-48 object-cover" />
+                          </div>
+                        )}
+
+                        {/* Description Preview */}
+                        <div className="p-6 rounded-3xl bg-slate-800/40 border border-slate-800 space-y-3">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">About This Masterclass</h4>
+                          <div className="text-xs text-slate-300 leading-relaxed space-y-2">
+                            {renderMarkdownPreview(editItem.description || "")}
+                          </div>
+                        </div>
+
+                        {/* Agenda Timeline Preview */}
+                        {Array.isArray(editItem.agenda) && editItem.agenda.length > 0 && (
+                          <div className="p-6 rounded-3xl bg-slate-800/40 border border-slate-800 space-y-3">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Curriculum & Agenda Timeline</h4>
+                            <div className="space-y-2.5">
+                              {editItem.agenda.map((item: string, i: number) => (
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/80 border border-slate-700 text-xs">
+                                  <span className="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-300 font-black text-[11px] flex items-center justify-center shrink-0">
+                                    0{i + 1}
+                                  </span>
+                                  <span className="text-slate-200 font-semibold">{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* What You Will Learn Checklist Preview */}
+                        {Array.isArray(editItem.whatYouWillLearn) && editItem.whatYouWillLearn.length > 0 && (
+                          <div className="p-6 rounded-3xl bg-slate-800/40 border border-slate-800 space-y-3">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Key Takeaways & Learning Outcomes</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              {editItem.whatYouWillLearn.map((item: string, i: number) => (
+                                <div key={i} className="flex items-start gap-2 text-xs text-slate-200">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                  <span className="font-medium">{item}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* BOTTOM STUDIO FOOTER TOOLBAR */}
+                <div className="px-6 py-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <span>Unlisted Workshop Link active upon save</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModalType(null);
+                        setEditItem(null);
+                      }}
+                      className="px-5 py-2.5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="px-6 py-2.5 rounded-2xl bg-brand-blue hover:bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-md flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <span>{editItem.id ? "Update Live Workshop" : "Publish Workshop"}</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           ) : (
             /* ================= STANDARD MODAL FOR COURSES, SOLUTIONS, INSTRUCTORS ================= */
             <div className="w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-2xl space-y-5 my-auto">
@@ -1417,61 +1973,6 @@ export default function AdminContentPage() {
                           value={editItem.rating || 4.9}
                           onChange={(e) => setEditItem({ ...editItem, rating: parseFloat(e.target.value) || 4.9 })}
                           className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-amber-600 text-xs font-bold"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {modalType === "workshop" && (
-                  <>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Speaker Name</label>
-                        <input
-                          type="text"
-                          value={editItem.speakerName || ""}
-                          onChange={(e) => setEditItem({ ...editItem, speakerName: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Speaker Role</label>
-                        <input
-                          type="text"
-                          value={editItem.speakerRole || ""}
-                          onChange={(e) => setEditItem({ ...editItem, speakerRole: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-blue-600 text-xs font-bold"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Price (₹, 0 for free)</label>
-                        <input
-                          type="number"
-                          value={editItem.price !== undefined ? editItem.price : 0}
-                          onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
-                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-emerald-600 text-xs font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Duration</label>
-                        <input
-                          type="text"
-                          value={editItem.duration || "2 Hours"}
-                          onChange={(e) => setEditItem({ ...editItem, duration: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-black uppercase tracking-wider text-slate-600 mb-1">Format / Mode</label>
-                        <input
-                          type="text"
-                          value={editItem.mode || "Live Online Masterclass"}
-                          onChange={(e) => setEditItem({ ...editItem, mode: e.target.value })}
-                          className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-xs font-bold"
                         />
                       </div>
                     </div>
