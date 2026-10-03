@@ -8,6 +8,10 @@ import {
 } from "lucide-react";
 import { CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSWorkshop, CMSSiteSettings } from "@/lib/data/cmsStore";
 import { getUserSession } from "@/lib/supabase/auth";
+import { 
+  normalizeBlogFromDb, normalizeWorkshopFromDb, normalizeCourseFromDb, 
+  normalizeSolutionFromDb, normalizeInstructorFromDb 
+} from "@/lib/cms-normalizer";
 
 export default function AdminContentPage() {
   const [activeTab, setActiveTab] = useState<"courses" | "solutions" | "instructors" | "blogs" | "workshops" | "settings">("solutions");
@@ -195,18 +199,19 @@ export default function AdminContentPage() {
 
   const handleOpenEdit = (type: "course" | "solution" | "instructor" | "blog" | "workshop", item: any) => {
     setModalType(type);
-    const itemCopy = { ...item };
-    if (type === "workshop") {
-      if (typeof itemCopy.agenda === "string") {
-        try { itemCopy.agenda = JSON.parse(itemCopy.agenda); } catch { itemCopy.agenda = []; }
-      }
-      if (!Array.isArray(itemCopy.agenda)) itemCopy.agenda = [];
-      if (typeof itemCopy.whatYouWillLearn === "string") {
-        try { itemCopy.whatYouWillLearn = JSON.parse(itemCopy.whatYouWillLearn); } catch { itemCopy.whatYouWillLearn = []; }
-      }
-      if (!Array.isArray(itemCopy.whatYouWillLearn)) itemCopy.whatYouWillLearn = [];
+    if (type === "blog") {
+      setEditItem(normalizeBlogFromDb(item));
+    } else if (type === "workshop") {
+      setEditItem(normalizeWorkshopFromDb(item));
+    } else if (type === "course") {
+      setEditItem(normalizeCourseFromDb(item));
+    } else if (type === "solution") {
+      setEditItem(normalizeSolutionFromDb(item));
+    } else if (type === "instructor") {
+      setEditItem(normalizeInstructorFromDb(item));
+    } else {
+      setEditItem({ ...item });
     }
-    setEditItem(itemCopy);
   };
 
   const insertBlogSnippet = (prefix: string, suffix: string = "") => {

@@ -2,11 +2,26 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { verifyAdminRequest } from "@/lib/auth-server";
 import { 
-  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings,
-  CMSCourse, CMSSolution, CMSInstructor, CMSBlog, CMSWorkshop, CMSSiteSettings
+  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings 
 } from "@/lib/data/cmsStore";
+import { 
+  isUuid,
+  normalizeBlogFromDb, normalizeBlogToDb,
+  normalizeWorkshopFromDb, normalizeWorkshopToDb,
+  normalizeCourseFromDb, normalizeCourseToDb,
+  normalizeSolutionFromDb, normalizeSolutionToDb,
+  normalizeInstructorFromDb, normalizeInstructorToDb,
+  normalizeSiteSettingsFromDb, normalizeSiteSettingsToDb
+} from "@/lib/cms-normalizer";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const NO_CACHE_HEADERS = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+  "Pragma": "no-cache",
+  "Expires": "0",
+};
 
 export async function GET(request: Request) {
   try {
@@ -19,88 +34,136 @@ export async function GET(request: Request) {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) return NextResponse.json({ success: true, data });
+          if (!error && data && data.length > 0) {
+            const normalized = data.map(normalizeCourseFromDb);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch courses error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memoryCourses });
+      return NextResponse.json({ success: true, data: memoryCourses }, { headers: NO_CACHE_HEADERS });
     }
 
     if (type === "solutions") {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("solutions").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) return NextResponse.json({ success: true, data });
+          if (!error && data && data.length > 0) {
+            const normalized = data.map(normalizeSolutionFromDb);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch solutions error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memorySolutions });
+      return NextResponse.json({ success: true, data: memorySolutions }, { headers: NO_CACHE_HEADERS });
     }
 
     if (type === "instructors") {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("instructors").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) return NextResponse.json({ success: true, data });
+          if (!error && data && data.length > 0) {
+            const normalized = data.map(normalizeInstructorFromDb);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch instructors error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memoryInstructors });
+      return NextResponse.json({ success: true, data: memoryInstructors }, { headers: NO_CACHE_HEADERS });
     }
 
     if (type === "blogs") {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("blogs").select("*").order("created_at", { ascending: false });
-          if (!error && data && data.length > 0) return NextResponse.json({ success: true, data });
+          if (!error && data && data.length > 0) {
+            const normalized = data.map(normalizeBlogFromDb);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch blogs error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memoryBlogs });
+      return NextResponse.json({ success: true, data: memoryBlogs }, { headers: NO_CACHE_HEADERS });
     }
 
     if (type === "workshops") {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("workshops").select("*").order("event_date", { ascending: true });
-          if (!error && data && data.length > 0) return NextResponse.json({ success: true, data });
+          if (!error && data && data.length > 0) {
+            const normalized = data.map(normalizeWorkshopFromDb);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch workshops error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memoryWorkshops });
+      return NextResponse.json({ success: true, data: memoryWorkshops }, { headers: NO_CACHE_HEADERS });
     }
 
     if (type === "settings") {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("site_settings").select("*").single();
-          if (!error && data) return NextResponse.json({ success: true, data });
+          if (!error && data) {
+            const normalized = normalizeSiteSettingsFromDb(data);
+            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          }
         } catch (e) {
           console.warn("Supabase fetch settings error fallback to memory:", e);
         }
       }
-      return NextResponse.json({ success: true, data: memorySiteSettings });
+      return NextResponse.json({ success: true, data: memorySiteSettings }, { headers: NO_CACHE_HEADERS });
+    }
+
+    // Fetch all for initial CMS page state
+    let coursesData = memoryCourses;
+    let solutionsData = memorySolutions;
+    let instructorsData = memoryInstructors;
+    let blogsData = memoryBlogs;
+    let workshopsData = memoryWorkshops;
+    let settingsData = memorySiteSettings;
+
+    if (supabase) {
+      try {
+        const [cRes, sRes, iRes, bRes, wRes, stRes] = await Promise.all([
+          supabase.from("courses").select("*").order("created_at", { ascending: false }),
+          supabase.from("solutions").select("*").order("created_at", { ascending: false }),
+          supabase.from("instructors").select("*").order("created_at", { ascending: false }),
+          supabase.from("blogs").select("*").order("created_at", { ascending: false }),
+          supabase.from("workshops").select("*").order("event_date", { ascending: true }),
+          supabase.from("site_settings").select("*").single(),
+        ]);
+
+        if (!cRes.error && cRes.data && cRes.data.length > 0) coursesData = cRes.data.map(normalizeCourseFromDb);
+        if (!sRes.error && sRes.data && sRes.data.length > 0) solutionsData = sRes.data.map(normalizeSolutionFromDb);
+        if (!iRes.error && iRes.data && iRes.data.length > 0) instructorsData = iRes.data.map(normalizeInstructorFromDb);
+        if (!bRes.error && bRes.data && bRes.data.length > 0) blogsData = bRes.data.map(normalizeBlogFromDb);
+        if (!wRes.error && wRes.data && wRes.data.length > 0) workshopsData = wRes.data.map(normalizeWorkshopFromDb);
+        if (!stRes.error && stRes.data) settingsData = normalizeSiteSettingsFromDb(stRes.data);
+      } catch (e) {
+        console.warn("Supabase fetch all content error:", e);
+      }
     }
 
     return NextResponse.json({
       success: true,
       data: {
-        courses: memoryCourses,
-        solutions: memorySolutions,
-        instructors: memoryInstructors,
-        blogs: memoryBlogs,
-        workshops: memoryWorkshops,
-        settings: memorySiteSettings,
+        courses: coursesData,
+        solutions: solutionsData,
+        instructors: instructorsData,
+        blogs: blogsData,
+        workshops: workshopsData,
+        settings: settingsData,
       },
-    });
+    }, { headers: NO_CACHE_HEADERS });
   } catch (err: any) {
     console.error("GET CMS route error:", err);
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }
 
@@ -118,84 +181,84 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: "Type and item are required." }, { status: 400 });
     }
 
-    let newItem: any = { ...item, id: item.id || `item-${Date.now()}` };
-
-    if (type === "courses") {
-      memoryCourses.unshift(newItem);
-    } else if (type === "solutions") {
-      memorySolutions.unshift(newItem);
-    } else if (type === "instructors") {
-      memoryInstructors.unshift(newItem);
-    } else if (type === "blogs") {
-      memoryBlogs.unshift(newItem);
-    } else if (type === "workshops") {
-      memoryWorkshops.unshift(newItem);
-    }
-
+    let returnedItem: any = { ...item };
     const supabase = getSupabaseAdminClient();
-    if (supabase) {
-      try {
-        if (type === "blogs") {
-          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-          const blogPayload = {
-            ...(isUuid(newItem.id) ? { id: newItem.id } : {}),
-            slug: newItem.slug || newItem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-            title: newItem.title,
-            excerpt: newItem.excerpt || "",
-            content: newItem.content || "",
-            category: newItem.category || "Engineering",
-            author_name: newItem.authorName || newItem.author_name || "LearnBuild Hub Tech Team",
-            author_avatar: newItem.authorAvatar || newItem.author_avatar || null,
-            cover_image: newItem.coverImage || newItem.cover_image || newItem.image || null,
-            read_time: newItem.readTime || newItem.read_time || "5 min read",
-            external_url: newItem.externalUrl || newItem.external_url || null,
-            published_at: newItem.publishedAt || newItem.published_at || new Date().toISOString(),
-            featured: Boolean(newItem.featured),
-          };
-          const { data, error } = await supabase.from("blogs").upsert(blogPayload).select();
-          if (error) {
-            console.error("Supabase blog insert error:", error);
-          } else if (data && data.length > 0) {
-            newItem = { ...newItem, ...data[0] };
-          }
-        } else if (type === "workshops") {
-          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-          const wsPayload = {
-            ...(isUuid(newItem.id) ? { id: newItem.id } : {}),
-            slug: newItem.slug || newItem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-            title: newItem.title,
-            tagline: newItem.tagline || "",
-            description: newItem.description || "",
-            category: newItem.category || "Engineering",
-            event_date: newItem.eventDate || newItem.event_date || new Date().toISOString(),
-            duration: newItem.duration || "2 Hours",
-            mode: newItem.mode || "Live Online",
-            price: Number(newItem.price) || 0,
-            speaker_name: newItem.speakerName || newItem.speaker_name || "LearnBuild Hub Mentor",
-            speaker_role: newItem.speakerRole || newItem.speaker_role || "Senior Architect",
-            speaker_avatar: newItem.speakerAvatar || newItem.speaker_avatar || null,
-            cover_image: newItem.coverImage || newItem.cover_image || null,
-            agenda: newItem.agenda || [],
-            what_you_will_learn: newItem.whatYouWillLearn || newItem.what_you_will_learn || [],
-            status: newItem.status || "upcoming",
-          };
-          const { data, error } = await supabase.from("workshops").upsert(wsPayload).select();
-          if (error) {
-            console.error("Supabase workshop insert error:", error);
-          } else if (data && data.length > 0) {
-            newItem = { ...newItem, ...data[0] };
-          }
-        } else {
-          await supabase.from(type).insert([newItem]);
+
+    if (type === "blogs") {
+      const dbPayload = normalizeBlogToDb(item);
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from("blogs").upsert(dbPayload).select();
+          if (error) console.error("Supabase blog insert error:", error);
+          else if (data && data.length > 0) returnedItem = normalizeBlogFromDb(data[0]);
+        } catch (e) {
+          console.warn("Supabase blog insert exception:", e);
         }
-      } catch (e) {
-        console.warn(`Supabase insert into ${type} error:`, e);
       }
+      if (!returnedItem.id) returnedItem.id = `blog-${Date.now()}`;
+      const existingIdx = memoryBlogs.findIndex(b => b.id === returnedItem.id || b.slug === returnedItem.slug);
+      if (existingIdx !== -1) memoryBlogs[existingIdx] = returnedItem;
+      else memoryBlogs.unshift(returnedItem);
+
+    } else if (type === "workshops") {
+      const dbPayload = normalizeWorkshopToDb(item);
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from("workshops").upsert(dbPayload).select();
+          if (error) console.error("Supabase workshop insert error:", error);
+          else if (data && data.length > 0) returnedItem = normalizeWorkshopFromDb(data[0]);
+        } catch (e) {
+          console.warn("Supabase workshop insert exception:", e);
+        }
+      }
+      if (!returnedItem.id) returnedItem.id = `workshop-${Date.now()}`;
+      const existingIdx = memoryWorkshops.findIndex(w => w.id === returnedItem.id || w.slug === returnedItem.slug);
+      if (existingIdx !== -1) memoryWorkshops[existingIdx] = returnedItem;
+      else memoryWorkshops.unshift(returnedItem);
+
+    } else if (type === "courses") {
+      const dbPayload = normalizeCourseToDb(item);
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from("courses").upsert(dbPayload).select();
+          if (!error && data && data.length > 0) returnedItem = normalizeCourseFromDb(data[0]);
+        } catch (e) { console.warn("Supabase courses insert exception:", e); }
+      }
+      if (!returnedItem.id) returnedItem.id = `course-${Date.now()}`;
+      const existingIdx = memoryCourses.findIndex(c => c.id === returnedItem.id || c.slug === returnedItem.slug);
+      if (existingIdx !== -1) memoryCourses[existingIdx] = returnedItem;
+      else memoryCourses.unshift(returnedItem);
+
+    } else if (type === "solutions") {
+      const dbPayload = normalizeSolutionToDb(item);
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from("solutions").upsert(dbPayload).select();
+          if (!error && data && data.length > 0) returnedItem = normalizeSolutionFromDb(data[0]);
+        } catch (e) { console.warn("Supabase solutions insert exception:", e); }
+      }
+      if (!returnedItem.id) returnedItem.id = `sol-${Date.now()}`;
+      const existingIdx = memorySolutions.findIndex(s => s.id === returnedItem.id);
+      if (existingIdx !== -1) memorySolutions[existingIdx] = returnedItem;
+      else memorySolutions.unshift(returnedItem);
+
+    } else if (type === "instructors") {
+      const dbPayload = normalizeInstructorToDb(item);
+      if (supabase) {
+        try {
+          const { data, error } = await supabase.from("instructors").upsert(dbPayload).select();
+          if (!error && data && data.length > 0) returnedItem = normalizeInstructorFromDb(data[0]);
+        } catch (e) { console.warn("Supabase instructors insert exception:", e); }
+      }
+      if (!returnedItem.id) returnedItem.id = `inst-${Date.now()}`;
+      const existingIdx = memoryInstructors.findIndex(i => i.id === returnedItem.id);
+      if (existingIdx !== -1) memoryInstructors[existingIdx] = returnedItem;
+      else memoryInstructors.unshift(returnedItem);
     }
 
-    return NextResponse.json({ success: true, data: newItem });
+    return NextResponse.json({ success: true, data: returnedItem }, { headers: NO_CACHE_HEADERS });
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }
 
@@ -209,110 +272,118 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { type, item, settings } = body;
 
-    if (type === "settings" && settings) {
-      Object.assign(memorySiteSettings, settings);
+    const supabase = getSupabaseAdminClient();
 
-      const supabase = getSupabaseAdminClient();
+    if (type === "settings" && settings) {
+      const normalizedSettings = normalizeSiteSettingsFromDb(settings);
+      Object.assign(memorySiteSettings, normalizedSettings);
+
       if (supabase) {
         try {
-          await supabase.from("site_settings").upsert(settings);
+          const dbPayload = normalizeSiteSettingsToDb(settings);
+          await supabase.from("site_settings").upsert(dbPayload);
         } catch (e) {
           console.warn("Supabase update settings error:", e);
         }
       }
 
-      return NextResponse.json({ success: true, data: memorySiteSettings });
+      return NextResponse.json({ success: true, data: memorySiteSettings }, { headers: NO_CACHE_HEADERS });
     }
 
-    if (!type || !item || !item.id) {
-      return NextResponse.json({ success: false, message: "Type and item with ID required." }, { status: 400 });
+    if (!type || !item) {
+      return NextResponse.json({ success: false, message: "Type and item required." }, { status: 400 });
     }
 
-    if (type === "courses") {
-      const idx = memoryCourses.findIndex((c) => c.id === item.id);
-      if (idx !== -1) memoryCourses[idx] = { ...memoryCourses[idx], ...item };
-    } else if (type === "solutions") {
-      const idx = memorySolutions.findIndex((s) => s.id === item.id);
-      if (idx !== -1) memorySolutions[idx] = { ...memorySolutions[idx], ...item };
-    } else if (type === "instructors") {
-      const idx = memoryInstructors.findIndex((i) => i.id === item.id);
-      if (idx !== -1) memoryInstructors[idx] = { ...memoryInstructors[idx], ...item };
-    } else if (type === "blogs") {
-      const idx = memoryBlogs.findIndex((b) => b.id === item.id);
-      if (idx !== -1) memoryBlogs[idx] = { ...memoryBlogs[idx], ...item };
-    } else if (type === "workshops") {
-      const idx = memoryWorkshops.findIndex((w) => w.id === item.id);
-      if (idx !== -1) memoryWorkshops[idx] = { ...memoryWorkshops[idx], ...item };
-    }
+    let returnedItem: any = { ...item };
 
-    const supabase = getSupabaseAdminClient();
-    if (supabase) {
-      try {
-        if (type === "blogs") {
-          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-          const blogPayload = {
-            ...(isUuid(item.id) ? { id: item.id } : {}),
-            slug: item.slug || item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-            title: item.title,
-            excerpt: item.excerpt || "",
-            content: item.content || "",
-            category: item.category || "Engineering",
-            author_name: item.authorName || item.author_name || "LearnBuild Hub Tech Team",
-            author_avatar: item.authorAvatar || item.author_avatar || null,
-            cover_image: item.coverImage || item.cover_image || item.image || null,
-            read_time: item.readTime || item.read_time || "5 min read",
-            external_url: item.externalUrl || item.external_url || null,
-            published_at: item.publishedAt || item.published_at || new Date().toISOString(),
-            featured: Boolean(item.featured),
-          };
-
+    if (type === "blogs") {
+      const dbPayload = normalizeBlogToDb(item);
+      if (supabase) {
+        try {
+          let res;
           if (isUuid(item.id)) {
-            await supabase.from("blogs").update(blogPayload).eq("id", item.id);
+            res = await supabase.from("blogs").update(dbPayload).eq("id", item.id).select();
           } else if (item.slug) {
-            await supabase.from("blogs").update(blogPayload).eq("slug", item.slug);
+            res = await supabase.from("blogs").update(dbPayload).eq("slug", item.slug).select();
           } else {
-            await supabase.from("blogs").upsert(blogPayload);
+            res = await supabase.from("blogs").upsert(dbPayload).select();
           }
-        } else if (type === "workshops") {
-          const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-          const wsPayload = {
-            ...(isUuid(item.id) ? { id: item.id } : {}),
-            slug: item.slug || item.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-            title: item.title,
-            tagline: item.tagline || "",
-            description: item.description || "",
-            category: item.category || "Engineering",
-            event_date: item.eventDate || item.event_date || new Date().toISOString(),
-            duration: item.duration || "2 Hours",
-            mode: item.mode || "Live Online",
-            price: Number(item.price) || 0,
-            speaker_name: item.speakerName || item.speaker_name || "LearnBuild Hub Mentor",
-            speaker_role: item.speakerRole || item.speaker_role || "Senior Architect",
-            speaker_avatar: item.speakerAvatar || item.speaker_avatar || null,
-            cover_image: item.coverImage || item.cover_image || null,
-            agenda: item.agenda || [],
-            what_you_will_learn: item.whatYouWillLearn || item.what_you_will_learn || [],
-            status: item.status || "upcoming",
-          };
-
-          if (isUuid(item.id)) {
-            await supabase.from("workshops").update(wsPayload).eq("id", item.id);
-          } else if (item.slug) {
-            await supabase.from("workshops").update(wsPayload).eq("slug", item.slug);
-          } else {
-            await supabase.from("workshops").upsert(wsPayload);
+          if (res && !res.error && res.data && res.data.length > 0) {
+            returnedItem = normalizeBlogFromDb(res.data[0]);
           }
-        } else {
-          await supabase.from(type).update(item).eq("id", item.id);
+        } catch (e) {
+          console.warn("Supabase blog update exception:", e);
         }
-      } catch (e) {
-        console.warn(`Supabase update ${type} error:`, e);
       }
+      const idx = memoryBlogs.findIndex((b) => b.id === item.id || b.slug === item.slug);
+      if (idx !== -1) memoryBlogs[idx] = { ...memoryBlogs[idx], ...returnedItem };
+
+    } else if (type === "workshops") {
+      const dbPayload = normalizeWorkshopToDb(item);
+      if (supabase) {
+        try {
+          let res;
+          if (isUuid(item.id)) {
+            res = await supabase.from("workshops").update(dbPayload).eq("id", item.id).select();
+          } else if (item.slug) {
+            res = await supabase.from("workshops").update(dbPayload).eq("slug", item.slug).select();
+          } else {
+            res = await supabase.from("workshops").upsert(dbPayload).select();
+          }
+          if (res && !res.error && res.data && res.data.length > 0) {
+            returnedItem = normalizeWorkshopFromDb(res.data[0]);
+          }
+        } catch (e) {
+          console.warn("Supabase workshop update exception:", e);
+        }
+      }
+      const idx = memoryWorkshops.findIndex((w) => w.id === item.id || w.slug === item.slug);
+      if (idx !== -1) memoryWorkshops[idx] = { ...memoryWorkshops[idx], ...returnedItem };
+
+    } else if (type === "courses") {
+      const dbPayload = normalizeCourseToDb(item);
+      if (supabase) {
+        try {
+          let res;
+          if (isUuid(item.id)) {
+            res = await supabase.from("courses").update(dbPayload).eq("id", item.id).select();
+          } else if (item.slug) {
+            res = await supabase.from("courses").update(dbPayload).eq("slug", item.slug).select();
+          } else {
+            res = await supabase.from("courses").upsert(dbPayload).select();
+          }
+          if (res && !res.error && res.data && res.data.length > 0) returnedItem = normalizeCourseFromDb(res.data[0]);
+        } catch (e) { console.warn("Supabase course update exception:", e); }
+      }
+      const idx = memoryCourses.findIndex((c) => c.id === item.id || c.slug === item.slug);
+      if (idx !== -1) memoryCourses[idx] = { ...memoryCourses[idx], ...returnedItem };
+
+    } else if (type === "solutions") {
+      const dbPayload = normalizeSolutionToDb(item);
+      if (supabase) {
+        try {
+          const res = await supabase.from("solutions").upsert(dbPayload).select();
+          if (res && !res.error && res.data && res.data.length > 0) returnedItem = normalizeSolutionFromDb(res.data[0]);
+        } catch (e) { console.warn("Supabase solution update exception:", e); }
+      }
+      const idx = memorySolutions.findIndex((s) => s.id === item.id);
+      if (idx !== -1) memorySolutions[idx] = { ...memorySolutions[idx], ...returnedItem };
+
+    } else if (type === "instructors") {
+      const dbPayload = normalizeInstructorToDb(item);
+      if (supabase) {
+        try {
+          const res = await supabase.from("instructors").upsert(dbPayload).select();
+          if (res && !res.error && res.data && res.data.length > 0) returnedItem = normalizeInstructorFromDb(res.data[0]);
+        } catch (e) { console.warn("Supabase instructor update exception:", e); }
+      }
+      const idx = memoryInstructors.findIndex((i) => i.id === item.id);
+      if (idx !== -1) memoryInstructors[idx] = { ...memoryInstructors[idx], ...returnedItem };
     }
 
-    return NextResponse.json({ success: true, data: item });
+    return NextResponse.json({ success: true, data: returnedItem }, { headers: NO_CACHE_HEADERS });
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }
 
@@ -331,8 +402,9 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ success: false, message: "Type and ID required." }, { status: 400 });
     }
 
+    // Memory Store deletion
     if (type === "courses") {
-      const idx = memoryCourses.findIndex((c) => c.id === id);
+      const idx = memoryCourses.findIndex((c) => c.id === id || c.slug === id);
       if (idx !== -1) memoryCourses.splice(idx, 1);
     } else if (type === "solutions") {
       const idx = memorySolutions.findIndex((s) => s.id === id);
@@ -351,30 +423,23 @@ export async function DELETE(request: Request) {
     const supabase = getSupabaseAdminClient();
     if (supabase) {
       try {
-        if (type === "blogs") {
-          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-          if (isUuid) {
-            await supabase.from("blogs").delete().eq("id", id);
-          } else {
-            await supabase.from("blogs").delete().eq("slug", id);
-          }
-        } else if (type === "workshops") {
-          const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-          if (isUuid) {
-            await supabase.from("workshops").delete().eq("id", id);
-          } else {
-            await supabase.from("workshops").delete().eq("slug", id);
-          }
-        } else {
+        if (isUuid(id)) {
           await supabase.from(type).delete().eq("id", id);
+        } else {
+          // If ID is not UUID, delete by slug if table supports slug, else by id
+          if (type === "blogs" || type === "workshops" || type === "courses") {
+            await supabase.from(type).delete().or(`id.eq.${id},slug.eq.${id}`);
+          } else {
+            await supabase.from(type).delete().eq("id", id);
+          }
         }
       } catch (e) {
         console.warn(`Supabase delete from ${type} error:`, e);
       }
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true }, { headers: NO_CACHE_HEADERS });
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, message: err.message }, { status: 500, headers: NO_CACHE_HEADERS });
   }
 }
