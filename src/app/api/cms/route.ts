@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/db";
 import { verifyAdminRequest } from "@/lib/auth-server";
 import { 
-  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings 
+  memoryCourses, memorySolutions, memoryInstructors, memoryBlogs, memoryWorkshops, memorySiteSettings, INITIAL_WORKSHOPS 
 } from "@/lib/data/cmsStore";
 import { 
   isUuid,
@@ -94,9 +94,15 @@ export async function GET(request: Request) {
       if (supabase) {
         try {
           const { data, error } = await supabase.from("workshops").select("*").order("event_date", { ascending: true });
-          if (!error && data && data.length > 0) {
-            const normalized = data.map(normalizeWorkshopFromDb);
-            return NextResponse.json({ success: true, data: normalized }, { headers: NO_CACHE_HEADERS });
+          if (!error && data) {
+            const dbNormalized = data.map(normalizeWorkshopFromDb);
+            const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
+            const existingIds = new Set(dbNormalized.map((w) => w.id));
+            const missingInitial = INITIAL_WORKSHOPS.filter(
+              (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+            );
+            const combined = [...dbNormalized, ...missingInitial];
+            return NextResponse.json({ success: true, data: combined }, { headers: NO_CACHE_HEADERS });
           }
         } catch (e) {
           console.warn("Supabase fetch workshops error fallback to memory:", e);
@@ -143,7 +149,15 @@ export async function GET(request: Request) {
         if (!sRes.error && sRes.data && sRes.data.length > 0) solutionsData = sRes.data.map(normalizeSolutionFromDb);
         if (!iRes.error && iRes.data && iRes.data.length > 0) instructorsData = iRes.data.map(normalizeInstructorFromDb);
         if (!bRes.error && bRes.data && bRes.data.length > 0) blogsData = bRes.data.map(normalizeBlogFromDb);
-        if (!wRes.error && wRes.data && wRes.data.length > 0) workshopsData = wRes.data.map(normalizeWorkshopFromDb);
+        if (!wRes.error && wRes.data) {
+          const dbNormalized = wRes.data.map(normalizeWorkshopFromDb);
+          const existingSlugs = new Set(dbNormalized.map((w) => w.slug));
+          const existingIds = new Set(dbNormalized.map((w) => w.id));
+          const missingInitial = INITIAL_WORKSHOPS.filter(
+            (iw) => !existingSlugs.has(iw.slug) && !existingIds.has(iw.id)
+          );
+          workshopsData = [...dbNormalized, ...missingInitial];
+        }
         if (!stRes.error && stRes.data) settingsData = normalizeSiteSettingsFromDb(stRes.data);
       } catch (e) {
         console.warn("Supabase fetch all content error:", e);
