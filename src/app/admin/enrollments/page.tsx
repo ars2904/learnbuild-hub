@@ -13,6 +13,7 @@ export default function AdminEnrollmentsPage() {
   const [loading, setLoading] = useState(true);
 
   // Filters & Search
+  const [activeTab, setActiveTab] = useState<"courses" | "workshops">("courses");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterCourse, setFilterCourse] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,8 +24,9 @@ export default function AdminEnrollmentsPage() {
   const loadData = async () => {
     setLoading(true);
     try {
+      const endpoint = activeTab === "workshops" ? "/api/admin/leads?type=workshops" : "/api/admin/leads?type=enrollments";
       const [leadsRes, instRes, crsRes] = await Promise.all([
-        fetch("/api/admin/leads?type=enrollments"),
+        fetch(endpoint),
         fetch("/api/admin/instructors"),
         fetch("/api/courses"),
       ]);
@@ -47,7 +49,7 @@ export default function AdminEnrollmentsPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [activeTab]);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
@@ -150,6 +152,26 @@ Please let us know your preferred time for a quick orientation call.`;
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh Applications</span>
+        </button>
+      </div>
+
+      {/* TAB SWITCHER */}
+      <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-200/80 w-fit">
+        <button
+          onClick={() => setActiveTab("courses")}
+          className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
+            activeTab === "courses" ? "bg-brand-blue text-white shadow-md" : "text-slate-700 hover:text-slate-900"
+          }`}
+        >
+          Course Track Applications
+        </button>
+        <button
+          onClick={() => setActiveTab("workshops")}
+          className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${
+            activeTab === "workshops" ? "bg-brand-blue text-white shadow-md" : "text-slate-700 hover:text-slate-900"
+          }`}
+        >
+          Workshop Masterclass Registrations
         </button>
       </div>
 
