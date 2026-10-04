@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { MainLayout } from "@/components/layout/MainLayout";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "LearnBuild Hub | Learn. Build.",
@@ -41,6 +42,17 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased relative">
         <MainLayout>{children}</MainLayout>
+        https://www.googletagmanager.com/gtag/js?id=G-2CJ0WJTP8J<Script
+ id="google-analytics"
+ strategy="afterInteractive"
+>
+ {`
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+   gtag('config', 'G-2CJ0WJTP8J');
+ `}
+</Script>
       </body>
     </html>
   );
