@@ -42,7 +42,9 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-white text-slate-900 antialiased relative">
         <MainLayout>{children}</MainLayout>
-        https://www.googletagmanager.com/gtag/js?id=G-2CJ0WJTP8J<Script
+      </body>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-2CJ0WJTP8J" strategy="afterInteractive"/>
+<Script
  id="google-analytics"
  strategy="afterInteractive"
 >
@@ -53,7 +55,6 @@ export default function RootLayout({
    gtag('config', 'G-2CJ0WJTP8J');
  `}
 </Script>
-      </body>
     </html>
   );
 }
