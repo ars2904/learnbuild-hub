@@ -1,4 +1,30 @@
-export const dynamic = 'force-dynamic';
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { 
+  BookOpen, 
+  Code2, 
+  TrendingUp, 
+  ArrowRight, 
+  CheckCircle2, 
+  Target, 
+  Users, 
+  GraduationCap, 
+  Rocket, 
+  Award,
+  Sparkles,
+  Zap,
+  ShieldCheck,
+  Cpu,
+  Terminal,
+  Building2,
+  Check
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { StudentWorkstationIllustration } from "@/components/common/StudentWorkstationIllustration";
+import { DeveloperWorkstationIllustration } from "@/components/common/DeveloperWorkstationIllustration";
+
 export default function SchoolDemoPage() {
  return (
 <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', color: '#111827', fontFamily: 'sans-serif' }}>
