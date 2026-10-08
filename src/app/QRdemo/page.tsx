@@ -100,7 +100,7 @@ export default function QRMenuDemo() {
 
     setErrorMessage(''); // Clear error if all validations pass
 
-    const shopOwnerNumber = '919876543210'; // Dukaan wale ka WhatsApp number
+    const shopOwnerNumber = '918149565351'; // Dukaan wale ka WhatsApp number
 
     let message = `🛒 *New Order from QR Menu*\n`;
 
