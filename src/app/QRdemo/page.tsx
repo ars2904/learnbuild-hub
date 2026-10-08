@@ -34,7 +34,7 @@ export default function QRMenuDemo() {
  const handleWhatsAppOrder = () => {
    if (totalItemsCount === 0) return;
    // Yahan demo ke liye ek dummy/default shop owner ka WhatsApp number daal sakte hain (with country code)
-   const shopOwnerNumber = '919876543210';
+   const shopOwnerNumber = '919140034860';
    let message = `🛒 *New Order from QR Menu*\n`;
    if (customerName) message += `👤 *Name:* ${customerName}\n`;
    if (tableNumber) message += `📍 *Table/Spot:* ${tableNumber}\n`;
