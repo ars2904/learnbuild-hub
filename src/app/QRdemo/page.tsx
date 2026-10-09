@@ -1,22 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Sample categories and items
+
+const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
 
-  { id: 1, name: 'Special Adrak Chai', price: 15, category: 'Beverages' },
+  { id: 1, name: 'Special Adrak Chai', price: 15, category: 'Beverages', desc: 'Garam garam adrak wali chai' },
 
-  { id: 2, name: 'Bun Maska', price: 25, category: 'Snacks' },
+  { id: 2, name: 'Bun Maska', price: 25, category: 'Starters', desc: 'Classic butter bun' },
 
-  { id: 3, name: 'Aloo Samosa', price: 15, category: 'Snacks' },
+  { id: 3, name: 'Aloo Samosa', price: 15, category: 'Starters', desc: 'Crispy and spicy' },
 
-  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages' },
+  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages', desc: 'Thandi thandi creamy coffee' },
 
-  { id: 5, name: 'Maggi Noodles', price: 30, category: 'Snacks' },
+  { id: 5, name: 'Veg Hakka Noodles', price: 80, category: 'Chinese', desc: 'Toss up with fresh veggies' },
+
+  { id: 6, name: 'Paneer Chilli', price: 120, category: 'Chinese', desc: 'Spicy restaurant style' },
+
+  { id: 7, name: 'Dal Tadka & Rice', price: 110, category: 'Main Course', desc: 'Ghar jaisa khana' },
 
 ];
 
 export default function QRMenuDemo() {
+
+  const [showSplash, setShowSplash] = useState(true);
+
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const [cart, setCart] = useState<{ [key: number]: number }>({});
 
@@ -29,6 +41,20 @@ export default function QRMenuDemo() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
+
+  // 2 Seconds Splash Screen Timer
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+      setShowSplash(false);
+
+    }, 2000);
+
+    return () => clearTimeout(timer);
+
+  }, []);
 
   const updateQuantity = (id: number, delta: number) => {
 
@@ -68,15 +94,19 @@ export default function QRMenuDemo() {
 
   };
 
+  const filteredItems = activeCategory === 'All' 
+
+    ? menuItems 
+
+    : menuItems.filter(item => item.category === activeCategory);
+
   const handleWhatsAppOrder = () => {
 
     if (totalItemsCount === 0) return;
 
-    // Validation checks
-
     if (!customerName.trim()) {
 
-      setErrorMessage('Kripya apna Naam (Name) bharein!');
+      setErrorMessage('Please enter your Name!');
 
       return;
 
@@ -84,7 +114,7 @@ export default function QRMenuDemo() {
 
     if (orderType === 'dine-in' && !tableNumber.trim()) {
 
-      setErrorMessage('Kripya Table Number bharein!');
+      setErrorMessage('Please enter your Table/Seat Number!');
 
       return;
 
@@ -92,25 +122,25 @@ export default function QRMenuDemo() {
 
     if (orderType === 'delivery' && !deliveryAddress.trim()) {
 
-      setErrorMessage('Kripya Delivery Address bharein!');
+      setErrorMessage('Please enter your Delivery Address!');
 
       return;
 
     }
 
-    setErrorMessage(''); // Clear error if all validations pass
+    setErrorMessage('');
 
-    const shopOwnerNumber = '918149565351'; // Dukaan wale ka WhatsApp number
+    const shopOwnerNumber = '919876543210'; 
 
     let message = `🛒 *New Order from QR Menu*\n`;
 
-    message += `📋 *Order Type:* ${orderType === 'dine-in' ? 'Dine-In (Stall par)' : 'Home Delivery (Ghar ke liye)'}\n`;
+    message += `📋 *Type:* ${orderType === 'dine-in' ? 'Dine-In (Stall)' : 'Home Delivery'}\n`;
 
     message += `👤 *Name:* ${customerName}\n`;
 
     if (orderType === 'dine-in') {
 
-      message += `📍 *Table No:* ${tableNumber}\n`;
+      message += `📍 *Table:* ${tableNumber}\n`;
 
     } else {
 
@@ -146,46 +176,70 @@ export default function QRMenuDemo() {
 
   };
 
-  return (
-<main className="min-h-screen bg-gray-50 pb-28">
+  // 1. Splash Screen View
 
-      {/* Header */}
-<header className="bg-white shadow-sm p-4 sticky top-0 z-10">
-<div className="max-w-md mx-auto flex justify-between items-center">
-<div>
-<h1 className="text-xl font-bold text-gray-800">Sharma Ji Chai Stall</h1>
-<p className="text-xs text-green-600 font-medium">● Live Demo QR Menu</p>
+  if (showSplash) {
+
+    return (
+<div className="fixed inset-0 bg-gradient-to-br from-indigo-900 via-indigo-800 to-gray-900 flex flex-col items-center justify-center z-50 text-white p-6">
+<div className="animate-bounce mb-4 bg-white/10 p-4 rounded-full backdrop-blur-md">
+<span className="text-4xl">⚡</span>
 </div>
-<span className="text-xs bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">
+<h1 className="text-3xl font-extrabold tracking-tight text-center">Sharma Ji Chai & Fast Food</h1>
+<p className="text-indigo-200 text-sm mt-2 font-medium">Scan. Select. Direct WhatsApp Order.</p>
+<div className="absolute bottom-10 flex items-center space-x-2 text-xs text-indigo-300">
+<span>Powered by LearnBuild Hub</span>
+</div>
+</div>
+
+    );
+
+  }
+
+  // 2. Main Menu View
+
+  return (
+<main className="min-h-screen bg-gray-50 pb-32 max-w-md mx-auto shadow-xl border-x relative">
+
+      {/* App Header */}
+<header className="bg-white sticky top-0 z-20 shadow-sm border-b px-4 py-3">
+<div className="flex justify-between items-center">
+<div>
+<h1 className="text-lg font-bold text-gray-900">Sharma Ji Stall</h1>
+<p className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
+<span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Live QR Menu
+</p>
+</div>
+<span className="text-[10px] bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
 
             LearnBuild Hub
 </span>
 </div>
 </header>
-<div className="max-w-md mx-auto p-4">
+<div className="p-4 space-y-4">
 
-        {/* Order Type Selector Tabs */}
-<div className="flex bg-gray-200 p-1 rounded-xl mb-4">
+        {/* Order Type Toggle */}
+<div className="flex bg-gray-200 p-1 rounded-xl">
 <button
 
             onClick={() => { setOrderType('dine-in'); setErrorMessage(''); }}
 
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
 
-              orderType === 'dine-in' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600'
+              orderType === 'dine-in' ? 'bg-white text-indigo-600 shadow-md' : 'text-gray-600'
 
             }`}
 >
 
-            🍽️ Dine-In (Stall Par)
+            🍽️ Dine-In (Stall)
 </button>
 <button
 
             onClick={() => { setOrderType('delivery'); setErrorMessage(''); }}
 
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
 
-              orderType === 'delivery' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600'
+              orderType === 'delivery' ? 'bg-white text-indigo-600 shadow-md' : 'text-gray-600'
 
             }`}
 >
@@ -195,52 +249,49 @@ export default function QRMenuDemo() {
 </div>
 
         {/* Customer Details Form */}
-<div className="bg-white p-3.5 rounded-xl shadow-sm mb-4 space-y-3 border">
-<p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+<div className="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+<p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
 
-            Required Details <span className="text-red-500">*</span>
+            Customer Info <span className="text-red-500">*</span>
 </p>
 <div>
-<label className="block text-xs text-gray-600 mb-1 font-medium">Your Name *</label>
 <input
 
               type="text"
 
-              placeholder="Jaise: Rahul Sharma"
+              placeholder="Your Full Name *"
 
               value={customerName}
 
               onChange={(e) => { setCustomerName(e.target.value); setErrorMessage(''); }}
 
-              className="w-full p-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 text-sm bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
 
             />
 </div>
 
           {orderType === 'dine-in' ? (
 <div>
-<label className="block text-xs text-gray-600 mb-1 font-medium">Table / Seat Number *</label>
 <input
 
                 type="text"
 
-                placeholder="Jaise: Table 3 ya Counter"
+                placeholder="Table / Seat Number * (e.g. Table 4)"
 
                 value={tableNumber}
 
                 onChange={(e) => { setTableNumber(e.target.value); setErrorMessage(''); }}
 
-                className="w-full p-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 text-sm bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
 
               />
 </div>
 
           ) : (
 <div>
-<label className="block text-xs text-gray-600 mb-1 font-medium">Delivery Address *</label>
 <textarea
 
-                placeholder="Apna pura pata (Address) yahan likhein..."
+                placeholder="Complete Delivery Address * (House no, Street...)"
 
                 value={deliveryAddress}
 
@@ -248,7 +299,7 @@ export default function QRMenuDemo() {
 
                 rows={2}
 
-                className="w-full p-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                className="w-full px-3 py-2 text-sm bg-gray-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
 
               />
 </div>
@@ -264,40 +315,67 @@ export default function QRMenuDemo() {
           )}
 </div>
 
+        {/* Category Filter Tabs */}
+<div className="flex overflow-x-auto space-x-2 pb-2 scrollbar-none">
+
+          {categories.map((cat) => (
+<button
+
+              key={cat}
+
+              onClick={() => setActiveCategory(cat)}
+
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap transition-all ${
+
+                activeCategory === cat
+
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+
+                  : 'bg-white text-gray-600 border hover:bg-gray-100'
+
+              }`}
+>
+
+              {cat}
+</button>
+
+          ))}
+</div>
+
         {/* Menu Items List */}
-<h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Menu Items</h2>
 <div className="space-y-3">
 
-          {menuItems.map((item) => {
+          {filteredItems.map((item) => {
 
             const qty = cart[item.id] || 0;
 
             return (
-<div key={item.id} className="bg-white p-3.5 rounded-xl shadow-sm border flex justify-between items-center">
-<div>
-<span className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">{item.category}</span>
-<h3 className="font-semibold text-gray-800 mt-1">{item.name}</h3>
-<p className="text-sm font-bold text-indigo-600">₹{item.price}</p>
+<div key={item.id} className="bg-white p-3.5 rounded-2xl shadow-sm border flex justify-between items-center transition-all hover:border-indigo-200">
+<div className="pr-2">
+<span className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">{item.category}</span>
+<h3 className="font-bold text-gray-800 text-sm mt-1">{item.name}</h3>
+<p className="text-xs text-gray-400">{item.desc}</p>
+<p className="text-sm font-extrabold text-indigo-600 mt-1">₹{item.price}</p>
 </div>
-<div className="flex items-center space-x-2">
+<div className="flex items-center">
 
                   {qty > 0 ? (
-<div className="flex items-center bg-indigo-50 border border-indigo-200 rounded-lg overflow-hidden">
+<div className="flex items-center bg-indigo-600 text-white rounded-xl overflow-hidden shadow-md">
 <button 
 
                         onClick={() => updateQuantity(item.id, -1)} 
 
-                        className="px-3 py-1 text-indigo-700 font-bold hover:bg-indigo-100 transition"
+                        className="px-3 py-1.5 font-bold hover:bg-indigo-700 transition"
 >
 
                         -
 </button>
-<span className="px-2 text-sm font-semibold text-indigo-900">{qty}</span>
+<span className="px-2 text-xs font-bold">{qty}</span>
 <button 
 
                         onClick={() => updateQuantity(item.id, 1)} 
 
-                        className="px-3 py-1 text-indigo-700 font-bold hover:bg-indigo-100 transition"
+                        className="px-3 py-1.5 font-bold hover:bg-indigo-700 transition"
 >
 
                         +
@@ -309,10 +387,10 @@ export default function QRMenuDemo() {
 
                       onClick={() => updateQuantity(item.id, 1)} 
 
-                      className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition"
+                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-xl transition border border-indigo-200"
 >
 
-                      Add
+                      + Add
 </button>
 
                   )}
@@ -325,20 +403,20 @@ export default function QRMenuDemo() {
 </div>
 </div>
 
-      {/* Sticky Bottom Cart Bar */}
+      {/* Floating Bottom Cart Bar */}
 
       {totalItemsCount > 0 && (
-<div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-20">
-<div className="max-w-md mx-auto flex justify-between items-center">
+<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t shadow-2xl p-4 z-30 rounded-t-3xl">
+<div className="flex justify-between items-center">
 <div>
-<p className="text-xs text-gray-500">{totalItemsCount} items selected</p>
-<p className="text-lg font-bold text-gray-900">₹{calculateTotalAmount()}</p>
+<p className="text-xs text-gray-500 font-medium">{totalItemsCount} items selected</p>
+<p className="text-lg font-black text-gray-900">₹{calculateTotalAmount()}</p>
 </div>
 <button 
 
               onClick={handleWhatsAppOrder}
 
-              className="bg-green-600 hover:gh-green-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md flex items-center space-x-2 transition"
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-lg shadow-green-200 flex items-center space-x-2 transition-all active:scale-95"
 >
 <span>Order on WhatsApp 🚀</span>
 </button>
