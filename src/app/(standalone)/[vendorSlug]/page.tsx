@@ -87,14 +87,16 @@ export default function QRMenuDemo() {
       .single();
 
     if (error) {
-
-      console.error('Error fetching vendor:', error.message);
-
-    } else if (data) {
-
-      setVendor(data);
-
-    }
+     // Check if subscription has expired
+     const expiryDate = new Date(data.subscription_expires_at);
+     const currentDate = new Date();
+     if (data.subscription_expires_at && expiryDate < currentDate) {
+       // Agar date khatam ho gayi hai
+       setVendor({ ...data, isExpired: true });
+     } else {
+       setVendor(data);
+     }
+   }
 
     setLoading(false);
 
@@ -274,7 +276,22 @@ export default function QRMenuDemo() {
     );
 
   }
-
+ if (vendor?.isExpired) {
+   return (
+<div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6 text-center">
+<div className="bg-rose-500/10 border border-rose-500/30 p-8 rounded-3xl max-w-sm space-y-3">
+<span className="text-4xl">⏳</span>
+<h1 className="text-xl font-bold text-rose-400">Subscription Expired</h1>
+<p className="text-xs text-slate-400">
+           Is shop ka digital menu ka subscription khatam ho gaya hai. Kripya dukaandaar se sampark karein.
+</p>
+<div className="pt-2 text-[10px] text-slate-500">
+           Powered by LearnBuild Hub 🚀
+</div>
+</div>
+</div>
+   );
+ }
   return (
 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28">
 
