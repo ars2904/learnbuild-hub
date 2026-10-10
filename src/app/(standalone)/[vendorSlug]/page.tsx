@@ -8,7 +8,39 @@ const supabase = createClient(
  process.env.NEXT_PUBLIC_SUPABASE_URL!,
  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
+export default function VendorMenuPage() {
+ const params = useParams();
+ const vendorSlug = params?.vendorSlug; // URL se slug nikala (jaise 'sharma-ji-stall')
+ const [vendor, setVendor] = useState<any>(null);
+ const [loading, setLoading] = useState(true);
+ useEffect(() => {
+   if (vendorSlug) {
+     fetchVendor();
+   }
+ }, [vendorSlug]);
+ const fetchVendor = async () => {
+   setLoading(true);
+   // Supabase se exact slug match karke data lao
+   const { data, error } = await supabase
+     .from('vendors')
+     .select('*')
+     .eq('slug', vendorSlug)
+     .single();
+   if (error) {
+     console.error('Error fetching vendor:', error.message);
+   } else if (data) {
+     setVendor(data); // Yahan vendor state me data save ho raha hai
+   }
+   setLoading(false);
+ };
+ // Agar abhi load ho raha hai toh loading screen dikhao
+ if (loading) {
+   return (
+<div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+<p className="text-sm font-medium animate-pulse">Loading Menu...</p>
+</div>
+   );
+ }
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
