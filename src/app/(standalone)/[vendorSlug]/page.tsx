@@ -1,11 +1,19 @@
 'use client';
+
 import { useState, useEffect } from 'react';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { useParams } from 'next/navigation';
+
 const supabase = createClient(
- process.env.NEXT_PUBLIC_SUPABASE_URL!,
- process.env.NEXT_PUBLIC_SUPabase_ANON_KEY!
+
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
 );
+
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
@@ -16,23 +24,30 @@ const menuItems = [
 
   { id: 3, name: 'Aloo Samosa', price: 15, category: 'Starters', desc: 'Crispy and spicy 🥟', bg: 'bg-orange-50 text-orange-900 border-orange-200' },
 
-  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages', desc: 'Thandi thandi creamy coffee 🧋', bg: 'bg-cyan-50 text-cyan-900 border-cyan-200' },
+  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages', desc: 'Thandi thandi creamy coffee 🥤', bg: 'bg-cyan-50 text-cyan-900 border-cyan-200' },
 
   { id: 5, name: 'Veg Hakka Noodles', price: 80, category: 'Chinese', desc: 'Toss up with fresh veggies 🍜', bg: 'bg-rose-50 text-rose-900 border-rose-200' },
 
   { id: 6, name: 'Paneer Chilli', price: 120, category: 'Chinese', desc: 'Spicy restaurant style 🌶️', bg: 'bg-red-50 text-red-900 border-red-200' },
 
-  { id: 7, name: 'Dal Tadka & Rice', price: 110, category: 'Main Course', desc: 'Ghar jaisa khana 🍛', bg: 'bg-emerald-50 text-emerald-900 border-emerald-200' },
+  { id: 7, name: 'Dal Tadka & Rice', price: 110, category: 'Main Course', desc: 'Ghar jaisa khana 🍲', bg: 'bg-emerald-50 text-emerald-900 border-emerald-200' },
 
 ];
 
 export default function QRMenuDemo() {
+
   const params = useParams();
-  const vendorSlug = params?.vendorSlug;
+
+  const vendorSlug = params?.vendorSlug as string;
+
   const [vendor, setVendor] = useState<any>(null);
+
   const [loading, setLoading] = useState(true);
+
   const [showSplash, setShowSplash] = useState(true);
+
   const [activeCategory, setActiveCategory] = useState('All');
+
   const [cart, setCart] = useState<{ [key: number]: number }>({});
 
   const [orderType, setOrderType] = useState<'dine-in' | 'delivery'>('dine-in');
@@ -44,8 +59,48 @@ export default function QRMenuDemo() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
-  
- 
+
+  // 1. Fetch Vendor details from Supabase using slug
+
+  useEffect(() => {
+
+    if (vendorSlug) {
+
+      fetchVendor();
+
+    }
+
+  }, [vendorSlug]);
+
+  const fetchVendor = async () => {
+
+    setLoading(true);
+
+    const { data, error } = await supabase
+
+      .from('vendors')
+
+      .select('*')
+
+      .eq('slug', vendorSlug)
+
+      .single();
+
+    if (error) {
+
+      console.error('Error fetching vendor:', error.message);
+
+    } else if (data) {
+
+      setVendor(data);
+
+    }
+
+    setLoading(false);
+
+  };
+
+  // Auto-hide Splash Screen after 2.2 seconds
 
   useEffect(() => {
 
@@ -59,57 +114,49 @@ export default function QRMenuDemo() {
 
   }, []);
 
+  // Cart operations
+
   const updateQuantity = (id: number, delta: number) => {
 
     setCart((prev) => {
 
-      const currentQty = prev[id] || 0;
+      const current = prev[id] || 0;
 
-      const newQty = currentQty + delta;
+      const updated = current + delta;
 
-      if (newQty <= 0) {
+      if (updated <= 0) {
 
-        const copy = { ...prev };
+        const { [id]: _, ...rest } = prev;
 
-        delete copy[id];
-
-        return copy;
+        return rest;
 
       }
 
-      return { ...prev, [id]: newQty };
+      return { ...prev, [id]: updated };
 
     });
 
   };
 
+  const totalAmount = Object.entries(cart).reduce((sum, [id, qty]) => {
+
+    const item = menuItems.find((m) => m.id === Number(id));
+
+    return sum + (item ? item.price * qty : 0);
+
+  }, 0);
+
   const totalItemsCount = Object.values(cart).reduce((a, b) => a + b, 0);
 
-  const calculateTotalAmount = () => {
-
-    return Object.entries(cart).reduce((total, [id, qty]) => {
-
-      const item = menuItems.find((p) => p.id === Number(id));
-
-      return total + (item ? item.price * qty : 0);
-
-    }, 0);
-
-  };
-
-  const filteredItems = activeCategory === 'All' 
-
-    ? menuItems 
-
-    : menuItems.filter(item => item.category === activeCategory);
+  // Send WhatsApp Order
 
   const handleWhatsAppOrder = () => {
 
-    if (totalItemsCount === 0) return;
+    setErrorMessage('');
 
     if (!customerName.trim()) {
 
-      setErrorMessage('Kripya apna Naam bharein!');
+      setErrorMessage('⚠️ Kripya apna naam (Full Name) bharein!');
 
       return;
 
@@ -117,7 +164,7 @@ export default function QRMenuDemo() {
 
     if (orderType === 'dine-in' && !tableNumber.trim()) {
 
-      setErrorMessage('Kripya Table / Seat Number bharein!');
+      setErrorMessage('⚠️ Kripya apna Table / Seat Number bharein!');
 
       return;
 
@@ -125,78 +172,102 @@ export default function QRMenuDemo() {
 
     if (orderType === 'delivery' && !deliveryAddress.trim()) {
 
-      setErrorMessage('Kripya Delivery Address bharein!');
+      setErrorMessage('⚠️ Kripya apna Delivery Address bharein!');
 
       return;
 
     }
 
-    setErrorMessage('');
+    if (totalItemsCount === 0) {
 
-    const shopOwnerNumber = vendor?.owner_whatsapp; 
+      setErrorMessage('⚠️ Kripya menu se kam se kam ek item add karein!');
 
-    let message = `🛒 *New Order from QR Menu*\n`;
-
-    message += `📋 *Type:* ${orderType === 'dine-in' ? 'Dine-In (Stall)' : 'Home Delivery'}\n`;
-
-    message += `👤 *Name:* ${customerName}\n`;
-
-    if (orderType === 'dine-in') {
-
-      message += `📍 *Table:* ${tableNumber}\n`;
-
-    } else {
-
-      message += `🏠 *Address:* ${deliveryAddress}\n`;
+      return;
 
     }
 
-    message += `--------------------------\n`;
+    const shopTitle = vendor?.shop_name || 'QR Menu';
+
+    const targetNumber = vendor?.owner_whatsapp;
+
+    if (!targetNumber) {
+
+      setErrorMessage('❌ Vendor WhatsApp contact missing!');
+
+      return;
+
+    }
+
+    let msg = `🛒 *NEW ORDER - ${shopTitle.toUpperCase()}*\n\n`;
+
+    msg += `👤 *Customer Name:* ${customerName}\n`;
+
+    msg += `📌 *Order Type:* ${orderType === 'dine-in' ? 'Dine-In (Stall)' : 'Home Delivery'}\n`;
+
+    if (orderType === 'dine-in') {
+
+      msg += `🪑 *Table/Seat No:* ${tableNumber}\n`;
+
+    } else {
+
+      msg += `🏠 *Delivery Address:* ${deliveryAddress}\n`;
+
+    }
+
+    msg += `\n📋 *ITEMS ORDERED:*\n`;
 
     Object.entries(cart).forEach(([id, qty]) => {
 
-      const item = menuItems.find((p) => p.id === Number(id));
+      const item = menuItems.find((m) => m.id === Number(id));
 
       if (item) {
 
-        const itemTotal = item.price * qty;
-
-        message += `• ${item.name} x ${qty} = ₹${itemTotal}\n`;
+        msg += `• ${item.name} x ${qty} = ₹${item.price * qty}\n`;
 
       }
 
     });
 
-    message += `--------------------------\n`;
+    msg += `\n💰 *TOTAL AMOUNT:* ₹${totalAmount}\n`;
 
-    message += `💰 *Total Bill: ₹${calculateTotalAmount()}*\n`;
+    msg += `\nPlease confirm my order!`;
 
-    message += `_Powered by LearnBuild Hub_`;
+    const encodedMsg = encodeURIComponent(msg);
 
-    const encodedMessage = encodeURIComponent(message);
-
-    window.open(`https://wa.me/${shopOwnerNumber}?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/${targetNumber}?text=${encodedMsg}`, '_blank');
 
   };
 
-  // Colorful Splash Screen
+  const filteredItems = activeCategory === 'All' 
 
-  if (showSplash) {
+    ? menuItems 
+
+    : menuItems.filter((i) => i.category === activeCategory);
+
+  if (loading) {
 
     return (
-<div className="fixed inset-0 bg-gradient-to-tr from-orange-600 via-pink-600 to-purple-700 flex flex-col items-center justify-center z-50 text-white p-6 shadow-2xl">
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-black/30 pointer-events-none"></div>
-<div className="animate-bounce mb-5 bg-white/20 p-5 rounded-3xl backdrop-blur-xl shadow-inner border border-white/30">
-<span className="text-5xl">🍔</span>
-</div>
-<h1 className="text-3xl font-black tracking-tight text-center drop-shadow-md"> {vendor?.shop_name || 'Loading Shop...'}</h1>
-<p className="text-pink-100 text-xs mt-2 font-semibold tracking-wide uppercase bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
+<div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4">
+<p className="text-sm font-semibold tracking-wider text-emerald-400 animate-pulse">
 
-          ⚡ Scan. Select. Direct WhatsApp Order.
+          ⚡ Loading Digital Menu...
 </p>
-<div className="absolute bottom-8 text-xs text-white/80 font-medium tracking-wider">
+</div>
 
-          Powered by LearnBuild Hub 🚀
+    );
+
+  }
+
+  if (!vendor) {
+
+    return (
+<div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6 text-center">
+<div className="bg-red-500/10 border border-red-500/30 p-6 rounded-3xl max-w-sm">
+<h1 className="text-xl font-bold text-red-400">Shop Not Found ❌</h1>
+<p className="text-xs text-gray-400 mt-2">
+
+            Yeh QR menu inactive hai ya URL galat hai.
+</p>
 </div>
 </div>
 
@@ -204,37 +275,63 @@ export default function QRMenuDemo() {
 
   }
 
-  // Colorful & Modern Menu Interface
-
   return (
-<main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-32 max-w-md mx-auto shadow-2xl border-x relative">
+<div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28">
 
-      {/* Vibrant Header */}
-<header className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white sticky top-0 z-20 shadow-md px-4 py-3.5 rounded-b-2xl">
-<div className="flex justify-between items-center">
-<div>
-<h1 className="text-lg font-black tracking-tight"> {vendor?.shop_name || 'Digital Menu'} 🌟</h1>
-<p className="text-[11px] text-emerald-300 font-bold flex items-center gap-1.5 mt-0.5">
-<span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live QR Digital Menu
-</p>
+      {/* 1. Colorful Splash Screen */}
+
+      {showSplash && (
+<div className="fixed inset-0 bg-gradient-to-tr from-orange-600 via-pink-600 to-purple-700 flex flex-col items-center justify-center z-50 text-white p-6 shadow-2xl transition-opacity duration-500">
+<div className="animate-bounce mb-5 bg-white/20 p-5 rounded-3xl backdrop-blur-xl border border-white/30">
+<span className="text-5xl">🍔</span>
 </div>
-<span className="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border border-white/20 shadow-sm">
+<h1 className="text-3xl font-black tracking-tight text-center drop-shadow-md text-white">
 
-            LearnBuild Hub
+            {vendor.shop_name}
+</h1>
+<p className="text-pink-100 text-xs mt-2 font-semibold tracking-wide uppercase bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
+
+            ⚡ SCAN. SELECT. DIRECT WHATSAPP ORDER.
+</p>
+<div className="absolute bottom-8 text-xs text-white/80 font-medium tracking-wider">
+
+            Powered by LearnBuild Hub 🚀
+</div>
+</div>
+
+      )}
+
+      {/* 2. Top Header Banner */}
+<div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-4 shadow-lg sticky top-0 z-30">
+<div className="max-w-md mx-auto flex justify-between items-center">
+<div>
+<h2 className="text-lg font-black tracking-wide flex items-center gap-1">
+
+              {vendor.shop_name} 🌟
+</h2>
+<p className="text-[10px] text-violet-200 font-medium">Live QR Digital Menu</p>
+</div>
+<span className="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-lg font-bold border border-white/20">
+
+            LEARNBUILD HUB
 </span>
 </div>
-</header>
-<div className="p-4 space-y-4">
+</div>
+<div className="max-w-md mx-auto p-4 space-y-5">
 
         {/* Order Type Toggle */}
-<div className="flex bg-indigo-100/60 p-1.5 rounded-2xl border border-indigo-200">
+<div className="grid grid-cols-2 gap-2 bg-slate-200/80 p-1.5 rounded-2xl border border-slate-300/60">
 <button
 
-            onClick={() => { setOrderType('dine-in'); setErrorMessage(''); }}
+            onClick={() => setOrderType('dine-in')}
 
-            className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
+            className={`py-2.5 text-xs font-bold rounded-xl transition ${
 
-              orderType === 'dine-in' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md' : 'text-indigo-900 hover:bg-indigo-200/50'
+              orderType === 'dine-in'
+
+                ? 'bg-violet-600 text-white shadow-md'
+
+                : 'text-slate-600 hover:text-slate-900'
 
             }`}
 >
@@ -243,11 +340,15 @@ export default function QRMenuDemo() {
 </button>
 <button
 
-            onClick={() => { setOrderType('delivery'); setErrorMessage(''); }}
+            onClick={() => setOrderType('delivery')}
 
-            className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
+            className={`py-2.5 text-xs font-bold rounded-xl transition ${
 
-              orderType === 'delivery' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md' : 'text-indigo-900 hover:bg-indigo-200/50'
+              orderType === 'delivery'
+
+                ? 'bg-violet-600 text-white shadow-md'
+
+                : 'text-slate-600 hover:text-slate-900'
 
             }`}
 >
@@ -256,75 +357,69 @@ export default function QRMenuDemo() {
 </button>
 </div>
 
-        {/* Customer Details Form */}
-<div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 space-y-3">
-<p className="text-xs font-black text-indigo-600 uppercase tracking-wider">
+        {/* Customer Details Input Card */}
+<div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 space-y-3">
+<h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
 
-            Customer Details <span className="text-red-500">*</span>
-</p>
-<div>
+            Customer Details <span className="text-rose-500">*</span>
+</h3>
+<input
+
+            type="text"
+
+            placeholder="Your Full Name *"
+
+            value={customerName}
+
+            onChange={(e) => setCustomerName(e.target.value)}
+
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-violet-500"
+
+          />
+
+          {orderType === 'dine-in' ? (
 <input
 
               type="text"
 
-              placeholder="Your Full Name *"
+              placeholder="Table / Seat Number * (e.g. Table 4)"
 
-              value={customerName}
+              value={tableNumber}
 
-              onChange={(e) => { setCustomerName(e.target.value); setErrorMessage(''); }}
+              onChange={(e) => setTableNumber(e.target.value)}
 
-              className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-violet-500"
 
             />
-</div>
-
-          {orderType === 'dine-in' ? (
-<div>
-<input
-
-                type="text"
-
-                placeholder="Table / Seat Number * (e.g. Table 4)"
-
-                value={tableNumber}
-
-                onChange={(e) => { setTableNumber(e.target.value); setErrorMessage(''); }}
-
-                className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-
-              />
-</div>
 
           ) : (
-<div>
 <textarea
 
-                placeholder="Complete Delivery Address * (House no, Street...)"
+              placeholder="Full Delivery Address *"
 
-                value={deliveryAddress}
+              value={deliveryAddress}
 
-                onChange={(e) => { setDeliveryAddress(e.target.value); setErrorMessage(''); }}
+              onChange={(e) => setDeliveryAddress(e.target.value)}
 
-                rows={2}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-violet-500 h-16 resize-none"
 
-                className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none font-medium"
-
-              />
-</div>
-
-          )}
-
-          {errorMessage && (
-<p className="text-xs text-red-600 font-bold bg-red-50 p-2.5 rounded-xl border border-red-200">
-
-              ⚠️ {errorMessage}
-</p>
+            />
 
           )}
 </div>
 
-        {/* Colorful Category Filter Tabs */}
-<div className="flex overflow-x-auto space-x-2 pb-2 scrollbar-none">
+        {/* Error Notification */}
+
+        {errorMessage && (
+<div className="p-3 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-xs font-semibold">
+
+            {errorMessage}
+</div>
+
+        )}
+
+        {/* Category Tabs */}
+<div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
 
           {categories.map((cat) => (
 <button
@@ -333,13 +428,13 @@ export default function QRMenuDemo() {
 
               onClick={() => setActiveCategory(cat)}
 
-              className={`px-4 py-2 text-xs font-black rounded-2xl whitespace-nowrap transition-all shadow-sm ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
 
                 activeCategory === cat
 
-                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-md shadow-pink-200 scale-105'
+                  ? 'bg-violet-600 text-white shadow-md'
 
-                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
 
               }`}
 >
@@ -350,7 +445,7 @@ export default function QRMenuDemo() {
           ))}
 </div>
 
-        {/* Menu Items Cards */}
+        {/* Menu Items List */}
 <div className="space-y-3">
 
           {filteredItems.map((item) => {
@@ -358,51 +453,56 @@ export default function QRMenuDemo() {
             const qty = cart[item.id] || 0;
 
             return (
-<div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center transition-all hover:shadow-md hover:border-indigo-100">
-<div className="pr-2">
-<span className={`text-[10px] px-2.5 py-0.5 rounded-full font-black border ${item.bg}`}>
+<div
+
+                key={item.id}
+
+                className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex justify-between items-center gap-3"
+>
+<div className="space-y-1">
+<span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${item.bg}`}>
 
                     {item.category}
 </span>
-<h3 className="font-extrabold text-gray-900 text-sm mt-1.5">{item.name}</h3>
-<p className="text-xs text-gray-500 font-medium mt-0.5">{item.desc}</p>
-<p className="text-sm font-black text-indigo-600 mt-1.5">₹{item.price}</p>
+<h4 className="font-bold text-sm text-slate-800">{item.name}</h4>
+<p className="text-[11px] text-slate-500">{item.desc}</p>
+<p className="font-extrabold text-sm text-violet-700">₹{item.price}</p>
 </div>
-<div className="flex items-center">
+<div className="flex items-center gap-2">
 
-                  {qty > 0 ? (
-<div className="flex items-center bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl overflow-hidden shadow-md">
-<button 
+                  {qty === 0 ? (
+<button
 
-                        onClick={() => updateQuantity(item.id, -1)} 
+                      onClick={() => updateQuantity(item.id, 1)}
 
-                        className="px-3.5 py-2 font-black hover:bg-black/10 transition"
+                      className="bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200 px-4 py-2 rounded-xl font-bold text-xs transition"
+>
+
+                      + Add
+</button>
+
+                  ) : (
+<div className="flex items-center bg-violet-600 text-white rounded-xl overflow-hidden shadow-sm">
+<button
+
+                        onClick={() => updateQuantity(item.id, -1)}
+
+                        className="px-3 py-1.5 font-bold hover:bg-violet-700 transition text-xs"
 >
 
                         -
 </button>
-<span className="px-2.5 text-xs font-black">{qty}</span>
-<button 
+<span className="px-2 font-black text-xs">{qty}</span>
+<button
 
-                        onClick={() => updateQuantity(item.id, 1)} 
+                        onClick={() => updateQuantity(item.id, 1)}
 
-                        className="px-3.5 py-2 font-black hover:bg-black/10 transition"
+                        className="px-3 py-1.5 font-bold hover:bg-violet-700 transition text-xs"
 >
 
                         +
 </button>
 </div>
-
-                  ) : (
-<button 
-
-                      onClick={() => updateQuantity(item.id, 1)} 
-
-                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-black rounded-2xl transition border border-indigo-200 shadow-sm"
->
-
-                      + Add
-</button>
 
                   )}
 </div>
@@ -417,25 +517,29 @@ export default function QRMenuDemo() {
       {/* Floating Bottom Cart Bar */}
 
       {totalItemsCount > 0 && (
-<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-xl border-t shadow-2xl p-4 z-30 rounded-t-3xl">
-<div className="flex justify-between items-center">
+<div className="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40">
+<div className="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 flex justify-between items-center">
 <div>
-<p className="text-xs text-gray-500 font-bold">{totalItemsCount} items selected</p>
-<p className="text-lg font-black text-gray-900">₹{calculateTotalAmount()}</p>
+<p className="text-[10px] text-slate-400 font-semibold uppercase">Your Cart</p>
+<p className="font-black text-sm text-emerald-400">
+
+                {totalItemsCount} {totalItemsCount === 1 ? 'Item' : 'Items'} | ₹{totalAmount}
+</p>
 </div>
-<button 
+<button
 
               onClick={handleWhatsAppOrder}
 
-              className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg shadow-green-200 flex items-center space-x-2 transition-all active:scale-95"
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition shadow-lg"
 >
-<span>Order on WhatsApp 🚀</span>
+<span>Send Order</span>
+<span>💬</span>
 </button>
 </div>
 </div>
 
       )}
-</main>
+</div>
 
   );
 
