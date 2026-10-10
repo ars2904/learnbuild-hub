@@ -14,6 +14,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     pathname?.startsWith("/admin") ||
     pathname?.startsWith("/dashboard") ||
     pathname?.startsWith("/employee") ||
+    pathname?.startsWith("/QRdemo") ||
     pathname === "/login" ||
     pathname === "/signup";
 
