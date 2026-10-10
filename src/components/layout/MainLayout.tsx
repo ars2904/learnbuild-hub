@@ -9,15 +9,26 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  // Standalone app routes that manage their own full-screen layouts
-  const isStandaloneRoute =
-    pathname?.startsWith("/admin") ||
-    pathname?.startsWith("/dashboard") ||
-    pathname?.startsWith("/employee") ||
-    pathname?.startsWith("/QRdemo") ||
-    pathname?.startsWith("/clinic-demo") ||
-    pathname === "/login" ||
-    pathname === "/signup";
+  // Check for dynamic vendor slug or other standalone routes
+ const isVendorSlugRoute = pathname?.split('/').length === 2 &&
+   pathname !== '/' &&
+   !pathname?.startsWith('/admin') &&
+   !pathname?.startsWith('/dashboard') &&
+   !pathname?.startsWith('/employee') &&
+   !pathname?.startsWith('/QRdemo') &&
+   !pathname?.startsWith('/clinic-demo') &&
+   !pathname?.startsWith('/login') &&
+   !pathname?.startsWith('/signup');
+ // Standalone app routes that manage their own full-screen layouts
+ const isStandaloneRoute =
+   pathname?.startsWith("/admin") ||
+   pathname?.startsWith("/dashboard") ||
+   pathname?.startsWith("/employee") ||
+   pathname?.startsWith("/QRdemo") ||
+   pathname?.startsWith("/clinic-demo") ||
+   pathname === "/login" ||
+   pathname === "/signup" ||
+   isVendorSlugRoute;
 
   if (isStandaloneRoute) {
     return (
