@@ -1,18 +1,17 @@
 'use client';
-
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-// Supabase client initialization
+import { useParams } from 'next/navigation';
 const supabase = createClient(
  process.env.NEXT_PUBLIC_SUPABASE_URL!,
- process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+ process.env.NEXT_PUBLIC_SUPabase_ANON_KEY!
 );
-export default function VendorMenuPage() {
+export default function QRMenuDemo() {
  const params = useParams();
- const vendorSlug = params?.vendorSlug; // URL se slug nikala (jaise 'sharma-ji-stall')
+ const vendorSlug = params?.vendorSlug;
  const [vendor, setVendor] = useState<any>(null);
  const [loading, setLoading] = useState(true);
+ const [showSplash, setShowSplash] = useState(true);
  useEffect(() => {
    if (vendorSlug) {
      fetchVendor();
@@ -20,7 +19,6 @@ export default function VendorMenuPage() {
  }, [vendorSlug]);
  const fetchVendor = async () => {
    setLoading(true);
-   // Supabase se exact slug match karke data lao
    const { data, error } = await supabase
      .from('vendors')
      .select('*')
@@ -29,18 +27,10 @@ export default function VendorMenuPage() {
    if (error) {
      console.error('Error fetching vendor:', error.message);
    } else if (data) {
-     setVendor(data); // Yahan vendor state me data save ho raha hai
+     setVendor(data);
    }
    setLoading(false);
  };
- // Agar abhi load ho raha hai toh loading screen dikhao
- if (loading) {
-   return (
-<div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
-<p className="text-sm font-medium animate-pulse">Loading Menu...</p>
-</div>
-   );
- }
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
