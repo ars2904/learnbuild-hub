@@ -8,6 +8,7 @@ const supabase = createClient(
  process.env.NEXT_PUBLIC_SUPABASE_URL!,
  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
@@ -45,6 +46,8 @@ export default function QRMenuDemo() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
+  const [vendor, setVendor] = useState<any>(null);
+ 
 
   useEffect(() => {
 
