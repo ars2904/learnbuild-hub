@@ -6,31 +6,6 @@ const supabase = createClient(
  process.env.NEXT_PUBLIC_SUPABASE_URL!,
  process.env.NEXT_PUBLIC_SUPabase_ANON_KEY!
 );
-export default function QRMenuDemo() {
- const params = useParams();
- const vendorSlug = params?.vendorSlug;
- const [vendor, setVendor] = useState<any>(null);
- const [loading, setLoading] = useState(true);
- const [showSplash, setShowSplash] = useState(true);
- useEffect(() => {
-   if (vendorSlug) {
-     fetchVendor();
-   }
- }, [vendorSlug]);
- const fetchVendor = async () => {
-   setLoading(true);
-   const { data, error } = await supabase
-     .from('vendors')
-     .select('*')
-     .eq('slug', vendorSlug)
-     .single();
-   if (error) {
-     console.error('Error fetching vendor:', error.message);
-   } else if (data) {
-     setVendor(data);
-   }
-   setLoading(false);
- };
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
@@ -52,11 +27,12 @@ const menuItems = [
 ];
 
 export default function QRMenuDemo() {
-
+  const params = useParams();
+  const vendorSlug = params?.vendorSlug;
+  const [vendor, setVendor] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
-
   const [activeCategory, setActiveCategory] = useState('All');
-
   const [cart, setCart] = useState<{ [key: number]: number }>({});
 
   const [orderType, setOrderType] = useState<'dine-in' | 'delivery'>('dine-in');
