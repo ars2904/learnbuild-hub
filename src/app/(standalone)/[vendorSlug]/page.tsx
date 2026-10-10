@@ -44,7 +44,7 @@ export default function QRMenuDemo() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [vendor, setVendor] = useState<any>(null);
+  
  
 
   useEffect(() => {
