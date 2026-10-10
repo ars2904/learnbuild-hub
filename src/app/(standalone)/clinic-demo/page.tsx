@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-
+import { clinicConfig } from '@/config/clinic';
+ 
 export default function ClinicDemoPage() {
 
   const [selectedSlot, setSelectedSlot] = useState('10:30 AM')
