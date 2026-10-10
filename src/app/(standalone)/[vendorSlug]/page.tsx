@@ -88,13 +88,14 @@ export default function QRMenuDemo() {
 
     if (error) {
      // Check if subscription has expired
-     const expiryDate = new Date(data?.subscription_expires_at);
+     const vendorData = data as any;
+     const expiryDate = new Date(vendorData?.subscription_expires_at);
      const currentDate = new Date();
-     if (data?.subscription_expires_at && expiryDate < currentDate) {
+     if (vendorData?.subscription_expires_at && expiryDate < currentDate) {
        // Agar date khatam ho gayi hai
-       setVendor({ ...data, isExpired: true });
+       setVendor({ ...vendorData, isExpired: true });
      } else {
-       setVendor(data);
+       setVendor(vendorData);
      }
    }
 
