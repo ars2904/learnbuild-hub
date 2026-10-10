@@ -191,7 +191,7 @@ export default function QRMenuDemo() {
 <div className="animate-bounce mb-5 bg-white/20 p-5 rounded-3xl backdrop-blur-xl shadow-inner border border-white/30">
 <span className="text-5xl">🍔</span>
 </div>
-<h1 className="text-3xl font-black tracking-tight text-center drop-shadow-md">{vendor?.shop_name}</h1>
+<h1 className="text-3xl font-black tracking-tight text-center drop-shadow-md"> {vendor?.shop_name || 'Loading Shop...'}</h1>
 <p className="text-pink-100 text-xs mt-2 font-semibold tracking-wide uppercase bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
 
           ⚡ Scan. Select. Direct WhatsApp Order.
@@ -215,7 +215,7 @@ export default function QRMenuDemo() {
 <header className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white sticky top-0 z-20 shadow-md px-4 py-3.5 rounded-b-2xl">
 <div className="flex justify-between items-center">
 <div>
-<h1 className="text-lg font-black tracking-tight">{vendor?.shop_name} 🌟</h1>
+<h1 className="text-lg font-black tracking-tight"> {vendor?.shop_name || 'Digital Menu'} 🌟</h1>
 <p className="text-[11px] text-emerald-300 font-bold flex items-center gap-1.5 mt-0.5">
 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live QR Digital Menu
 </p>
