@@ -60,7 +60,7 @@ export default function QRMenuDemo() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 1. Fetch Vendor details from Supabase using slug
+  // Fetch Vendor details from Supabase using slug with expiry check
 
   useEffect(() => {
 
@@ -84,20 +84,37 @@ export default function QRMenuDemo() {
 
       .eq('slug', vendorSlug)
 
-      .single();
+      .maybeSingle();
 
     if (error) {
-     // Check if subscription has expired
-     const vendorData = data as any;
-     const expiryDate = new Date(vendorData?.subscription_expires_at);
-     const currentDate = new Date();
-     if (vendorData?.subscription_expires_at && expiryDate < currentDate) {
-       // Agar date khatam ho gayi hai
-       setVendor({ ...vendorData, isExpired: true });
-     } else {
-       setVendor(vendorData);
-     }
-   }
+
+      console.error('Error fetching vendor:', error.message);
+
+      setVendor(null);
+
+    } else if (data) {
+
+      const vendorData = data as any;
+
+      const expiryDate = new Date(vendorData?.subscription_expires_at);
+
+      const currentDate = new Date();
+
+      if (vendorData?.subscription_expires_at && expiryDate < currentDate) {
+
+        setVendor({ ...vendorData, isExpired: true });
+
+      } else {
+
+        setVendor(vendorData);
+
+      }
+
+    } else {
+
+      setVendor(null);
+
+    }
 
     setLoading(false);
 
@@ -277,22 +294,31 @@ export default function QRMenuDemo() {
     );
 
   }
- if (vendor?.isExpired) {
-   return (
+
+  // Subscription Expired Screen
+
+  if (vendor?.isExpired) {
+
+    return (
 <div className="min-h-screen bg-slate-900 text-white flex flex-col items-center justify-center p-6 text-center">
 <div className="bg-rose-500/10 border border-rose-500/30 p-8 rounded-3xl max-w-sm space-y-3">
 <span className="text-4xl">⏳</span>
 <h1 className="text-xl font-bold text-rose-400">Subscription Expired</h1>
 <p className="text-xs text-slate-400">
-           Is shop ka digital menu ka subscription khatam ho gaya hai. Kripya dukaandaar se sampark karein.
+
+            Is shop ka digital menu ka subscription khatam ho gaya hai. Kripya dukaandaar se sampark karein.
 </p>
 <div className="pt-2 text-[10px] text-slate-500">
-           Powered by LearnBuild Hub 🚀
+
+            Powered by LearnBuild Hub 🚀
 </div>
 </div>
 </div>
-   );
- }
+
+    );
+
+  }
+
   return (
 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28">
 
