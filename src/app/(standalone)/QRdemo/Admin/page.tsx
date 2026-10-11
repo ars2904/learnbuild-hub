@@ -25,35 +25,45 @@ export default function AdminDashboard() {
  useEffect(() => {
    fetchVendors();
  }, []);
- // Package Duration Calculation Function (1 Month / 6 Months / 1 Year)
- const calculateNewExpiryDate = (months: number) => {
-   const date = new Date(); // Current date se calculate hoga
-   if (months === 1) {
-     date.setDate(date.getDate() + 30); // 30 Days
-   } else if (months === 6) {
-     date.setMonth(date.getMonth() + 6); // 6 Months
-   } else if (months === 12) {
-     date.setFullYear(date.getFullYear() + 1); // 1 Year
+ // Smart Expiry Calculation Logic
+ // Agar subscription abhi active hai, toh purani expiry date se aage extend hoga, warna aaj ki date se.
+ const calculateNewExpiryDate = (currentExpiry: string | null, months: number) => {
+   let baseDate = new Date();
+   if (currentExpiry) {
+     const expDate = new Date(currentExpiry);
+     if (expDate > baseDate) {
+       baseDate = expDate;
+     }
    }
-   return date.toISOString();
+   if (months === 1) {
+     baseDate.setDate(baseDate.getDate() + 30); // 30 Days / 1 Month
+   } else if (months === 6) {
+     baseDate.setMonth(baseDate.getMonth() + 6); // 6 Months
+   } else if (months === 12) {
+     baseDate.setFullYear(baseDate.getFullYear() + 1); // 1 Year (12 Months)
+   }
+   return baseDate.toISOString();
  };
- // Extend or Update Subscription Expiry
- const handleExtendSubscription = async (vendorId: string, months: number) => {
-   const newExpiry = calculateNewExpiryDate(months);
+ // Handle Subscription Renewal from Dropdown
+ const handleRenewalChange = async (vendor: any, selectedValue: string) => {
+   if (!selectedValue) return;
+   const months = Number(selectedValue);
+   const newExpiry = calculateNewExpiryDate(vendor.subscription_expires_at, months);
    const { error } = await supabase
      .from('vendors')
      .update({ subscription_expires_at: newExpiry })
-     .eq('id', vendorId);
+     .eq('id', vendor.id);
    if (error) {
      alert('Error updating subscription: ' + error.message);
    } else {
      alert(`Subscription successfully extended for ${months === 1 ? '1 Month (30 Days)' : months === 6 ? '6 Months' : '1 Year'}!`);
-     fetchVendors(); // Refresh list
+     fetchVendors(); // Refresh vendor list
    }
  };
  return (
 <div className="min-h-screen bg-slate-950 text-slate-100 p-6 font-sans">
 <div className="max-w-2xl mx-auto space-y-6">
+       {/* Top Header */}
 <div className="flex justify-between items-center bg-slate-900 p-5 rounded-2xl border border-slate-800">
 <div>
 <h1 className="text-xl font-black text-white">LearnBuild Hub Admin 🚀</h1>
@@ -66,6 +76,7 @@ export default function AdminDashboard() {
            Refresh List 🔄
 </button>
 </div>
+       {/* Vendors List */}
        {loading ? (
 <div className="text-center py-12 text-slate-400 text-xs font-semibold animate-pulse">
            Loading vendors data...
@@ -109,30 +120,38 @@ export default function AdminDashboard() {
                        : 'No Expiry Set'}
 </span>
 </div>
-                 {/* Package Duration Action Buttons */}
-<div className="space-y-2 pt-1">
-<p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                     Assign Package / Extend Duration:
-</p>
-<div className="grid grid-cols-3 gap-2">
-<button
-                       onClick={() => handleExtendSubscription(vendor.id, 1)}
-                       className="bg-violet-600/20 hover:bg-violet-600 text-violet-300 hover:text-white border border-violet-500/30 py-2 rounded-xl text-xs font-bold transition"
+                 {/* Action Section with View Menu & Dropdown for Renewal */}
+<div className="flex items-center gap-3 pt-1">
+<a
+                     href={`/${vendor.slug}`}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-center py-2.5 rounded-xl text-xs font-bold border border-slate-700 transition"
 >
-                       + 1 Month (30D)
-</button>
-<button
-                       onClick={() => handleExtendSubscription(vendor.id, 6)}
-                       className="bg-violet-600/20 hover:bg-violet-600 text-violet-300 hover:text-white border border-violet-500/30 py-2 rounded-xl text-xs font-bold transition"
+                     👁️ View Menu
+</a>
+<div className="flex-1">
+<select
+                       defaultValue=""
+                       onChange={(e) => {
+                         handleRenewalChange(vendor, e.target.value);
+                         e.target.value = ""; // Reset dropdown after selection
+                       }}
+                       className="w-full bg-violet-600 hover:bg-violet-500 text-white py-2.5 px-3 rounded-xl text-xs font-bold border border-violet-500 transition cursor-pointer focus:outline-none"
 >
-                       + 6 Months
-</button>
-<button
-                       onClick={() => handleExtendSubscription(vendor.id, 12)}
-                       className="bg-violet-600/20 hover:bg-violet-600 text-violet-300 hover:text-white border border-violet-500/30 py-2 rounded-xl text-xs font-bold transition"
->
-                       + 1 Year
-</button>
+<option value="" disabled className="bg-slate-900 text-slate-400">
+                         🔄 Renew Subscription
+</option>
+<option value="1" className="bg-slate-900 text-white">
+                         + 1 Month (30 Days)
+</option>
+<option value="6" className="bg-slate-900 text-white">
+                         + 6 Months
+</option>
+<option value="12" className="bg-slate-900 text-white">
+                         + 1 Year (12 Months)
+</option>
+</select>
 </div>
 </div>
 </div>
