@@ -13,7 +13,40 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 );
+// State add karo
 
+const [menuSearch, setMenuSearch] = useState('');
+
+// Filtered items logic
+
+const filteredItems = menuItems.filter((item) => {
+
+  const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
+
+  const matchesSearch = item.name.toLowerCase().includes(menuSearch.toLowerCase()) ||
+
+                        item.desc.toLowerCase().includes(menuSearch.toLowerCase());
+
+  return matchesCategory && matchesSearch;
+
+});
+ {/* Menu Search Bar */}
+<div className="relative">
+<input
+
+            type="text"
+
+            placeholder="🔍 Search dishes (e.g. Chai, Noodles)..."
+
+            value={menuSearch}
+
+            onChange={(e) => setMenuSearch(e.target.value)}
+
+            className="w-full bg-white text-slate-900 placeholder-slate-400 text-xs px-4 py-3 rounded-2xl border border-slate-200/80 shadow-sm focus:outline-none focus:border-violet-500"
+
+          />
+</div>
+ 
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
 const menuItems = [
