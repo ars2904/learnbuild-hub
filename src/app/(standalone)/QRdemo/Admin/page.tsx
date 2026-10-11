@@ -70,15 +70,7 @@ const filteredVendors = vendors.filter((v) =>
 );
  return (
 <div className="min-h-screen bg-slate-950 text-slate-100 p-6 font-sans">
- <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800">
-<input
-           type="text"
-           placeholder="🔍 Search vendor by shop name, slug or WhatsApp..."
-           value={searchQuery}
-           onChange={(e) => setSearchQuery(e.target.value)}
-           className="w-full bg-slate-950 text-white placeholder-slate-500 text-xs px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-violet-500"
-         />
-</div>
+
 <div className="max-w-2xl mx-auto space-y-6">
        {/* Top Header */}
 <div className="flex justify-between items-center bg-slate-900 p-5 rounded-2xl border border-slate-800">
@@ -93,6 +85,15 @@ const filteredVendors = vendors.filter((v) =>
            Refresh List 🔄
 </button>
 </div>
+  <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800">
+<input
+           type="text"
+           placeholder="🔍 Search vendor by shop name, slug or WhatsApp..."
+           value={searchQuery}
+           onChange={(e) => setSearchQuery(e.target.value)}
+           className="w-full bg-slate-950 text-white placeholder-slate-500 text-xs px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-violet-500"
+         />
+</div>
        {/* Vendors List */}
        {loading ? (
 <div className="text-center py-12 text-slate-400 text-xs font-semibold animate-pulse">
@@ -104,7 +105,7 @@ const filteredVendors = vendors.filter((v) =>
 </div>
        ) : (
 <div className="space-y-4">
-           {vendors.map((vendor) => {
+           {filteredVendors.map((vendor) => {
              const expiryDate = new Date(vendor.subscription_expires_at);
              const isExpired = vendor.subscription_expires_at && expiryDate < new Date();
              return (
