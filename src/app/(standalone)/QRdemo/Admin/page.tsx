@@ -60,8 +60,25 @@ export default function AdminDashboard() {
      fetchVendors(); // Refresh vendor list
    }
  };
+ // State add karo
+const [searchQuery, setSearchQuery] = useState('');
+// Filtered vendors list
+const filteredVendors = vendors.filter((v) =>
+ v.shop_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+ v.slug?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+ v.owner_whatsapp?.includes(searchQuery)
+);
  return (
 <div className="min-h-screen bg-slate-950 text-slate-100 p-6 font-sans">
+ <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800">
+<input
+           type="text"
+           placeholder="🔍 Search vendor by shop name, slug or WhatsApp..."
+           value={searchQuery}
+           onChange={(e) => setSearchQuery(e.target.value)}
+           className="w-full bg-slate-950 text-white placeholder-slate-500 text-xs px-4 py-3 rounded-xl border border-slate-800 focus:outline-none focus:border-violet-500"
+         />
+</div>
 <div className="max-w-2xl mx-auto space-y-6">
        {/* Top Header */}
 <div className="flex justify-between items-center bg-slate-900 p-5 rounded-2xl border border-slate-800">
