@@ -16,24 +16,6 @@ const supabase = createClient(
 
 const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
 
-const menuItems = [
-
-  { id: 1, name: 'Special Adrak Chai', price: 15, category: 'Beverages', desc: 'Garam garam adrak wali chai ☕', bg: 'bg-amber-100 text-amber-900 border-amber-300' },
-
-  { id: 2, name: 'Bun Maska', price: 25, category: 'Starters', desc: 'Classic butter bun 🍞', bg: 'bg-yellow-100 text-yellow-900 border-yellow-300' },
-
-  { id: 3, name: 'Aloo Samosa', price: 15, category: 'Starters', desc: 'Crispy and spicy 🥟', bg: 'bg-orange-100 text-orange-900 border-orange-300' },
-
-  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages', desc: 'Thandi thandi creamy coffee 🥤', bg: 'bg-sky-100 text-sky-900 border-sky-300' },
-
-  { id: 5, name: 'Veg Hakka Noodles', price: 80, category: 'Chinese', desc: 'Toss up with fresh veggies 🍜', bg: 'bg-rose-100 text-rose-900 border-rose-300' },
-
-  { id: 6, name: 'Paneer Chilli', price: 120, category: 'Chinese', desc: 'Spicy restaurant style 🌶️', bg: 'bg-red-100 text-red-900 border-red-300' },
-
-  { id: 7, name: 'Dal Tadka & Rice', price: 110, category: 'Main Course', desc: 'Ghar jaisa khana 🍲', bg: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
-
-];
-
 export default function QRMenuDemo() {
 
   const params = useParams();
@@ -41,6 +23,8 @@ export default function QRMenuDemo() {
   const vendorSlug = params?.vendorSlug as string;
 
   const [vendor, setVendor] = useState<any>(null);
+
+  const [menuItems, setMenuItems] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +34,7 @@ export default function QRMenuDemo() {
 
   const [menuSearch, setMenuSearch] = useState('');
 
-  const [cart, setCart] = useState<{ [key: number]: number }>({});
+  const [cart, setCart] = useState<{ [key: string]: number }>({});
 
   const [orderType, setOrderType] = useState<'dine-in' | 'delivery'>('dine-in');
 
@@ -62,23 +46,25 @@ export default function QRMenuDemo() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Fetch Vendor details from Supabase using slug with expiry check
+  // Fetch Vendor details and their specific Menu Items from Supabase
 
   useEffect(() => {
 
     if (vendorSlug) {
 
-      fetchVendor();
+      fetchVendorAndMenu();
 
     }
 
   }, [vendorSlug]);
 
-  const fetchVendor = async () => {
+  const fetchVendorAndMenu = async () => {
 
     setLoading(true);
 
-    const { data, error } = await supabase
+    // 1. Fetch vendor by slug
+
+    const { data: vendorData, error: vendorError } = await supabase
 
       .from('vendors')
 
@@ -88,33 +74,55 @@ export default function QRMenuDemo() {
 
       .maybeSingle();
 
-    if (error) {
+    if (vendorError || !vendorData) {
 
-      console.error('Error fetching vendor:', error.message);
+      console.error('Error fetching vendor:', vendorError?.message);
 
       setVendor(null);
 
-    } else if (data) {
+      setLoading(false);
 
-      const vendorData = data as any;
+      return;
 
-      const expiryDate = new Date(vendorData?.subscription_expires_at);
+    }
 
-      const currentDate = new Date();
+    const vData = vendorData as any;
 
-      if (vendorData?.subscription_expires_at && expiryDate < currentDate) {
+    const expiryDate = new Date(vData?.subscription_expires_at);
 
-        setVendor({ ...vendorData, isExpired: true });
+    const currentDate = new Date();
 
-      } else {
+    if (vData?.subscription_expires_at && expiryDate < currentDate) {
 
-        setVendor(vendorData);
+      setVendor({ ...vData, isExpired: true });
 
-      }
+      setLoading(false);
+
+      return;
+
+    }
+
+    setVendor(vData);
+
+    // 2. Fetch menu items belonging to this vendor's ID
+
+    const { data: itemsData, error: itemsError } = await supabase
+
+      .from('vendor_menu_items')
+
+      .select('*')
+
+      .eq('vendor_id', vData.id);
+
+    if (itemsError) {
+
+      console.error('Error fetching menu items:', itemsError.message);
+
+      setMenuItems([]);
 
     } else {
 
-      setVendor(null);
+      setMenuItems(itemsData || []);
 
     }
 
@@ -144,15 +152,15 @@ export default function QRMenuDemo() {
 
     const matchesSearch = item.name.toLowerCase().includes(menuSearch.toLowerCase()) ||
 
-                          item.desc.toLowerCase().includes(menuSearch.toLowerCase());
+                          (item.description && item.description.toLowerCase().includes(menuSearch.toLowerCase()));
 
     return matchesCategory && matchesSearch;
 
   });
 
-  // Cart operations
+  // Cart operations (using item.id which is UUID string)
 
-  const updateQuantity = (id: number, delta: number) => {
+  const updateQuantity = (id: string, delta: number) => {
 
     setCart((prev) => {
 
@@ -176,9 +184,9 @@ export default function QRMenuDemo() {
 
   const totalAmount = Object.entries(cart).reduce((sum, [id, qty]) => {
 
-    const item = menuItems.find((m) => m.id === Number(id));
+    const item = menuItems.find((m) => m.id === id);
 
-    return sum + (item ? item.price * qty : 0);
+    return sum + (item ? Number(item.price) * qty : 0);
 
   }, 0);
 
@@ -254,11 +262,11 @@ export default function QRMenuDemo() {
 
     Object.entries(cart).forEach(([id, qty]) => {
 
-      const item = menuItems.find((m) => m.id === Number(id));
+      const item = menuItems.find((m) => m.id === id);
 
       if (item) {
 
-        msg += `• ${item.name} x ${qty} = ₹${item.price * qty}\n`;
+        msg += `• ${item.name} x ${qty} = ₹${Number(item.price) * qty}\n`;
 
       }
 
@@ -273,8 +281,6 @@ export default function QRMenuDemo() {
     window.open(`https://wa.me/${targetNumber}?text=${encodedMsg}`, '_blank');
 
   };
-
-  // If loading, we directly show Splash or empty bg to avoid boring text
 
   if (loading) {
 
@@ -304,8 +310,6 @@ export default function QRMenuDemo() {
 
   }
 
-  // Subscription Expired Screen
-
   if (vendor?.isExpired) {
 
     return (
@@ -331,7 +335,7 @@ export default function QRMenuDemo() {
   return (
 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28">
 
-      {/* 1. Colorful Grand Splash Screen */}
+      {/* Grand Splash Screen */}
 
       {showSplash && (
 <div className="fixed inset-0 bg-gradient-to-tr from-violet-600 via-fuchsia-600 to-pink-600 flex flex-col items-center justify-center z-50 text-white p-6 shadow-2xl transition-opacity duration-700">
@@ -354,7 +358,7 @@ export default function QRMenuDemo() {
 
       )}
 
-      {/* 2. Vibrant Header Banner */}
+      {/* Vibrant Header Banner */}
 <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-700 text-white p-5 shadow-xl sticky top-0 z-30">
 <div className="max-w-md mx-auto flex justify-between items-center">
 <div>
@@ -460,10 +464,8 @@ export default function QRMenuDemo() {
           )}
 </div>
 
-        {/* Error Notification */}
-
         {errorMessage && (
-<div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold shadow-sm animate-shake">
+<div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold shadow-sm">
 
             {errorMessage}
 </div>
@@ -476,7 +478,7 @@ export default function QRMenuDemo() {
 
             type="text"
 
-            placeholder="🔍 Search dishes (e.g. Chai, Noodles)..."
+            placeholder="🔍 Search dishes..."
 
             value={menuSearch}
 
@@ -514,13 +516,13 @@ export default function QRMenuDemo() {
           ))}
 </div>
 
-        {/* Menu Items List */}
+        {/* Dynamic Menu Items List from Supabase */}
 <div className="space-y-3.5">
 
           {filteredItems.length === 0 ? (
-<div className="text-center py-10 bg-white rounded-3xl border border-slate-200 p-6 text-slate-400 text-xs font-semibold">
+<div className="text-center py-10 bg-white rounded-3xl border border-slate-200 p-6 text-slate-400 text-xs font-semibold shadow-sm">
 
-              No dishes found matching your search! 🔍
+              No menu items found for this shop yet! Add items from Supabase. 🍽️
 </div>
 
           ) : (
@@ -537,12 +539,16 @@ export default function QRMenuDemo() {
                   className="bg-white p-4 rounded-3xl shadow-sm hover:shadow-md border border-slate-200/90 flex justify-between items-center gap-3 transition"
 >
 <div className="space-y-1.5">
-<span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border ${item.bg}`}>
+<span className="text-[10px] font-black px-2.5 py-1 rounded-lg border bg-violet-50 text-violet-800 border-violet-200">
 
                       {item.category}
 </span>
 <h4 className="font-extrabold text-sm text-slate-900">{item.name}</h4>
-<p className="text-[11px] text-slate-500 font-medium">{item.desc}</p>
+
+                    {item.description && (
+<p className="text-[11px] text-slate-500 font-medium">{item.description}</p>
+
+                    )}
 <p className="font-black text-sm text-violet-700">₹{item.price}</p>
 </div>
 <div className="flex items-center gap-2">
