@@ -14,7 +14,7 @@ const supabase = createClient(
 
 );
 
-const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
+const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course', 'Desserts'];
 
 export default function QRMenuDemo() {
 
@@ -25,8 +25,6 @@ export default function QRMenuDemo() {
   const [vendor, setVendor] = useState<any>(null);
 
   const [menuItems, setMenuItems] = useState<any[]>([]);
-
-  const [loading, setLoading] = useState(true);
 
   const [showSplash, setShowSplash] = useState(true);
 
@@ -46,7 +44,7 @@ export default function QRMenuDemo() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Fetch Vendor details and their specific Menu Items from Supabase
+  // Fetch Vendor details and their specific Menu Items from Supabase in background
 
   useEffect(() => {
 
@@ -60,10 +58,6 @@ export default function QRMenuDemo() {
 
   const fetchVendorAndMenu = async () => {
 
-    setLoading(true);
-
-    // 1. Fetch vendor by slug
-
     const { data: vendorData, error: vendorError } = await supabase
 
       .from('vendors')
@@ -76,11 +70,7 @@ export default function QRMenuDemo() {
 
     if (vendorError || !vendorData) {
 
-      console.error('Error fetching vendor:', vendorError?.message);
-
       setVendor(null);
-
-      setLoading(false);
 
       return;
 
@@ -96,15 +86,11 @@ export default function QRMenuDemo() {
 
       setVendor({ ...vData, isExpired: true });
 
-      setLoading(false);
-
       return;
 
     }
 
     setVendor(vData);
-
-    // 2. Fetch menu items belonging to this vendor's ID
 
     const { data: itemsData, error: itemsError } = await supabase
 
@@ -114,19 +100,11 @@ export default function QRMenuDemo() {
 
       .eq('vendor_id', vData.id);
 
-    if (itemsError) {
-
-      console.error('Error fetching menu items:', itemsError.message);
-
-      setMenuItems([]);
-
-    } else {
+    if (!itemsError) {
 
       setMenuItems(itemsData || []);
 
     }
-
-    setLoading(false);
 
   };
 
@@ -157,8 +135,6 @@ export default function QRMenuDemo() {
     return matchesCategory && matchesSearch;
 
   });
-
-  // Cart operations (using item.id which is UUID string)
 
   const updateQuantity = (id: string, delta: number) => {
 
@@ -191,8 +167,6 @@ export default function QRMenuDemo() {
   }, 0);
 
   const totalItemsCount = Object.values(cart).reduce((a, b) => a + b, 0);
-
-  // Send WhatsApp Order
 
   const handleWhatsAppOrder = () => {
 
@@ -282,34 +256,6 @@ export default function QRMenuDemo() {
 
   };
 
-  if (loading) {
-
-    return (
-<div className="min-h-screen bg-slate-950 flex items-center justify-center">
-<div className="w-10 h-10 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
-</div>
-
-    );
-
-  }
-
-  if (!vendor) {
-
-    return (
-<div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
-<div className="bg-red-500/10 border border-red-500/30 p-8 rounded-3xl max-w-sm shadow-xl">
-<h1 className="text-xl font-bold text-red-400">Shop Not Found ❌</h1>
-<p className="text-xs text-slate-400 mt-2">
-
-            Yeh QR menu inactive hai ya URL galat hai.
-</p>
-</div>
-</div>
-
-    );
-
-  }
-
   if (vendor?.isExpired) {
 
     return (
@@ -335,7 +281,7 @@ export default function QRMenuDemo() {
   return (
 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-28">
 
-      {/* Grand Splash Screen */}
+      {/* Grand Splash Screen - Opens instantly without blocking loader */}
 
       {showSplash && (
 <div className="fixed inset-0 bg-gradient-to-tr from-violet-600 via-fuchsia-600 to-pink-600 flex flex-col items-center justify-center z-50 text-white p-6 shadow-2xl transition-opacity duration-700">
@@ -344,7 +290,7 @@ export default function QRMenuDemo() {
 </div>
 <h1 className="text-3xl font-black tracking-tight text-center drop-shadow-lg text-white">
 
-            {vendor.shop_name}
+            {vendor?.shop_name || 'Digital Menu'}
 </h1>
 <p className="text-pink-100 text-xs mt-3 font-bold tracking-wider uppercase bg-black/25 px-4 py-1.5 rounded-full backdrop-blur-md shadow-inner">
 
@@ -364,7 +310,7 @@ export default function QRMenuDemo() {
 <div>
 <h2 className="text-lg font-black tracking-wide flex items-center gap-1.5">
 
-              {vendor.shop_name} 🌟
+              {vendor?.shop_name || 'Loading Shop...'} 🌟
 </h2>
 <p className="text-[11px] text-violet-200 font-medium tracking-wide">✨ Live QR Digital Menu</p>
 </div>
@@ -522,7 +468,7 @@ export default function QRMenuDemo() {
           {filteredItems.length === 0 ? (
 <div className="text-center py-10 bg-white rounded-3xl border border-slate-200 p-6 text-slate-400 text-xs font-semibold shadow-sm">
 
-              No menu items found for this shop yet! Add items from Supabase. 🍽️
+              No menu items found for this shop yet! Add items from your admin panel. 🍽️
 </div>
 
           ) : (
