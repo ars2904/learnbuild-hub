@@ -6,7 +6,35 @@ import { createClient } from '@supabase/supabase-js';
 
 import { useParams } from 'next/navigation';
 
-import { Utensils, Search, Sparkles, Leaf, Users, Heart, Plus, Minus, ShoppingCart } from 'lucide-react';
+import { 
+
+  Utensils, 
+
+  Search, 
+
+  Sparkles, 
+
+  Leaf, 
+
+  Users, 
+
+  Heart, 
+
+  Plus, 
+
+  Minus, 
+
+  ShoppingCart, 
+
+  Phone, 
+
+  MapPin, 
+
+  Share2, 
+
+  Star 
+
+} from 'lucide-react';
 
 const supabase = createClient(
 
@@ -46,7 +74,7 @@ export default function QRMenuDemo() {
 
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Fetch Vendor details and their specific Menu Items from Supabase in background
+  // Fetch Vendor details and Menu Items from Supabase
 
   useEffect(() => {
 
@@ -258,11 +286,49 @@ export default function QRMenuDemo() {
 
   };
 
+  const handleCallRestaurant = () => {
+
+    if (vendor?.owner_whatsapp) {
+
+      window.open(`tel:${vendor.owner_whatsapp}`, '_self');
+
+    } else {
+
+      alert('Restaurant contact number not available.');
+
+    }
+
+  };
+
+  const handleShareMenu = () => {
+
+    if (navigator.share) {
+
+      navigator.share({
+
+        title: vendor?.shop_name || 'Digital Menu',
+
+        text: 'Check out our digital menu and order directly on WhatsApp!',
+
+        url: window.location.href,
+
+      }).catch(() => {});
+
+    } else {
+
+      navigator.clipboard.writeText(window.location.href);
+
+      alert('Menu link copied to clipboard!');
+
+    }
+
+  };
+
   if (vendor?.isExpired) {
 
     return (
-<div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
-<div className="bg-rose-500/15 border border-rose-500/30 p-8 rounded-3xl max-w-sm space-y-3 shadow-2xl">
+<div className="min-h-screen bg-[#0B0F17] text-white flex flex-col items-center justify-center p-6 text-center">
+<div className="bg-rose-500/10 border border-rose-500/30 p-8 rounded-3xl max-w-sm space-y-3 shadow-2xl">
 <span className="text-4xl">⏳</span>
 <h1 className="text-xl font-bold text-rose-400">Subscription Expired</h1>
 <p className="text-xs text-slate-400">
@@ -281,16 +347,16 @@ export default function QRMenuDemo() {
   }
 
   return (
-<div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-32 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+<div className="min-h-screen bg-[#0B0F17] text-gray-100 font-sans pb-36 max-w-md mx-auto relative overflow-hidden shadow-2xl">
 
       {/* ==========================================
 
-          1. NEW SPLASH SCREEN DESIGN (Dark & Premium)
+          1. EXACT MATCH SPLASH SCREEN (Dark & Glowing)
 
          ========================================== */}
 
       {showSplash && (
-<div className="fixed inset-0 z-50 bg-[#0c1017] flex flex-col justify-between items-center text-center p-6 max-w-md mx-auto select-none">
+<div className="fixed inset-0 z-50 bg-[#0B0F17] flex flex-col justify-between items-center text-center p-6 max-w-md mx-auto select-none">
 
           {/* Top Right Slogan */}
 <div className="absolute top-8 right-6 text-right">
@@ -320,11 +386,11 @@ export default function QRMenuDemo() {
 <span className="h-[1px] w-6 bg-amber-500/60"></span>
 <span className="text-amber-400 tracking-[0.25em] text-[11px] font-bold uppercase">
 
-                CAFE & DINING
+                CAFE
 </span>
 <span className="h-[1px] w-6 bg-amber-500/60"></span>
 </div>
-<p className="text-[11px] text-slate-400 tracking-wide font-medium mt-1">
+<p className="text-[11px] text-gray-400 tracking-wide font-medium mt-1">
 
               Fresh Food • Fast Service • Great Taste
 </p>
@@ -335,7 +401,7 @@ export default function QRMenuDemo() {
 
                 Welcome!
 </span>
-<p className="text-xs text-slate-400 mt-2 font-medium">
+<p className="text-xs text-gray-400 mt-2 font-medium">
 
                 Preparing your menu...
 </p>
@@ -347,24 +413,24 @@ export default function QRMenuDemo() {
 </div>
 
             {/* 3 Value Pillars */}
-<div className="grid grid-cols-3 gap-3 w-full mt-10 pt-5 border-t border-slate-800/80 px-2">
+<div className="grid grid-cols-3 gap-3 w-full mt-10 pt-5 border-t border-gray-800/80 px-2">
 <div className="flex flex-col items-center">
 <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Leaf className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">GOOD FOOD</span>
+<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">GOOD FOOD</span>
 </div>
-<div className="flex flex-col items-center border-x border-slate-800 px-1">
+<div className="flex flex-col items-center border-x border-gray-800 px-1">
 <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Users className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">HAPPIER PEOPLE</span>
+<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">HAPPIER PEOPLE</span>
 </div>
 <div className="flex flex-col items-center">
 <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Heart className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">BRIGHTER DAYS</span>
+<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">BRIGHTER DAYS</span>
 </div>
 </div>
 </div>
@@ -396,68 +462,119 @@ export default function QRMenuDemo() {
 
       {/* ==========================================
 
-          2. CLEAN HEADER BAR
+          2. DARK APP HEADER (Matching Reference)
 
          ========================================== */}
-<header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 p-4 shadow-sm">
+<header className="sticky top-0 z-30 bg-[#0B0F17]/95 backdrop-blur-md border-b border-gray-800/80 p-4">
 <div className="flex justify-between items-center">
+<div className="flex items-center gap-3">
+<div className="w-10 h-10 bg-gradient-to-tr from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-md">
+<Utensils className="w-5 h-5 text-white" />
+</div>
 <div>
-<h2 className="text-lg font-black tracking-tight text-slate-900 uppercase">
+<h2 className="text-base font-black tracking-wide text-white uppercase">
 
-              {vendor?.shop_name || 'Loading Shop...'}
+                {vendor?.shop_name || 'Loading Shop...'}
 </h2>
-<p className="text-xs text-amber-600 font-bold">✨ Live QR Digital Menu</p>
+<p className="text-[11px] text-amber-400 font-medium">Fresh Food • Fast Service</p>
 </div>
-<div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-amber-700 text-xs font-bold shadow-sm">
-<Sparkles className="w-3.5 h-3.5 text-amber-500" /> LEARNBUILD HUB
 </div>
+<div className="flex items-center gap-2">
+<div className="flex items-center gap-1 bg-gray-900 border border-gray-800 px-2.5 py-1 rounded-full text-xs text-amber-400 font-bold">
+<Star className="w-3 h-3 fill-amber-400" /> 4.8
+</div>
+</div>
+</div>
+
+        {/* Search Bar */}
+<div className="mt-3 relative">
+<Search className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+<input
+
+            type="text"
+
+            placeholder="Search your favourite food..."
+
+            value={menuSearch}
+
+            onChange={(e) => setMenuSearch(e.target.value)}
+
+            className="w-full bg-gray-900 border border-gray-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition shadow-inner"
+
+          />
 </div>
 </header>
 <div className="p-4 space-y-4">
 
-        {/* Order Type Toggle */}
-<div className="grid grid-cols-2 gap-2 bg-slate-200/90 p-1.5 rounded-2xl border border-slate-300/80 shadow-inner">
+        {/* Category Pills Slider (Dark Theme) */}
+<div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
+
+          {categories.map((cat) => (
 <button
 
-            onClick={() => setOrderType('dine-in')}
+              key={cat}
 
-            className={`py-3 text-xs font-black rounded-xl transition shadow-sm ${
+              onClick={() => setActiveCategory(cat)}
 
-              orderType === 'dine-in'
+              className={`flex flex-col items-center justify-center min-w-[72px] px-3 py-2.5 rounded-2xl text-xs font-bold transition shadow-sm ${
 
-                ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold'
+                activeCategory === cat
 
-                : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow-lg shadow-amber-500/20 scale-105'
 
-            }`}
+                  : 'bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800'
+
+              }`}
 >
+<span className="text-sm mb-1">
 
-            🍽️ Dine-In (Stall)
+                {cat === 'All' ? '🍽️' : cat === 'Starters' ? '🍟' : cat === 'Beverages' ? '🥤' : cat === 'Chinese' ? '🍜' : '🍛'}
+</span>
+
+              {cat}
 </button>
-<button
 
-            onClick={() => setOrderType('delivery')}
-
-            className={`py-3 text-xs font-black rounded-xl transition shadow-sm ${
-
-              orderType === 'delivery'
-
-                ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold'
-
-                : 'text-slate-600 hover:text-slate-900'
-
-            }`}
->
-
-            🛵 Home Delivery
-</button>
+          ))}
 </div>
 
-        {/* Customer Details Input Card */}
-<div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-200/90 space-y-3">
-<h3 className="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-1">
-<span>👤 Customer Details</span> <span className="text-rose-500">*</span>
-</h3>
+        {/* Interactive Order Type & Customer Details Card */}
+<div className="bg-gray-900/90 border border-gray-800 p-4 rounded-3xl shadow-lg space-y-3">
+<div className="grid grid-cols-2 gap-2 bg-gray-950 p-1 rounded-2xl border border-gray-800">
+<button
+
+              onClick={() => setOrderType('dine-in')}
+
+              className={`py-2.5 text-xs font-black rounded-xl transition ${
+
+                orderType === 'dine-in'
+
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+
+                  : 'text-gray-400 hover:text-white'
+
+              }`}
+>
+
+              🍽️ Dine-In (Table)
+</button>
+<button
+
+              onClick={() => setOrderType('delivery')}
+
+              className={`py-2.5 text-xs font-black rounded-xl transition ${
+
+                orderType === 'delivery'
+
+                  ? 'bg-amber-500 text-slate-950 shadow-md'
+
+                  : 'text-gray-400 hover:text-white'
+
+              }`}
+>
+
+              🛵 Home Delivery
+</button>
+</div>
 <input
 
             type="text"
@@ -468,7 +585,7 @@ export default function QRMenuDemo() {
 
             onChange={(e) => setCustomerName(e.target.value)}
 
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-amber-500 focus:bg-white transition"
+            className="w-full bg-gray-950 border border-gray-800 rounded-2xl px-4 py-3 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"
 
           />
 
@@ -483,7 +600,7 @@ export default function QRMenuDemo() {
 
               onChange={(e) => setTableNumber(e.target.value)}
 
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-amber-500 focus:bg-white transition"
+              className="w-full bg-gray-950 border border-gray-800 rounded-2xl px-4 py-3 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"
 
             />
 
@@ -496,7 +613,7 @@ export default function QRMenuDemo() {
 
               onChange={(e) => setDeliveryAddress(e.target.value)}
 
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-medium focus:outline-none focus:border-amber-500 focus:bg-white transition h-16 resize-none"
+              className="w-full bg-gray-950 border border-gray-800 rounded-2xl px-4 py-3 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition h-16 resize-none"
 
             />
 
@@ -504,63 +621,22 @@ export default function QRMenuDemo() {
 </div>
 
         {errorMessage && (
-<div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-2xl text-xs font-bold shadow-sm">
+<div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-2xl text-xs font-bold shadow-sm">
 
             {errorMessage}
 </div>
 
         )}
 
-        {/* Search Bar for Menu Items */}
-<div className="relative">
-<Search className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400" />
-<input
-
-            type="text"
-
-            placeholder="Search dishes or beverages..."
-
-            value={menuSearch}
-
-            onChange={(e) => setMenuSearch(e.target.value)}
-
-            className="w-full bg-white text-slate-900 placeholder-slate-400 text-xs font-medium pl-10 pr-4 py-3.5 rounded-2xl border border-slate-200/90 shadow-sm focus:outline-none focus:border-amber-500 transition"
-
-          />
-</div>
-
-        {/* Category Tabs */}
-<div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-
-          {categories.map((cat) => (
-<button
-
-              key={cat}
-
-              onClick={() => setActiveCategory(cat)}
-
-              className={`px-4 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition shadow-sm ${
-
-                activeCategory === cat
-
-                  ? 'bg-amber-500 text-slate-950 font-black shadow-md scale-105'
-
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-
-              }`}
->
-
-              {cat}
-</button>
-
-          ))}
-</div>
-
-        {/* Dynamic Menu Items List */}
-<div className="space-y-3">
+        {/* Dynamic Menu Items List (Dark Card Theme) */}
+<div className="space-y-3.5">
+<h3 className="text-sm font-black text-white tracking-wider flex items-center justify-between">
+<span>🔥 Menu & Bestsellers</span>
+<span className="text-xs text-amber-400 font-medium">{filteredItems.length} items</span>
+</h3>
 
           {filteredItems.length === 0 ? (
-<div className="text-center py-12 bg-white rounded-3xl border border-slate-200 p-6 text-slate-400 text-xs font-semibold shadow-sm">
+<div className="text-center py-12 bg-gray-900 border border-gray-800 rounded-3xl p-6 text-gray-400 text-xs shadow-inner">
 
               No menu items found for this shop yet! Add items from your admin panel. 🍽️
 </div>
@@ -576,49 +652,49 @@ export default function QRMenuDemo() {
 
                   key={item.id}
 
-                  className="bg-white p-4 rounded-3xl shadow-sm hover:shadow-md border border-slate-200/90 flex justify-between items-center gap-3 transition"
+                  className="bg-gray-900 border border-gray-800/90 rounded-3xl p-4 flex justify-between items-center gap-3 shadow-lg hover:border-gray-700 transition"
 >
 <div className="space-y-1.5 flex-1">
-<span className="text-[10px] font-black px-2.5 py-1 rounded-lg border bg-amber-50 text-amber-800 border-amber-200">
+<span className="text-[10px] font-black px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
 
                       {item.category}
 </span>
-<h4 className="font-extrabold text-sm text-slate-900">{item.name}</h4>
+<h4 className="font-bold text-sm text-white">{item.name}</h4>
 
                     {item.description && (
-<p className="text-[11px] text-slate-500 font-medium line-clamp-2">{item.description}</p>
+<p className="text-[11px] text-gray-400 line-clamp-2">{item.description}</p>
 
                     )}
-<p className="font-black text-sm text-slate-900">₹{item.price}</p>
+<p className="font-black text-sm text-amber-400">₹{item.price}</p>
 </div>
-<div className="flex items-center gap-2">
+<div className="flex items-center">
 
                     {qty === 0 ? (
 <button
 
                         onClick={() => updateQuantity(item.id, 1)}
 
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2.5 rounded-2xl font-black text-xs transition shadow-sm flex items-center gap-1"
+                        className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black px-4 py-2.5 rounded-2xl text-xs transition shadow-md shadow-amber-500/20 flex items-center gap-1"
 >
-<Plus className="w-3.5 h-3.5 stroke-[3]" /> ADD
+<Plus className="w-3.5 h-3.5 stroke-[3]" /> Add
 </button>
 
                     ) : (
-<div className="flex items-center bg-slate-100 border border-slate-300 rounded-2xl overflow-hidden shadow-inner">
+<div className="flex items-center bg-gray-800 border border-amber-500/40 rounded-2xl overflow-hidden shadow-inner">
 <button
 
                           onClick={() => updateQuantity(item.id, -1)}
 
-                          className="px-3 py-2 text-slate-700 font-black hover:bg-slate-200 transition text-xs"
+                          className="px-3 py-2 text-amber-400 font-black hover:bg-gray-700 transition text-xs"
 >
 <Minus className="w-3.5 h-3.5" />
 </button>
-<span className="px-2.5 font-black text-xs text-slate-900">{qty}</span>
+<span className="px-2.5 font-black text-xs text-white">{qty}</span>
 <button
 
                           onClick={() => updateQuantity(item.id, 1)}
 
-                          className="px-3 py-2 text-slate-700 font-black hover:bg-slate-200 transition text-xs"
+                          className="px-3 py-2 text-amber-400 font-black hover:bg-gray-700 transition text-xs"
 >
 <Plus className="w-3.5 h-3.5" />
 </button>
@@ -636,31 +712,71 @@ export default function QRMenuDemo() {
 </div>
 </div>
 
-      {/* Floating Bottom Cart Bar */}
+      {/* ==========================================
 
-      {totalItemsCount > 0 && (
-<div className="fixed bottom-4 left-4 right-4 max-w-md mx-auto z-40">
-<div className="bg-white border border-slate-200 p-4 rounded-3xl shadow-[0_10px_25px_rgba(0,0,0,0.1)] flex justify-between items-center">
-<div>
-<p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Your Cart</p>
-<p className="font-black text-sm text-slate-900">
+          3. FLOATING BOTTOM BAR (WhatsApp & Actions)
 
-                {totalItemsCount} {totalItemsCount === 1 ? 'Item' : 'Items'} | ₹{totalAmount}
-</p>
+         ========================================== */}
+<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0B0F17]/95 backdrop-blur-md border-t border-gray-800 p-4 z-40 space-y-3 shadow-2xl rounded-t-3xl">
+
+        {totalItemsCount > 0 && (
+<div className="flex justify-between items-center bg-gray-900 border border-gray-800 px-4 py-2.5 rounded-2xl shadow-inner">
+<div className="flex items-center gap-2">
+<ShoppingCart className="w-4 h-4 text-amber-400" />
+<span className="text-xs font-bold text-gray-300">{totalItemsCount} Items</span>
 </div>
+<span className="text-sm font-black text-emerald-400">₹{totalAmount}</span>
+</div>
+
+        )}
+
+        {/* WhatsApp Order Button */}
 <button
 
-              onClick={handleWhatsAppOrder}
+          onClick={handleWhatsAppOrder}
 
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-2xl font-black text-xs flex items-center gap-2 transition shadow-lg shadow-emerald-600/20 transform active:scale-95"
+          className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-500 hover:from-emerald-500 hover:to-green-500 text-white py-3.5 px-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition transform active:scale-95"
 >
-<ShoppingCart className="w-4 h-4" />
-<span>Order on WhatsApp</span>
+<span className="text-lg">💬</span>
+<span className="text-sm tracking-wide">Order on WhatsApp</span>
+</button>
+
+        {/* Secondary Action Buttons (Call, Location, Share) */}
+<div className="grid grid-cols-3 gap-2 pt-1 border-t border-gray-800/80">
+<button
+
+            onClick={handleCallRestaurant}
+
+            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
+>
+<Phone className="w-3.5 h-3.5 text-amber-400" /> Call
+</button>
+<button
+
+            onClick={() => alert(vendor?.address || 'Location: Pune, Maharashtra')}
+
+            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
+>
+<MapPin className="w-3.5 h-3.5 text-amber-400" /> Location
+</button>
+<button
+
+            onClick={handleShareMenu}
+
+            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
+>
+<Share2 className="w-3.5 h-3.5 text-amber-400" /> Share
 </button>
 </div>
-</div>
 
-      )}
+        {/* LearnBuild Hub Branding Footer */}
+<div className="pt-2 text-center border-t border-gray-800/50">
+<p className="text-[10px] text-gray-500 font-medium">
+
+            Powered by <strong className="text-gray-400 font-bold">LearnBuild Hub</strong> | Learn. Build. Grow. 🚀
+</p>
+</div>
+</div>
 </div>
 
   );
