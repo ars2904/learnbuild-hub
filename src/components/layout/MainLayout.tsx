@@ -8,8 +8,6 @@ import Navbar from "./Navbar";
 
 import Footer from "./Footer";
 
-import ScrollToTop from "@components/common/ScrollToTop";
-
 export default function MainLayout({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
@@ -64,7 +62,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   const hideHeaderFooter = isStandaloneRoute || isVendorSlugRoute;
 
-  // Agar standalone route hai (jaise admin/dashboard) toh sirf children return karo bina navbar/footer ke
+  // Agar standalone route hai (jaise admin/dashboard) toh sirf children return karo
 
   if (isStandaloneRoute) {
 
@@ -87,7 +85,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 <main className="flex-1 w-full pt-20">{children}</main>
 
       {!hideHeaderFooter && <Footer />}
-<ScrollToTop />
 </>
 
   );
