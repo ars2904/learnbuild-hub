@@ -9,47 +9,42 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-// Check for dynamic vendor slug or other standalone routes
-
-  const isVendorSlugRoute = pathname?.split('/').length === 2 && 
-
-    pathname !== '/' && 
-
-    !pathname?.startsWith('/admin') && 
-
-    !pathname?.startsWith('/dashboard') && 
-
-    !pathname?.startsWith('/employee') && 
-
-    !pathname?.startsWith('/QRdemo') && 
-
-    !pathname?.startsWith('/clinic-demo') && 
-
-    !pathname?.startsWith('/login') && 
-
-    !pathname?.startsWith('/signup');
-
-  // Standalone app routes that manage their own full-screen layouts
-
-  const isStandaloneRoute = 
-
-    pathname?.startsWith("/admin") || 
-
-    pathname?.startsWith("/dashboard") || 
-
-    pathname?.startsWith("/employee") || 
-
-    pathname?.startsWith("/QRdemo") || 
-
-    pathname?.startsWith("/clinic-demo") || 
-
-    pathname?.includes("/admin") || // <-- Ye line add kar di hai taaki kisi bhi vendor ka /admin standalone ho jaye
-
-    pathname === "/login" || 
-
-    pathname === "/signup" || 
-
-    isVendorSlugRoute;
+// SIRF in standalone routes aur vendors par Header/Footer HIDE hoga
+ // Baaki learnbuildhub.com/learn, /blogs, /contact, /xyz kitne bhi naye pages banao, sab par dikhega!
+ const isStandaloneRoute =
+   pathname?.startsWith('/admin') ||
+   pathname?.startsWith('/dashboard') ||
+   pathname?.startsWith('/employee') ||
+   pathname?.startsWith('/QRdemo') ||
+   pathname?.startsWith('/clinic-demo') ||
+   pathname?.startsWith('/login') ||
+   pathname?.startsWith('/signup') ||
+   pathname?.includes('/admin');
+ // Vendor routes check (Example: /sharma-ji, /yadav-chai)
+ // Yeh tabhi true hoga jab path sirf single slash ho (jaise /slug) aur standard route na ho
+ const isVendorSlugRoute =
+   !isStandaloneRoute &&
+   pathname !== '/' &&
+   !pathname?.startsWith('/learn') &&
+   !pathname?.startsWith('/build') &&
+   !pathname?.startsWith('/blog') &&
+   !pathname?.startsWith('/blogs') &&
+   !pathname?.startsWith('/contact') &&
+   !pathname?.startsWith('/about') &&
+   pathname?.split('/').filter(Boolean).length === 1 &&
+   // Check if path is actually a vendor (slug without fixed top-level folders)
+   !['learn', 'build', 'blogs', 'blog', 'contact', 'about', 'services', 'pricing'].includes(
+     pathname?.split('/').filter(Boolean)[0] || ''
+   );
+ const hideHeaderFooter = isStandaloneRoute || isVendorSlugRoute;
+ return (
+<>
+     {!hideHeaderFooter && <Navbar />}
+<main>{children}</main>
+     {!hideHeaderFooter && <Footer />}
+</>
+ );
+}
  
 
   if (isStandaloneRoute) {
