@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 
 import Image from "next/image";
-
-import { useParams } from "next/navigation";
 
 import {
 
@@ -14,15 +12,7 @@ import {
 
   ShoppingCart,
 
-  CheckCircle2,
-
-  Phone,
-
-  Clock,
-
   Sparkles,
-
-  MapPin,
 
   Leaf,
 
@@ -30,19 +20,33 @@ import {
 
   Heart,
 
-  ChevronRight,
-
   Plus,
 
   Minus,
 
+  CheckCircle2,
+
+  Phone,
+
+  Clock,
+
+  MapPin,
+
+  X,
+
+  Send
+
 } from "lucide-react";
 
-// ==========================================
+import { createClient } from "@supabase/supabase-js";
 
-// TYPES DEFINITION
+// Supabase client initialization
 
-// ==========================================
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface MenuItem {
 
@@ -56,41 +60,49 @@ interface MenuItem {
 
   category: string;
 
-  isVeg: boolean;
+  is_veg: boolean;
 
-  isAvailable: boolean;
+  is_available: boolean;
 
-  image?: string;
+  image_url?: string;
 
 }
 
 interface VendorData {
 
+  id: string;
+
   name: string;
 
-  tagline: string;
+  tagline?: string;
 
-  benefits: string; // e.g., "Fresh Food • Fast Service • Great Taste"
+  logo_url?: string;
 
-  logoUrl?: string;
-
-  whatsappNumber: string;
+  whatsapp_number: string;
 
   address?: string;
 
 }
 
-export default function VendorMenuPage() {
+export default function VendorMenuPage({
 
-  const params = useParams();
+  params,
 
-  const vendorSlug = params?.vendorSlug as string;
+}: {
 
-  // State Management
+  params: Promise<{ vendorSlug: string }>;
+
+}) {
+
+  const resolvedParams = use(params);
+
+  const vendorSlug = resolvedParams.vendorSlug;
+
+  // States
 
   const [showSplash, setShowSplash] = useState<boolean>(true);
 
-  const [loadingData, setLoadingData] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [vendor, setVendor] = useState<VendorData | null>(null);
 
@@ -108,71 +120,91 @@ export default function VendorMenuPage() {
 
   const [tableNumber, setTableNumber] = useState<string>("");
 
-  const [orderType, setOrderType] = useState<"dine-in" | "takeaway">("dine-in");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // 1. Fetch Vendor Data & Menu Items from Supabase/API
+  // 1. Dynamic Data Fetching from Supabase
 
   useEffect(() => {
 
-    async function fetchData() {
+    async function fetchVendorAndMenu() {
 
       try {
 
-        setLoadingData(true);
+        setLoading(true);
 
-        // TODO: Replace with your actual Supabase / API fetch query using vendorSlug
+        setErrorMsg(null);
 
-        // const { data: vendorData } = await supabase.from('vendors').select('*').eq('slug', vendorSlug).single();
+        // Fetch Vendor
 
-        // const { data: items } = await supabase.from('menu_items').select('*').eq('vendor_id', vendorData.id);
+        const { data: vendorData, error: vError } = await supabase
 
-        // MOCK DATA FALLBACK (Aapke backend fetch ke according)
+          .from("vendors")
 
-        const mockVendor: VendorData = {
+          .select("*")
 
-          name: vendorSlug ? vendorSlug.replace(/-/g, " ").toUpperCase() : "TASTY BITES",
+          .eq("slug", vendorSlug)
 
-          tagline: "CAFE",
+          .single();
 
-          benefits: "Fresh Food  •  Fast Service  •  Great Taste",
+        if (vError || !vendorData) {
 
-          whatsappNumber: "918149565351",
+          setErrorMsg("Restaurant not found.");
 
-          address: "FC Road, Pune",
+          setLoading(false);
 
-        };
+          return;
 
-        const mockItems: MenuItem[] = [
+        }
 
-          { id: "1", name: "Paneer Tikka Grill", description: "Cottage cheese cubes marinated & grilled in tandoor", price: 249, category: "Starters", isVeg: true, isAvailable: true },
+        setVendor(vendorData);
 
-          { id: "2", name: "Butter Chicken Special", description: "Creamy tomato gravy with tender boneless chicken", price: 349, category: "Main Course", isVeg: false, isAvailable: true },
+        // Fetch Menu Items for Vendor
 
-          { id: "3", name: "Veg Special Biryani", description: "Fragrant basmati rice cooked with garden fresh veggies", price: 220, category: "Main Course", isVeg: true, isAvailable: true },
+        const { data: itemsData, error: iError } = await supabase
 
-          { id: "4", name: "Cold Coffee with Ice Cream", description: "Rich blended coffee topped with vanilla scoop", price: 149, category: "Beverages", isVeg: true, isAvailable: true },
+          .from("menu_items")
 
-          { id: "5", name: "Crispy Veg Nuggets", description: "Golden fried vegetable bites served with mint dip", price: 179, category: "Starters", isVeg: true, isAvailable: true },
+          .select("*")
 
-        ];
+          .eq("vendor_id", vendorData.id)
 
-        setVendor(mockVendor);
+          .eq("is_available", true);
 
-        setMenuItems(mockItems);
+        if (iError) {
 
-        // Extract unique categories
+          console.error("Error loading menu:", iError);
 
-        const uniqueCategories = ["All", ...Array.from(new Set(mockItems.map((item) => item.category)))];
+        } else if (itemsData) {
 
-        setCategories(uniqueCategories);
+          setMenuItems(itemsData);
+
+          // Extract Unique Categories Dynamically
+
+          const uniqueCats = [
+
+            "All",
+
+            ...Array.from(
+
+              new Set(itemsData.map((item: MenuItem) => item.category))
+
+            ),
+
+          ];
+
+          setCategories(uniqueCats as string[]);
+
+        }
 
       } catch (err) {
 
-        console.error("Error fetching vendor data:", err);
+        console.error("Fetch Exception:", err);
+
+        setErrorMsg("Failed to load restaurant data.");
 
       } finally {
 
-        setLoadingData(false);
+        setLoading(false);
 
       }
 
@@ -180,13 +212,13 @@ export default function VendorMenuPage() {
 
     if (vendorSlug) {
 
-      fetchData();
+      fetchVendorAndMenu();
 
     }
 
   }, [vendorSlug]);
 
-  // 2. Splash Screen Auto-Hide Timer (2.5 seconds)
+  // Splash Screen Timer
 
   useEffect(() => {
 
@@ -194,13 +226,13 @@ export default function VendorMenuPage() {
 
       setShowSplash(false);
 
-    }, 2600);
+    }, 2800);
 
     return () => clearTimeout(timer);
 
   }, []);
 
-  // Cart Helper Functions
+  // Cart Management Logic
 
   const updateQuantity = (itemId: string, delta: number) => {
 
@@ -234,7 +266,7 @@ export default function VendorMenuPage() {
 
   }, 0);
 
-  // Send Order to WhatsApp
+  // Send WhatsApp Order Dynamic Link
 
   const handleSendWhatsAppOrder = () => {
 
@@ -242,7 +274,7 @@ export default function VendorMenuPage() {
 
     if (Object.keys(cart).length === 0) {
 
-      alert("Please add items to your cart first!");
+      alert("Please select items to order!");
 
       return;
 
@@ -254,7 +286,7 @@ export default function VendorMenuPage() {
 
     message += `👤 *Customer Name:* ${customerName || "Guest"}\n`;
 
-    message += `🍽️ *Type:* ${orderType === "dine-in" ? `Dine-In (Table No: ${tableNumber || "N/A"})` : "Takeaway"}\n`;
+    message += `🍽️ *Table No:* ${tableNumber || "Takeaway"}\n`;
 
     message += `------------------------------\n`;
 
@@ -278,85 +310,129 @@ export default function VendorMenuPage() {
 
     const encodedMsg = encodeURIComponent(message);
 
-    window.open(`https://wa.me/${vendor.whatsappNumber}?text=${encodedMsg}`, "_blank");
+    window.open(
+
+      `https://wa.me/${vendor.whatsapp_number}?text=${encodedMsg}`,
+
+      "_blank"
+
+    );
 
   };
 
-  // Filter items by category & search
+  // Dynamic Filtering Logic
 
   const filteredItems = menuItems.filter((item) => {
 
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesCategory =
 
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      selectedCategory === "All" || item.category === selectedCategory;
+
+    const matchesSearch =
+
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+
+      item.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesCategory && matchesSearch;
 
   });
 
+  if (errorMsg) {
+
+    return (
+<div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+<div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
+<Utensils className="w-8 h-8" />
+</div>
+<h2 className="text-xl font-bold text-slate-800">{errorMsg}</h2>
+<p className="text-sm text-slate-500 mt-1">Please check the link or QR code.</p>
+</div>
+
+    );
+
+  }
+
   return (
-<div className="min-h-screen bg-[#0d1117] text-gray-100 flex flex-col font-sans max-w-md mx-auto shadow-2xl relative overflow-hidden">
+<div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans max-w-md mx-auto shadow-xl relative overflow-hidden">
 
       {/* ==========================================
 
-          1. SPLASH SCREEN COMPONENT (Exact Design Match)
+          1. DYNAMIC SPLASH SCREEN (Premium Dark Backdrop)
 
          ========================================== */}
 
       {showSplash && (
-<div className="fixed inset-0 z-50 bg-[#0B0F17] flex flex-col justify-between items-center text-center p-6 max-w-md mx-auto animate-fade-in select-none">
+<div className="fixed inset-0 z-50 bg-[#0c1017] flex flex-col justify-between items-center text-center p-6 max-w-md mx-auto animate-fade-in select-none">
 
-          {/* Top Subtle Slogan */}
+          {/* Top Decorative Tagline */}
 <div className="absolute top-8 right-6 text-right">
-<p className="font-serif italic text-amber-200/80 text-xs leading-tight">
+<p className="font-serif italic text-amber-300/80 text-xs leading-tight">
 
               Good Food<br />Brings People<br />Together
 </p>
 <p className="text-amber-400/60 text-xs mt-1">♡</p>
 </div>
 
-          {/* Upper Section: Logo & Branding */}
-<div className="mt-14 flex flex-col items-center w-full">
+          {/* Center Brand Identity */}
+<div className="mt-16 flex flex-col items-center w-full">
 
-            {/* Chef Hat Icon with Glowing Accent */}
-<div className="relative mb-3">
-<div className="w-20 h-20 bg-gradient-to-tr from-amber-500/20 to-orange-500/30 rounded-full flex items-center justify-center border border-amber-500/40 shadow-[0_0_25px_rgba(245,158,11,0.3)]">
-<div className="w-14 h-14 bg-gradient-to-b from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg transform -rotate-3">
+            {/* Dynamic Restaurant Logo or Icon */}
+<div className="relative mb-4">
+<div className="w-20 h-20 bg-gradient-to-tr from-amber-500/20 to-orange-500/30 rounded-full flex items-center justify-center border border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.25)]">
+
+                {vendor?.logo_url ? (
+<Image
+
+                    src={vendor.logo_url}
+
+                    alt={vendor.name}
+
+                    width={56}
+
+                    height={56}
+
+                    className="rounded-xl object-cover"
+
+                  />
+
+                ) : (
+<div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-md">
 <Utensils className="w-8 h-8 text-white stroke-[2.5]" />
 </div>
+
+                )}
 </div>
 </div>
 
-            {/* Restaurant Title */}
-<h1 className="text-3xl font-black tracking-wider text-white uppercase font-sans mt-2">
+            {/* Dynamic Name & Sub-tagline */}
+<h1 className="text-2xl font-black tracking-wider text-white uppercase mt-2 px-2">
 
-              {vendor?.name || "TASTY BITES"}
+              {loading ? "LOADING..." : vendor?.name}
 </h1>
 <div className="flex items-center gap-3 my-1">
-<span className="h-[1px] w-8 bg-gradient-to-r from-transparent to-amber-500/60"></span>
-<span className="text-amber-400 tracking-[0.3em] text-xs font-semibold uppercase">
+<span className="h-[1px] w-6 bg-amber-500/60"></span>
+<span className="text-amber-400 tracking-[0.25em] text-[11px] font-bold uppercase">
 
-                {vendor?.tagline || "CAFE"}
+                {vendor?.tagline || "DIGITAL MENU"}
 </span>
-<span className="h-[1px] w-8 bg-gradient-to-l from-transparent to-amber-500/60"></span>
+<span className="h-[1px] w-6 bg-amber-500/60"></span>
 </div>
-<p className="text-[11px] text-gray-400 tracking-wide font-medium mt-1">
+<p className="text-[11px] text-slate-400 tracking-wide font-medium mt-1">
 
-              {vendor?.benefits || "Fresh Food  •  Fast Service  •  Great Taste"}
+              Fresh Food • Fast Service • Great Taste
 </p>
 
-            {/* Cursive Welcome & Animated Loader */}
+            {/* Welcome Animation */}
 <div className="mt-10 flex flex-col items-center">
-<span className="font-serif italic text-4xl text-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]">
+<span className="font-serif italic text-4xl text-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.3)]">
 
                 Welcome!
 </span>
-<p className="text-xs text-gray-400 mt-3 font-medium tracking-wide">
+<p className="text-xs text-slate-400 mt-2 font-medium">
 
                 Preparing your menu...
 </p>
-
-              {/* Pulsing Dots Loader */}
 <div className="flex gap-2 mt-3">
 <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-bounce"></span>
 <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-bounce [animation-delay:0.2s]"></span>
@@ -364,46 +440,46 @@ export default function VendorMenuPage() {
 </div>
 </div>
 
-            {/* 3 Value Pillars */}
-<div className="grid grid-cols-3 gap-4 w-full mt-10 pt-6 border-t border-gray-800/80 px-2">
+            {/* Value Pillars */}
+<div className="grid grid-cols-3 gap-3 w-full mt-10 pt-5 border-t border-slate-800/80 px-2">
 <div className="flex flex-col items-center">
-<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1.5">
+<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Leaf className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">GOOD FOOD</span>
+<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">GOOD FOOD</span>
 </div>
-<div className="flex flex-col items-center border-x border-gray-800/60 px-1">
-<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1.5">
+<div className="flex flex-col items-center border-x border-slate-800 px-1">
+<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Users className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">HAPPIER PEOPLE</span>
+<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">HAPPIER PEOPLE</span>
 </div>
 <div className="flex flex-col items-center">
-<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1.5">
+<div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
 <Heart className="w-4 h-4" />
 </div>
-<span className="text-[10px] font-bold tracking-wider text-gray-300 uppercase">BRIGHTER DAYS</span>
+<span className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">BRIGHTER DAYS</span>
 </div>
 </div>
 </div>
 
-          {/* Bottom Curved "Powered by LearnBuild Hub" Footer Card */}
-<div className="w-full bg-gradient-to-b from-white to-gray-100 text-gray-900 rounded-t-3xl pt-4 pb-5 px-6 shadow-2xl border-t border-amber-300/30 mt-auto">
-<p className="text-[10px] uppercase font-bold tracking-widest text-gray-500 mb-1">
+          {/* LearnBuild Hub Branding Footer Card */}
+<div className="w-full bg-white text-slate-900 rounded-t-3xl pt-3.5 pb-4 px-6 shadow-2xl mt-auto">
+<p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mb-0.5">
 
               Powered by
 </p>
 <div className="flex items-center justify-center gap-2">
-<div className="w-7 h-7 bg-[#0b1329] rounded-lg p-1 flex items-center justify-center shadow">
-<span className="text-orange-500 font-extrabold text-xs">{"</>"}</span>
+<div className="w-6 h-6 bg-[#0b1329] rounded-md p-1 flex items-center justify-center">
+<span className="text-orange-500 font-black text-xs">{"</>"}</span>
 </div>
 <div className="text-left leading-none">
-<span className="font-extrabold text-base text-[#0b1329] tracking-tight">LearnBuild</span>
-<span className="font-extrabold text-base text-orange-500 tracking-tight ml-0.5">Hub</span>
-<p className="text-[9px] text-amber-700 font-bold tracking-wider uppercase">Learn. Build. Grow.</p>
+<span className="font-black text-sm text-[#0b1329]">LearnBuild</span>
+<span className="font-black text-sm text-orange-500 ml-0.5">Hub</span>
+<p className="text-[8px] text-amber-700 font-bold tracking-wider uppercase">Learn. Build. Grow.</p>
 </div>
 </div>
-<p className="text-[9px] text-gray-500 font-medium tracking-wider mt-2 pt-2 border-t border-gray-200">
+<p className="text-[9px] text-slate-400 font-medium tracking-wider mt-1.5 pt-1.5 border-t border-slate-100">
 
               Digital Menus for a Smarter Tomorrow
 </p>
@@ -414,43 +490,43 @@ export default function VendorMenuPage() {
 
       {/* ==========================================
 
-          2. MAIN MENU PAGE CONTENT
+          2. MAIN MENU PAGE (Clean Light UI Theme)
 
          ========================================== */}
-<header className="sticky top-0 z-30 bg-[#0d1117]/90 backdrop-blur-md border-b border-gray-800 p-4">
+<header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 p-4 shadow-sm">
 <div className="flex items-center justify-between">
 <div>
-<h2 className="text-lg font-bold text-white uppercase tracking-wide">
+<h2 className="text-lg font-black text-slate-900 uppercase tracking-tight">
 
-              {vendor?.name || "TASTY BITES"}
+              {vendor?.name}
 </h2>
-<p className="text-xs text-amber-400 font-medium">{vendor?.tagline || "CAFE"}</p>
+<p className="text-xs text-amber-600 font-bold">{vendor?.tagline || "Café & Dining"}</p>
 </div>
-<div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full text-amber-400 text-xs font-semibold">
-<Sparkles className="w-3.5 h-3.5" /> Direct Menu
+<div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-amber-700 text-xs font-bold">
+<Sparkles className="w-3.5 h-3.5 text-amber-500" /> Direct Order
 </div>
 </div>
 
         {/* Search Bar */}
 <div className="mt-3 relative">
-<Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400" />
+<Search className="w-4 h-4 absolute left-3.5 top-2.5 text-slate-400" />
 <input
 
             type="text"
 
-            placeholder="Search delicious items..."
+            placeholder="Search dishes or beverages..."
 
             value={searchQuery}
 
             onChange={(e) => setSearchQuery(e.target.value)}
 
-            className="w-full bg-gray-900 border border-gray-800 rounded-xl pl-9 pr-4 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"
+            className="w-full bg-slate-100 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition"
 
           />
 </div>
 
-        {/* Categories Horizontal Scroll */}
-<div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
+        {/* Dynamic Horizontal Categories Scroll */}
+<div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-0.5">
 
           {categories.map((cat) => (
 <button
@@ -459,13 +535,13 @@ export default function VendorMenuPage() {
 
               onClick={() => setSelectedCategory(cat)}
 
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition ${
 
                 selectedCategory === cat
 
-                  ? "bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20"
 
-                  : "bg-gray-900 text-gray-400 border border-gray-800 hover:text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
 
               }`}
 >
@@ -477,13 +553,19 @@ export default function VendorMenuPage() {
 </div>
 </header>
 
-      {/* Menu List */}
-<main className="flex-1 p-4 pb-32 space-y-3">
+      {/* Dynamic Menu Items Display */}
+<main className="flex-1 p-4 pb-36 space-y-3">
 
-        {filteredItems.length === 0 ? (
-<div className="text-center py-12 text-gray-500 text-sm">
+        {loading ? (
+<div className="text-center py-16 text-slate-400 text-xs font-medium">
 
-            No menu items found.
+            Fetching menu directly from server...
+</div>
+
+        ) : filteredItems.length === 0 ? (
+<div className="text-center py-16 text-slate-400 text-xs font-medium">
+
+            No items available in this category.
 </div>
 
         ) : (
@@ -497,15 +579,15 @@ export default function VendorMenuPage() {
 
                 key={item.id}
 
-                className="bg-gray-900/80 border border-gray-800/80 rounded-2xl p-3.5 flex justify-between items-center gap-3 hover:border-gray-700 transition"
+                className="bg-white border border-slate-200/80 rounded-2xl p-3.5 flex justify-between items-center gap-3 shadow-sm hover:shadow-md transition"
 >
 <div className="flex-1">
 <div className="flex items-center gap-2">
 <span
 
-                      className={`w-3 h-3 rounded-sm border flex items-center justify-center p-[1px] ${
+                      className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center p-[1px] ${
 
-                        item.isVeg ? "border-green-500" : "border-red-500"
+                        item.is_veg ? "border-emerald-600" : "border-rose-600"
 
                       }`}
 >
@@ -513,19 +595,29 @@ export default function VendorMenuPage() {
 
                         className={`w-1.5 h-1.5 rounded-full ${
 
-                          item.isVeg ? "bg-green-500" : "bg-red-500"
+                          item.is_veg ? "bg-emerald-600" : "bg-rose-600"
 
                         }`}
 
                       />
 </span>
-<h3 className="font-semibold text-sm text-gray-100">{item.name}</h3>
-</div>
-<p className="text-xs text-gray-400 mt-1 line-clamp-2">{item.description}</p>
-<p className="text-sm font-bold text-amber-400 mt-2">₹{item.price}</p>
+<h3 className="font-bold text-sm text-slate-900">{item.name}</h3>
 </div>
 
-                {/* Add / Quantity Button */}
+                  {item.description && (
+<p className="text-xs text-slate-500 mt-1 line-clamp-2">
+
+                      {item.description}
+</p>
+
+                  )}
+<p className="text-sm font-black text-slate-900 mt-2">
+
+                    ₹{item.price}
+</p>
+</div>
+
+                {/* Plus / Minus Quantity Buttons */}
 <div>
 
                   {qty === 0 ? (
@@ -533,27 +625,27 @@ export default function VendorMenuPage() {
 
                       onClick={() => updateQuantity(item.id, 1)}
 
-                      className="bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold px-4 py-2 rounded-xl transition shadow-md shadow-amber-500/10 flex items-center gap-1"
+                      className="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-sm flex items-center gap-1"
 >
-<Plus className="w-3.5 h-3.5" /> ADD
+<Plus className="w-3.5 h-3.5 stroke-[3]" /> ADD
 </button>
 
                   ) : (
-<div className="flex items-center bg-gray-800 border border-amber-500/40 rounded-xl overflow-hidden">
+<div className="flex items-center bg-slate-100 border border-slate-300 rounded-xl overflow-hidden shadow-inner">
 <button
 
                         onClick={() => updateQuantity(item.id, -1)}
 
-                        className="p-1.5 text-amber-400 hover:bg-gray-700"
+                        className="p-1.5 text-slate-700 hover:bg-slate-200"
 >
 <Minus className="w-3.5 h-3.5" />
 </button>
-<span className="px-2.5 text-xs font-bold text-white">{qty}</span>
+<span className="px-2 text-xs font-black text-slate-900">{qty}</span>
 <button
 
                         onClick={() => updateQuantity(item.id, 1)}
 
-                        className="p-1.5 text-amber-400 hover:bg-gray-700"
+                        className="p-1.5 text-slate-700 hover:bg-slate-200"
 >
 <Plus className="w-3.5 h-3.5" />
 </button>
@@ -570,10 +662,10 @@ export default function VendorMenuPage() {
         )}
 </main>
 
-      {/* Bottom Sticky Cart & Order Details Drawer */}
+      {/* Sticky Bottom WhatsApp Order Bar */}
 
       {totalCartCount > 0 && (
-<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-gray-900 border-t border-gray-800 p-4 z-40 rounded-t-2xl shadow-2xl space-y-3">
+<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-slate-200 p-4 z-40 rounded-t-2xl shadow-[0_-10px_25px_rgba(0,0,0,0.08)] space-y-2.5">
 <div className="flex gap-2">
 <input
 
@@ -585,7 +677,7 @@ export default function VendorMenuPage() {
 
               onChange={(e) => setCustomerName(e.target.value)}
 
-              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none"
+              className="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
 
             />
 <input
@@ -598,7 +690,7 @@ export default function VendorMenuPage() {
 
               onChange={(e) => setTableNumber(e.target.value)}
 
-              className="w-24 bg-gray-800 border border-gray-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none"
+              className="w-24 bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
 
             />
 </div>
@@ -606,14 +698,14 @@ export default function VendorMenuPage() {
 
             onClick={handleSendWhatsAppOrder}
 
-            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg flex items-center justify-between transition"
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-between transition"
 >
 <div className="flex items-center gap-2">
 <ShoppingCart className="w-4 h-4" />
 <span className="text-xs font-medium">{totalCartCount} Items</span>
 </div>
-<span className="text-sm">Send Order via WhatsApp</span>
-<span className="text-sm font-black bg-emerald-700 px-2.5 py-0.5 rounded-lg">₹{totalCartPrice}</span>
+<span className="text-xs tracking-wide uppercase font-black">Order on WhatsApp</span>
+<span className="text-sm font-black bg-emerald-700 px-2 py-0.5 rounded-lg">₹{totalCartPrice}</span>
 </button>
 </div>
 
