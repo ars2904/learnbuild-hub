@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 
 import Image from "next/image";
+
+import { useParams } from "next/navigation";
 
 import {
 
@@ -23,18 +25,6 @@ import {
   Plus,
 
   Minus,
-
-  CheckCircle2,
-
-  Phone,
-
-  Clock,
-
-  MapPin,
-
-  X,
-
-  Send
 
 } from "lucide-react";
 
@@ -84,19 +74,11 @@ interface VendorData {
 
 }
 
-export default function VendorMenuPage({
+export default function VendorMenuPage() {
 
-  params,
+  const params = useParams();
 
-}: {
-
-  params: Promise<{ vendorSlug: string }>;
-
-}) {
-
-  const resolvedParams = use(params);
-
-  const vendorSlug = resolvedParams.vendorSlug;
+  const vendorSlug = (params?.vendorSlug as string) || "";
 
   // States
 
@@ -127,6 +109,8 @@ export default function VendorMenuPage({
   useEffect(() => {
 
     async function fetchVendorAndMenu() {
+
+      if (!vendorSlug) return;
 
       try {
 
@@ -210,11 +194,7 @@ export default function VendorMenuPage({
 
     }
 
-    if (vendorSlug) {
-
-      fetchVendorAndMenu();
-
-    }
+    fetchVendorAndMenu();
 
   }, [vendorSlug]);
 
