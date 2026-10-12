@@ -28,8 +28,6 @@ import {
 
   Phone, 
 
-  MapPin, 
-
   Share2, 
 
   Star 
@@ -347,11 +345,11 @@ export default function QRMenuDemo() {
   }
 
   return (
-<div className="min-h-screen bg-[#0B0F17] text-gray-100 font-sans pb-36 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+<div className="min-h-screen bg-[#0B0F17] text-gray-100 font-sans pb-28 max-w-md mx-auto relative overflow-hidden shadow-2xl">
 
       {/* ==========================================
 
-          1. EXACT MATCH SPLASH SCREEN (Dark & Glowing)
+          1. SPLASH SCREEN (Dark & Glowing)
 
          ========================================== */}
 
@@ -462,7 +460,7 @@ export default function QRMenuDemo() {
 
       {/* ==========================================
 
-          2. DARK APP HEADER (Matching Reference)
+          2. DARK APP HEADER
 
          ========================================== */}
 <header className="sticky top-0 z-30 bg-[#0B0F17]/95 backdrop-blur-md border-b border-gray-800/80 p-4">
@@ -485,28 +483,10 @@ export default function QRMenuDemo() {
 </div>
 </div>
 </div>
-
-        {/* Search Bar */}
-<div className="mt-3 relative">
-<Search className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
-<input
-
-            type="text"
-
-            placeholder="Search your favourite food..."
-
-            value={menuSearch}
-
-            onChange={(e) => setMenuSearch(e.target.value)}
-
-            className="w-full bg-gray-900 border border-gray-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition shadow-inner"
-
-          />
-</div>
 </header>
 <div className="p-4 space-y-4">
 
-        {/* Category Pills Slider (Dark Theme) */}
+        {/* Category Pills Slider */}
 <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
 
           {categories.map((cat) => (
@@ -537,7 +517,7 @@ export default function QRMenuDemo() {
           ))}
 </div>
 
-        {/* Interactive Order Type & Customer Details Card */}
+        {/* Customer Details Form */}
 <div className="bg-gray-900/90 border border-gray-800 p-4 rounded-3xl shadow-lg space-y-3">
 <div className="grid grid-cols-2 gap-2 bg-gray-950 p-1 rounded-2xl border border-gray-800">
 <button
@@ -620,6 +600,24 @@ export default function QRMenuDemo() {
           )}
 </div>
 
+        {/* Search Bar (Placed below details form) */}
+<div className="relative">
+<Search className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
+<input
+
+            type="text"
+
+            placeholder="Search your favourite food..."
+
+            value={menuSearch}
+
+            onChange={(e) => setMenuSearch(e.target.value)}
+
+            className="w-full bg-gray-900 border border-gray-800 rounded-2xl pl-10 pr-4 py-3 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition shadow-inner"
+
+          />
+</div>
+
         {errorMessage && (
 <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 rounded-2xl text-xs font-bold shadow-sm">
 
@@ -628,7 +626,7 @@ export default function QRMenuDemo() {
 
         )}
 
-        {/* Dynamic Menu Items List (Dark Card Theme) */}
+        {/* Dynamic Menu Items List */}
 <div className="space-y-3.5">
 <h3 className="text-sm font-black text-white tracking-wider flex items-center justify-between">
 <span>🔥 Menu & Bestsellers</span>
@@ -714,64 +712,55 @@ export default function QRMenuDemo() {
 
       {/* ==========================================
 
-          3. FLOATING BOTTOM BAR (WhatsApp & Actions)
+          3. FLOATING BOTTOM BAR (Only Compact Actions)
 
          ========================================== */}
-<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0B0F17]/95 backdrop-blur-md border-t border-gray-800 p-4 z-40 space-y-3 shadow-2xl rounded-t-3xl">
+<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0B0F17]/95 backdrop-blur-md border-t border-gray-800 p-3 z-40 space-y-2 shadow-2xl rounded-t-2xl">
+
+        {/* WhatsApp Order Button (Appears ONLY when cart has items) */}
 
         {totalItemsCount > 0 && (
-<div className="flex justify-between items-center bg-gray-900 border border-gray-800 px-4 py-2.5 rounded-2xl shadow-inner">
+<button
+
+            onClick={handleWhatsAppOrder}
+
+            className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-between shadow-lg shadow-emerald-600/20 transition"
+>
 <div className="flex items-center gap-2">
-<ShoppingCart className="w-4 h-4 text-amber-400" />
-<span className="text-xs font-bold text-gray-300">{totalItemsCount} Items</span>
+<ShoppingCart className="w-4 h-4" />
+<span>{totalItemsCount} {totalItemsCount === 1 ? 'Item' : 'Items'} | ₹{totalAmount}</span>
 </div>
-<span className="text-sm font-black text-emerald-400">₹{totalAmount}</span>
+<div className="flex items-center gap-1">
+<span>Order on WhatsApp</span>
+<span className="text-sm">💬</span>
 </div>
+</button>
 
         )}
 
-        {/* WhatsApp Order Button */}
-<button
-
-          onClick={handleWhatsAppOrder}
-
-          className="w-full bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-500 hover:from-emerald-500 hover:to-green-500 text-white py-3.5 px-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition transform active:scale-95"
->
-<span className="text-lg">💬</span>
-<span className="text-sm tracking-wide">Order on WhatsApp</span>
-</button>
-
-        {/* Secondary Action Buttons (Call, Location, Share) */}
-<div className="grid grid-cols-3 gap-2 pt-1 border-t border-gray-800/80">
+        {/* Secondary Action Buttons (Call & Share Only) */}
+<div className="grid grid-cols-2 gap-2">
 <button
 
             onClick={handleCallRestaurant}
 
-            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
+            className="flex items-center justify-center gap-1.5 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-medium text-gray-300 transition"
 >
 <Phone className="w-3.5 h-3.5 text-amber-400" /> Call
 </button>
 <button
 
-            onClick={() => alert(vendor?.address || 'Location: Pune, Maharashtra')}
-
-            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
->
-<MapPin className="w-3.5 h-3.5 text-amber-400" /> Location
-</button>
-<button
-
             onClick={handleShareMenu}
 
-            className="flex items-center justify-center gap-1.5 py-2 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-[11px] font-bold text-gray-300 transition"
+            className="flex items-center justify-center gap-1.5 py-1.5 bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl text-xs font-medium text-gray-300 transition"
 >
 <Share2 className="w-3.5 h-3.5 text-amber-400" /> Share
 </button>
 </div>
 
         {/* LearnBuild Hub Branding Footer */}
-<div className="pt-2 text-center border-t border-gray-800/50">
-<p className="text-[10px] text-gray-500 font-medium">
+<div className="text-center pt-0.5">
+<p className="text-[9px] text-gray-500 font-medium">
 
             Powered by <strong className="text-gray-400 font-bold">LearnBuild Hub</strong> | Learn. Build. Grow. 🚀
 </p>
