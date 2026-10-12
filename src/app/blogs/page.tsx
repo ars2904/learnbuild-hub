@@ -201,7 +201,7 @@ export default function BlogsPage() {
             {filteredBlogs.map((blog) => (
               <Link
                 key={blog.id}
-                href={blog.externalUrl || `/blogs/${blog.slug}`}
+                href={blog.externalUrl || `/blogs/${blog.slug} || {blog.id}`}
                 target={blog.externalUrl ? "_blank" : "_self"}
                 className="rounded-3xl bg-white border border-slate-200 overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
