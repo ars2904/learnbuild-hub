@@ -346,6 +346,27 @@ export default function QRMenuDemo() {
 
   return (
 <div className="min-h-screen bg-[#0B0F17] text-gray-100 font-sans pb-24 max-w-md mx-auto relative overflow-hidden shadow-2xl">
+<style jsx global>{`
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+
+        .no-scrollbar::-webkit-scrollbar {
+
+          display: none;
+
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+
+        .no-scrollbar {
+
+          -ms-overflow-style: none;  /* IE and Edge */
+
+          scrollbar-width: none;  /* Firefox */
+
+        }
+
+      `}</style>
 
       {/* ==========================================
 
@@ -355,8 +376,6 @@ export default function QRMenuDemo() {
 
       {showSplash && (
 <div className="fixed inset-0 z-50 bg-[#0B0F17] flex flex-col justify-between items-center text-center p-6 max-w-md mx-auto select-none">
-
-          {/* Top Right Slogan */}
 <div className="absolute top-8 right-6 text-right">
 <p className="font-serif italic text-amber-300/80 text-xs leading-tight">
 
@@ -364,8 +383,6 @@ export default function QRMenuDemo() {
 </p>
 <p className="text-amber-400/60 text-xs mt-1">♡</p>
 </div>
-
-          {/* Center Brand Identity */}
 <div className="mt-16 flex flex-col items-center w-full">
 <div className="relative mb-4">
 <div className="w-20 h-20 bg-gradient-to-tr from-amber-500/20 to-orange-500/30 rounded-full flex items-center justify-center border border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.25)]">
@@ -374,8 +391,6 @@ export default function QRMenuDemo() {
 </div>
 </div>
 </div>
-
-            {/* Dynamic Shop Name */}
 <h1 className="text-2xl font-black tracking-wider text-white uppercase mt-2 px-2">
 
               {vendor?.shop_name || 'WELCOME'}
@@ -392,8 +407,6 @@ export default function QRMenuDemo() {
 
               Fresh Food • Fast Service • Great Taste
 </p>
-
-            {/* Welcome & Loader */}
 <div className="mt-10 flex flex-col items-center">
 <span className="font-serif italic text-4xl text-amber-400 drop-shadow-[0_2px_10px_rgba(245,158,11,0.3)]">
 
@@ -409,8 +422,6 @@ export default function QRMenuDemo() {
 <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce [animation-delay:0.4s]"></span>
 </div>
 </div>
-
-            {/* 3 Value Pillars */}
 <div className="grid grid-cols-3 gap-3 w-full mt-10 pt-5 border-t border-gray-800/80 px-2">
 <div className="flex flex-col items-center">
 <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-1">
@@ -432,8 +443,6 @@ export default function QRMenuDemo() {
 </div>
 </div>
 </div>
-
-          {/* LearnBuild Hub Footer Branding */}
 <div className="w-full bg-white text-slate-900 rounded-t-3xl pt-3.5 pb-4 px-6 shadow-2xl mt-auto">
 <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mb-0.5">
 
@@ -484,7 +493,7 @@ export default function QRMenuDemo() {
 </header>
 <div className="p-3 space-y-3">
 
-        {/* Compact Category Pills Slider */}
+        {/* Compact Category Pills Slider with Scrollbar Hidden */}
 <div className="flex gap-2 overflow-x-auto no-scrollbar py-0.5">
 
           {categories.map((cat) => (
@@ -494,11 +503,11 @@ export default function QRMenuDemo() {
 
               onClick={() => setActiveCategory(cat)}
 
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm shrink-0 ${
 
                 activeCategory === cat
 
-                  ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/20 scale-105'
+                  ? 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/25 scale-105'
 
                   : 'bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800'
 
@@ -602,7 +611,7 @@ export default function QRMenuDemo() {
 </div>
 </div>
 
-        {/* Search Bar (Below details form) */}
+        {/* Search Bar */}
 <div className="relative">
 <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-gray-400" />
 <input
@@ -628,7 +637,7 @@ export default function QRMenuDemo() {
 
         )}
 
-        {/* Dynamic Menu Items List (Now gets plenty of vertical space!) */}
+        {/* Dynamic Menu Items List */}
 <div className="space-y-2.5">
 <div className="flex items-center justify-between px-1">
 <h3 className="text-xs font-black text-white tracking-wider uppercase">
@@ -722,8 +731,6 @@ export default function QRMenuDemo() {
          ========================================== */}
 <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#0B0F17]/95 backdrop-blur-md border-t border-gray-800 p-2.5 z-40 space-y-2 shadow-2xl rounded-t-2xl">
 
-        {/* WhatsApp Order Button (Appears ONLY when items added) */}
-
         {totalItemsCount > 0 && (
 <button
 
@@ -742,8 +749,6 @@ export default function QRMenuDemo() {
 </button>
 
         )}
-
-        {/* Secondary Action Buttons (Call & Share) */}
 <div className="grid grid-cols-2 gap-2">
 <button
 
@@ -762,8 +767,6 @@ export default function QRMenuDemo() {
 <Share2 className="w-3.5 h-3.5 text-amber-400" /> Share
 </button>
 </div>
-
-        {/* LearnBuild Hub Branding Footer */}
 <div className="text-center pt-0.5">
 <p className="text-[9px] text-gray-500 font-medium">
 
