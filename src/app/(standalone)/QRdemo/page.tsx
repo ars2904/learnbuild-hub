@@ -1,44 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
-const categories = ['All', 'Starters', 'Beverages', 'Chinese', 'Main Course'];
+import {
 
-const menuItems = [
+  Search,
 
-  { id: 1, name: 'Special Adrak Chai', price: 15, category: 'Beverages', desc: 'Garam garam adrak wali chai ☕', bg: 'bg-amber-50 text-amber-900 border-amber-200' },
+  Star,
 
-  { id: 2, name: 'Bun Maska', price: 25, category: 'Starters', desc: 'Classic butter bun 🍞', bg: 'bg-yellow-50 text-yellow-900 border-yellow-200' },
+  ShoppingCart,
 
-  { id: 3, name: 'Aloo Samosa', price: 15, category: 'Starters', desc: 'Crispy and spicy 🥟', bg: 'bg-orange-50 text-orange-900 border-orange-200' },
+  Phone,
 
-  { id: 4, name: 'Cold Coffee', price: 50, category: 'Beverages', desc: 'Thandi thandi creamy coffee 🧋', bg: 'bg-cyan-50 text-cyan-900 border-cyan-200' },
+  MapPin,
 
-  { id: 5, name: 'Veg Hakka Noodles', price: 80, category: 'Chinese', desc: 'Toss up with fresh veggies 🍜', bg: 'bg-rose-50 text-rose-900 border-rose-200' },
+  Share2,
 
-  { id: 6, name: 'Paneer Chilli', price: 120, category: 'Chinese', desc: 'Spicy restaurant style 🌶️', bg: 'bg-red-50 text-red-900 border-red-200' },
+} from "lucide-react";
 
-  { id: 7, name: 'Dal Tadka & Rice', price: 110, category: 'Main Course', desc: 'Ghar jaisa khana 🍛', bg: 'bg-emerald-50 text-emerald-900 border-emerald-200' },
-
-];
-
-export default function QRMenuDemo() {
+export default function Page() {
 
   const [showSplash, setShowSplash] = useState(true);
-
-  const [activeCategory, setActiveCategory] = useState('All');
-
-  const [cart, setCart] = useState<{ [key: number]: number }>({});
-
-  const [orderType, setOrderType] = useState<'dine-in' | 'delivery'>('dine-in');
-
-  const [customerName, setCustomerName] = useState('');
-
-  const [tableNumber, setTableNumber] = useState('');
-
-  const [deliveryAddress, setDeliveryAddress] = useState('');
-
-  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
 
@@ -46,388 +28,542 @@ export default function QRMenuDemo() {
 
       setShowSplash(false);
 
-    }, 2200);
+    }, 2000);
 
     return () => clearTimeout(timer);
 
   }, []);
 
-  const updateQuantity = (id: number, delta: number) => {
+  const menuItems = [
 
-    setCart((prev) => {
+    {
 
-      const currentQty = prev[id] || 0;
+      name: "Classic Burger",
 
-      const newQty = currentQty + delta;
+      price: 149,
 
-      if (newQty <= 0) {
+      image:
 
-        const copy = { ...prev };
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
 
-        delete copy[id];
+    },
 
-        return copy;
+    {
 
-      }
+      name: "Margherita Pizza",
 
-      return { ...prev, [id]: newQty };
+      price: 249,
 
-    });
+      image:
 
-  };
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
 
-  const totalItemsCount = Object.values(cart).reduce((a, b) => a + b, 0);
+    },
 
-  const calculateTotalAmount = () => {
+    {
 
-    return Object.entries(cart).reduce((total, [id, qty]) => {
+      name: "Chicken Biryani",
 
-      const item = menuItems.find((p) => p.id === Number(id));
+      price: 299,
 
-      return total + (item ? item.price * qty : 0);
+      image:
 
-    }, 0);
+        "https://images.unsplash.com/photo-1701579231349-d7459c40919d?w=800",
 
-  };
+    },
 
-  const filteredItems = activeCategory === 'All' 
+    {
 
-    ? menuItems 
+      name: "Paneer Wrap",
 
-    : menuItems.filter(item => item.category === activeCategory);
+      price: 129,
 
-  const handleWhatsAppOrder = () => {
+      image:
 
-    if (totalItemsCount === 0) return;
+        "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800",
 
-    if (!customerName.trim()) {
+    },
 
-      setErrorMessage('Kripya apna Naam bharein!');
+    {
 
-      return;
+      name: "Cold Coffee",
 
-    }
+      price: 99,
 
-    if (orderType === 'dine-in' && !tableNumber.trim()) {
+      image:
 
-      setErrorMessage('Kripya Table / Seat Number bharein!');
+        "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800",
 
-      return;
+    },
 
-    }
-
-    if (orderType === 'delivery' && !deliveryAddress.trim()) {
-
-      setErrorMessage('Kripya Delivery Address bharein!');
-
-      return;
-
-    }
-
-    setErrorMessage('');
-
-    const shopOwnerNumber = '918707684229'; 
-
-    let message = `🛒 *New Order from QR Menu*\n`;
-
-    message += `📋 *Type:* ${orderType === 'dine-in' ? 'Dine-In (Stall)' : 'Home Delivery'}\n`;
-
-    message += `👤 *Name:* ${customerName}\n`;
-
-    if (orderType === 'dine-in') {
-
-      message += `📍 *Table:* ${tableNumber}\n`;
-
-    } else {
-
-      message += `🏠 *Address:* ${deliveryAddress}\n`;
-
-    }
-
-    message += `--------------------------\n`;
-
-    Object.entries(cart).forEach(([id, qty]) => {
-
-      const item = menuItems.find((p) => p.id === Number(id));
-
-      if (item) {
-
-        const itemTotal = item.price * qty;
-
-        message += `• ${item.name} x ${qty} = ₹${itemTotal}\n`;
-
-      }
-
-    });
-
-    message += `--------------------------\n`;
-
-    message += `💰 *Total Bill: ₹${calculateTotalAmount()}*\n`;
-
-    message += `_Powered by LearnBuild Hub_`;
-
-    const encodedMessage = encodeURIComponent(message);
-
-    window.open(`https://wa.me/${shopOwnerNumber}?text=${encodedMessage}`, '_blank');
-
-  };
-
-  // Colorful Splash Screen
+  ];
 
   if (showSplash) {
 
     return (
-<div className="fixed inset-0 bg-gradient-to-tr from-orange-600 via-pink-600 to-purple-700 flex flex-col items-center justify-center z-50 text-white p-6 shadow-2xl">
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-transparent to-black/30 pointer-events-none"></div>
-<div className="animate-bounce mb-5 bg-white/20 p-5 rounded-3xl backdrop-blur-xl shadow-inner border border-white/30">
-<span className="text-5xl">🍔</span>
+<main className="h-screen flex items-center justify-center bg-gradient-to-br from-[#071229] via-[#0a1f47] to-[#09152c] text-white">
+<div className="text-center px-6">
+<div className="w-28 h-28 rounded-full bg-orange-500 flex items-center justify-center mx-auto shadow-2xl mb-6 animate-pulse">
+<span className="text-5xl">🍽️</span>
 </div>
-<h1 className="text-3xl font-black tracking-tight text-center drop-shadow-md">Welcome to Classic Awadh Restaurant</h1>
-<p className="text-pink-100 text-xs mt-2 font-semibold tracking-wide uppercase bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
+<h1 className="text-5xl font-bold">
 
-          ⚡ Scan. Select. Direct WhatsApp Order.
+            TASTY <span className="text-orange-500">BITES</span>
+</h1>
+<p className="text-2xl tracking-[8px] mt-1">CAFE</p>
+<p className="text-gray-300 mt-4">
+
+            Fresh Food • Fast Service • Great Taste
 </p>
-<div className="absolute bottom-8 text-xs text-white/80 font-medium tracking-wider">
+<h2 className="text-orange-400 text-4xl italic mt-10">
 
-          Powered by LearnBuild Hub 🚀
+            Welcome!
+</h2>
+<p className="mt-6 text-lg text-gray-300">
+
+            Preparing your menu...
+</p>
+<div className="flex justify-center gap-3 mt-4">
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce" />
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce delay-100" />
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce delay-200" />
 </div>
+<div className="mt-16 text-sm text-gray-400">
+
+            Powered by
 </div>
+<h3 className="text-2xl font-bold mt-2">
+
+            Learn<span className="text-orange-500">Build</span> Hub
+</h3>
+</div>
+</main>
 
     );
 
   }
 
-  // Colorful & Modern Menu Interface
+  return (
+<main className="min-h-screen bg-[#081627] text-white pb-36">
+
+      {/* Header */}
+<div className="p-5 sticky top-0 z-50 backdrop-blur bg-[#081627]/90">
+<div className="flex justify-between items-center mb-4">
+<div>
+<h1 className="text-3xl font-bold">
+
+              TASTY <span className="text-orange-500">BITES</span>
+</h1>
+<p className="text-sm text-gray-300">
+
+              Fresh Food • Fast Service
+</p>
+</div>
+<div className="bg-green-500/20 px-3 py-2 rounded-full flex gap-2 items-center">
+<Star size={14} fill="gold" />
+<span>4.8</span>
+</div>
+</div>
+
+        {/* Search */}
+<div className="bg-white rounded-full flex items-center px-4 py-3">
+<Search className="text-gray-500" />
+<input
+
+            placeholder="Search your favourite food..."
+
+            className="ml-3 w-full outline-none text-black"
+
+          />
+</div>
+</div>
+
+      {/* Offer */}
+<div className="px-5 mt-5">
+<div className="bg-gradient-to-r from-red-600 to-orange-500 rounded-2xl p-4">
+<h2 className="text-3xl font-bold">20% OFF</h2>
+<p>On orders above ₹499</p>
+</div>
+</div>
+
+      {/* Categories */}
+<div className="flex gap-3 overflow-x-auto px-5 py-5">
+
+        {["Burger", "Pizza", "Biryani", "Chinese", "Drinks"].map((cat) => (
+<button
+
+            key={cat}
+
+            className="whitespace-nowrap bg-[#122742] px-5 py-3 rounded-xl border border-slate-700"
+>
+
+            {cat}
+</button>
+
+        ))}
+</div>
+
+      {/* Menu */}
+<div className="px-5 space-y-4">
+<h2 className="text-2xl font-bold mb-4">
+
+          🔥 Bestsellers
+</h2>
+
+        {menuItems.map((item) => (
+<div
+
+            key={item.name}
+
+            className="bg-[#10233d] rounded-2xl overflow-hidden flex"
+>
+
+            {item.image}
+<div className="p-4 flex-1">
+<h3 className="font-bold text-lg">
+
+                {item.name}
+</h3>
+<p className="text-orange-400 font-bold text-xl mt-2">
+
+                ₹{item.price}
+</p>
+<button className="mt-4 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl font-semibold">
+
+                Add +
+</button>
+</div>
+</div>
+
+        ))}
+</div>
+
+      {/* Cart */}
+<div className="fixed bottom-24 left-4 right-4 bg-[#10233d] rounded-2xl p-4 flex justify-between items-center border border-slate-700">
+<div className="flex items-center gap-2">
+<ShoppingCart />
+<span>3 Items | ₹427</span>
+</div>
+<button className="text-orange-400 font-semibold">
+
+          View Cart →
+</button>
+</div>
+
+      {/* WhatsApp CTA */}
+<div className="fixed bottom-0 left-0 right-0 bg-[#081627] p-4 border-t border-slate-800">
+https://wa.me/918149565351
+
+          WhatsApp Order
+</a>
+<div className="flex justify-around mt-4 text-sm text-gray-300">
+<div className="flex items-center gap-1">
+<Phone size={16} />
+
+            Call
+</div>
+<div className="flex items-center gap-1">
+<MapPin size={16} />
+
+            Location
+</div>
+<div className="flex items-center gap-1">
+<Share2 size={16} />
+
+            Share
+</div>
+</div>
+<div className="text-center mt-3 text-xs text-gray-500">
+
+          Powered by LearnBuild Hub
+</div>
+</div>
+</main>
+
+  );
+
+}
+
+"use client";
+
+import { useEffect, useState } from "react";
+
+import {
+
+  Search,
+
+  Star,
+
+  ShoppingCart,
+
+  Phone,
+
+  MapPin,
+
+  Share2,
+
+} from "lucide-react";
+
+export default function Page() {
+
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+
+    const timer = setTimeout(() => {
+
+      setShowSplash(false);
+
+    }, 2000);
+
+    return () => clearTimeout(timer);
+
+  }, []);
+
+  const menuItems = [
+
+    {
+
+      name: "Classic Burger",
+
+      price: 149,
+
+      image:
+
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800",
+
+    },
+
+    {
+
+      name: "Margherita Pizza",
+
+      price: 249,
+
+      image:
+
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800",
+
+    },
+
+    {
+
+      name: "Chicken Biryani",
+
+      price: 299,
+
+      image:
+
+        "https://images.unsplash.com/photo-1701579231349-d7459c40919d?w=800",
+
+    },
+
+    {
+
+      name: "Paneer Wrap",
+
+      price: 129,
+
+      image:
+
+        "https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=800",
+
+    },
+
+    {
+
+      name: "Cold Coffee",
+
+      price: 99,
+
+      image:
+
+        "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=800",
+
+    },
+
+  ];
+
+  if (showSplash) {
+
+    return (
+<main className="h-screen flex items-center justify-center bg-gradient-to-br from-[#071229] via-[#0a1f47] to-[#09152c] text-white">
+<div className="text-center px-6">
+<div className="w-28 h-28 rounded-full bg-orange-500 flex items-center justify-center mx-auto shadow-2xl mb-6 animate-pulse">
+<span className="text-5xl">🍽️</span>
+</div>
+<h1 className="text-5xl font-bold">
+
+            TASTY <span className="text-orange-500">BITES</span>
+</h1>
+<p className="text-2xl tracking-[8px] mt-1">CAFE</p>
+<p className="text-gray-300 mt-4">
+
+            Fresh Food • Fast Service • Great Taste
+</p>
+<h2 className="text-orange-400 text-4xl italic mt-10">
+
+            Welcome!
+</h2>
+<p className="mt-6 text-lg text-gray-300">
+
+            Preparing your menu...
+</p>
+<div className="flex justify-center gap-3 mt-4">
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce" />
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce delay-100" />
+<div className="w-3 h-3 rounded-full bg-orange-400 animate-bounce delay-200" />
+</div>
+<div className="mt-16 text-sm text-gray-400">
+
+            Powered by
+</div>
+<h3 className="text-2xl font-bold mt-2">
+
+            Learn<span className="text-orange-500">Build</span> Hub
+</h3>
+</div>
+</main>
+
+    );
+
+  }
 
   return (
-<main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pb-32 max-w-md mx-auto shadow-2xl border-x relative">
+<main className="min-h-screen bg-[#081627] text-white pb-36">
 
-      {/* Vibrant Header */}
-<header className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white sticky top-0 z-20 shadow-md px-4 py-3.5 rounded-b-2xl">
-<div className="flex justify-between items-center">
+      {/* Header */}
+<div className="p-5 sticky top-0 z-50 backdrop-blur bg-[#081627]/90">
+<div className="flex justify-between items-center mb-4">
 <div>
-<h1 className="text-lg font-black tracking-tight">Classic Awadh Restaurant 🌟</h1>
-<p className="text-[11px] text-emerald-300 font-bold flex items-center gap-1.5 mt-0.5">
-<span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live QR Digital Menu
+<h1 className="text-3xl font-bold">
+
+              TASTY <span className="text-orange-500">BITES</span>
+</h1>
+<p className="text-sm text-gray-300">
+
+              Fresh Food • Fast Service
 </p>
 </div>
-<span className="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border border-white/20 shadow-sm">
-
-            LearnBuild Hub
-</span>
+<div className="bg-green-500/20 px-3 py-2 rounded-full flex gap-2 items-center">
+<Star size={14} fill="gold" />
+<span>4.8</span>
 </div>
-</header>
-<div className="p-4 space-y-4">
-
-        {/* Order Type Toggle */}
-<div className="flex bg-indigo-100/60 p-1.5 rounded-2xl border border-indigo-200">
-<button
-
-            onClick={() => { setOrderType('dine-in'); setErrorMessage(''); }}
-
-            className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
-
-              orderType === 'dine-in' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md' : 'text-indigo-900 hover:bg-indigo-200/50'
-
-            }`}
->
-
-            🍽️ Dine-In (Stall)
-</button>
-<button
-
-            onClick={() => { setOrderType('delivery'); setErrorMessage(''); }}
-
-            className={`flex-1 py-2 text-xs font-black rounded-xl transition-all ${
-
-              orderType === 'delivery' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md' : 'text-indigo-900 hover:bg-indigo-200/50'
-
-            }`}
->
-
-            🛵 Home Delivery
-</button>
 </div>
 
-        {/* Customer Details Form */}
-<div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 space-y-3">
-<p className="text-xs font-black text-indigo-600 uppercase tracking-wider">
-
-            Customer Details <span className="text-red-500">*</span>
-</p>
-<div>
+        {/* Search */}
+<div className="bg-white rounded-full flex items-center px-4 py-3">
+<Search className="text-gray-500" />
 <input
 
-              type="text"
+            placeholder="Search your favourite food..."
 
-              placeholder="Your Full Name *"
+            className="ml-3 w-full outline-none text-black"
 
-              value={customerName}
-
-              onChange={(e) => { setCustomerName(e.target.value); setErrorMessage(''); }}
-
-              className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-
-            />
+          />
+</div>
 </div>
 
-          {orderType === 'dine-in' ? (
-<div>
-<input
-
-                type="text"
-
-                placeholder="Table / Seat Number * (e.g. Table 4)"
-
-                value={tableNumber}
-
-                onChange={(e) => { setTableNumber(e.target.value); setErrorMessage(''); }}
-
-                className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
-
-              />
+      {/* Offer */}
+<div className="px-5 mt-5">
+<div className="bg-gradient-to-r from-red-600 to-orange-500 rounded-2xl p-4">
+<h2 className="text-3xl font-bold">20% OFF</h2>
+<p>On orders above ₹499</p>
+</div>
 </div>
 
-          ) : (
-<div>
-<textarea
+      {/* Categories */}
+<div className="flex gap-3 overflow-x-auto px-5 py-5">
 
-                placeholder="Complete Delivery Address * (House no, Street...)"
-
-                value={deliveryAddress}
-
-                onChange={(e) => { setDeliveryAddress(e.target.value); setErrorMessage(''); }}
-
-                rows={2}
-
-                className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none font-medium"
-
-              />
-</div>
-
-          )}
-
-          {errorMessage && (
-<p className="text-xs text-red-600 font-bold bg-red-50 p-2.5 rounded-xl border border-red-200">
-
-              ⚠️ {errorMessage}
-</p>
-
-          )}
-</div>
-
-        {/* Colorful Category Filter Tabs */}
-<div className="flex overflow-x-auto space-x-2 pb-2 scrollbar-none">
-
-          {categories.map((cat) => (
+        {["Burger", "Pizza", "Biryani", "Chinese", "Drinks"].map((cat) => (
 <button
 
-              key={cat}
+            key={cat}
 
-              onClick={() => setActiveCategory(cat)}
-
-              className={`px-4 py-2 text-xs font-black rounded-2xl whitespace-nowrap transition-all shadow-sm ${
-
-                activeCategory === cat
-
-                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-md shadow-pink-200 scale-105'
-
-                  : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-
-              }`}
+            className="whitespace-nowrap bg-[#122742] px-5 py-3 rounded-xl border border-slate-700"
 >
 
-              {cat}
+            {cat}
 </button>
 
-          ))}
+        ))}
 </div>
 
-        {/* Menu Items Cards */}
-<div className="space-y-3">
+      {/* Menu */}
+<div className="px-5 space-y-4">
+<h2 className="text-2xl font-bold mb-4">
 
-          {filteredItems.map((item) => {
+          🔥 Bestsellers
+</h2>
 
-            const qty = cart[item.id] || 0;
+        {menuItems.map((item) => (
+<div
 
-            return (
-<div key={item.id} className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center transition-all hover:shadow-md hover:border-indigo-100">
-<div className="pr-2">
-<span className={`text-[10px] px-2.5 py-0.5 rounded-full font-black border ${item.bg}`}>
+            key={item.name}
 
-                    {item.category}
-</span>
-<h3 className="font-extrabold text-gray-900 text-sm mt-1.5">{item.name}</h3>
-<p className="text-xs text-gray-500 font-medium mt-0.5">{item.desc}</p>
-<p className="text-sm font-black text-indigo-600 mt-1.5">₹{item.price}</p>
-</div>
-<div className="flex items-center">
-
-                  {qty > 0 ? (
-<div className="flex items-center bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl overflow-hidden shadow-md">
-<button 
-
-                        onClick={() => updateQuantity(item.id, -1)} 
-
-                        className="px-3.5 py-2 font-black hover:bg-black/10 transition"
+            className="bg-[#10233d] rounded-2xl overflow-hidden flex"
 >
 
-                        -
-</button>
-<span className="px-2.5 text-xs font-black">{qty}</span>
-<button 
+            {item.image}
+<div className="p-4 flex-1">
+<h3 className="font-bold text-lg">
 
-                        onClick={() => updateQuantity(item.id, 1)} 
+                {item.name}
+</h3>
+<p className="text-orange-400 font-bold text-xl mt-2">
 
-                        className="px-3.5 py-2 font-black hover:bg-black/10 transition"
->
+                ₹{item.price}
+</p>
+<button className="mt-4 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-xl font-semibold">
 
-                        +
-</button>
-</div>
-
-                  ) : (
-<button 
-
-                      onClick={() => updateQuantity(item.id, 1)} 
-
-                      className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-black rounded-2xl transition border border-indigo-200 shadow-sm"
->
-
-                      + Add
-</button>
-
-                  )}
-</div>
-</div>
-
-            );
-
-          })}
-</div>
-</div>
-
-      {/* Floating Bottom Cart Bar */}
-
-      {totalItemsCount > 0 && (
-<div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-xl border-t shadow-2xl p-4 z-30 rounded-t-3xl">
-<div className="flex justify-between items-center">
-<div>
-<p className="text-xs text-gray-500 font-bold">{totalItemsCount} items selected</p>
-<p className="text-lg font-black text-gray-900">₹{calculateTotalAmount()}</p>
-</div>
-<button 
-
-              onClick={handleWhatsAppOrder}
-
-              className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg shadow-green-200 flex items-center space-x-2 transition-all active:scale-95"
->
-<span>Order on WhatsApp 🚀</span>
+                Add +
 </button>
 </div>
 </div>
 
-      )}
+        ))}
+</div>
+
+      {/* Cart */}
+<div className="fixed bottom-24 left-4 right-4 bg-[#10233d] rounded-2xl p-4 flex justify-between items-center border border-slate-700">
+<div className="flex items-center gap-2">
+<ShoppingCart />
+<span>3 Items | ₹427</span>
+</div>
+<button className="text-orange-400 font-semibold">
+
+          View Cart →
+</button>
+</div>
+
+      {/* WhatsApp CTA */}
+<div className="fixed bottom-0 left-0 right-0 bg-[#081627] p-4 border-t border-slate-800">
+https://wa.me/918149565351
+
+          WhatsApp Order
+</a>
+<div className="flex justify-around mt-4 text-sm text-gray-300">
+<div className="flex items-center gap-1">
+<Phone size={16} />
+
+            Call
+</div>
+<div className="flex items-center gap-1">
+<MapPin size={16} />
+
+            Location
+</div>
+<div className="flex items-center gap-1">
+<Share2 size={16} />
+
+            Share
+</div>
+</div>
+<div className="text-center mt-3 text-xs text-gray-500">
+
+          Powered by LearnBuild Hub
+</div>
+</div>
 </main>
 
   );
