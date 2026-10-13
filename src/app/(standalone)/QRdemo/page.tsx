@@ -553,7 +553,7 @@ export default function StaticDemoQRMenu() {
 
               onChange={(e) => setCustomerName(e.target.value)}
 
-              className="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"
+              className="w-full bg-gray-950 border border-gray-800 rounded-xl px-3 py-2 text-base text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-500 transition"
 
             />
 
